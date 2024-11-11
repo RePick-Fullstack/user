@@ -20,7 +20,7 @@ public class SignupController {
         return "signup";
     }
 
-    @PostMapping("/user")
+    @PostMapping("/signup")
     public String signup(@RequestBody AddUserRequest request) {
         userService.save(request);
         return "redirect:/login";
