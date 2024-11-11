@@ -3,11 +3,14 @@ package TheNaeunEconomy.user.domain;
 
 import jakarta.persistence.*;
 import java.util.Date;
+import java.util.UUID;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.antlr.v4.runtime.misc.NotNull;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,14 +20,16 @@ import java.util.List;
 
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Getter
 @Entity
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", unique = true, updatable = false)
-    private Long id;
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(name = "id", unique = true, updatable = false, nullable = false, columnDefinition = "BINARY(16)")
+    private UUID id;
 
     @NotNull
     @Column(name = "email", unique = true)
@@ -65,7 +70,6 @@ public class User implements UserDetails {
         this.birthDate = birthDate;
         this.isBilling = false;
         this.isDeleted = false;
-
     }
 
     @Override

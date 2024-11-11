@@ -4,6 +4,7 @@ package TheNaeunEconomy.user.contorller;
 import TheNaeunEconomy.user.request.AddUserRequest;
 import TheNaeunEconomy.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,10 +22,8 @@ public class SignupController {
     }
 
     @PostMapping("/signup")
-    public String signup(@RequestBody AddUserRequest request) {
+    public ResponseEntity<String> registerUser(@RequestBody AddUserRequest request) {
         userService.save(request);
-        return "redirect:/login";
+        return ResponseEntity.ok("User registered successfully.");
     }
-
-
 }
