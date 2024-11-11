@@ -25,7 +25,8 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
-/src/main/application.properties
+# application.properties 파일 무시
+/src/main/resources/application.properties
 
 ### NetBeans ###
 /nbproject/private/
