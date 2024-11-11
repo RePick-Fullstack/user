@@ -2,10 +2,9 @@ package TheNaeunEconomy.user.contorller;
 
 
 import TheNaeunEconomy.user.Repository.UserRepository;
-import TheNaeunEconomy.user.domain.User;
 import TheNaeunEconomy.user.jwt.TokenProvider;
 import TheNaeunEconomy.user.request.LoginUserRequest;
-import java.util.Optional;
+import TheNaeunEconomy.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +20,7 @@ public class LoginController {
 
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
+    private final UserService userService;
 
     @GetMapping("/login")
     public String login() {
@@ -29,8 +29,8 @@ public class LoginController {
 
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody LoginUserRequest request) {
-        User user = userRepository.getReferenceById(request.getId());
-        String string = tokenProvider.generateToken(user);
-        return string != null ? ResponseEntity.ok(string) : ResponseEntity.notFound().build();
+        log.info("Login user request: {}", request);
+        ResponseEntity<String> userToken = userService.login(request);
+        return userToken;
     }
 }
