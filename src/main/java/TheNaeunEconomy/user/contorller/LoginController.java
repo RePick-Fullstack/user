@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Controller
 public class LoginController {
 
-    private final UserRepository userRepository;
-    private final TokenProvider tokenProvider;
     private final UserService userService;
 
     @GetMapping("/login")
@@ -29,8 +27,6 @@ public class LoginController {
 
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody LoginUserRequest request) {
-        log.info("Login user request: {}", request);
-        ResponseEntity<String> userToken = userService.login(request);
-        return userToken;
+        return userService.login(request);
     }
 }

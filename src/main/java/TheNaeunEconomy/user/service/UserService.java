@@ -46,11 +46,19 @@ public class UserService {
 
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
-            return ResponseEntity.status(404).body("User not found");
+            return ResponseEntity.status(404).body("존재하지 않는 사용자 입니다.");
+        }
+
+        if (!isPasswordMatch(password, user.getPassword())) {
+            return ResponseEntity.status(404).body("비밀번호가 틀렸습니다.");
         }
 
         String token = tokenProvider.generateToken(user);
 
         return ResponseEntity.ok(token);
+    }
+
+    public boolean isPasswordMatch(String rawPassword, String encodedPassword) {
+        return bCryptPasswordEncoder.matches(rawPassword, encodedPassword);
     }
 }
