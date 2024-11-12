@@ -1,9 +1,13 @@
 package TheNaeunEconomy.user.jwt;
 
 import TheNaeunEconomy.user.domain.User;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
 import java.time.Duration;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
@@ -30,5 +34,27 @@ public class TokenProvider {
                 .claim("id", user.getId())
                 .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
                 .compact();
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parser().setSigningKey(jwtProperties.getSecretKey()).parseClaimsJws(token);
+
+            return true;
+        } catch (SignatureException e) {
+            System.out.println("Invalid JWT signature");
+        } catch (ExpiredJwtException e) {
+            System.out.println("Expired JWT token");
+        } catch (MalformedJwtException e) {
+            System.out.println("Malformed JWT token");
+        } catch (Exception e) {
+            System.out.println("Invalid JWT token");
+        }
+        return false;
+    }
+
+    public String getUserIdFromToken(String token) {
+        Claims claims = Jwts.parser().setSigningKey(jwtProperties.getSecretKey()).parseClaimsJws(token).getBody();
+        return claims.get("id", String.class);
     }
 }
