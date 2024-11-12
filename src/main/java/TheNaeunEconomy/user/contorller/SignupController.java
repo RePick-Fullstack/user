@@ -7,21 +7,22 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 @Slf4j
 @RequiredArgsConstructor
-@Controller
+@RestController
 public class SignupController {
 
     private final UserService userService;
 
     @GetMapping("/signup")
-    public String signupPage() {
-        return "signup";
+    public ModelAndView signupPage() {
+        return new ModelAndView("signup");
     }
 
     @PostMapping("/signup")

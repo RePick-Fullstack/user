@@ -6,21 +6,22 @@ import TheNaeunEconomy.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 @Slf4j
 @RequiredArgsConstructor
-@Controller
+@RestController
 public class LoginController {
 
     private final UserService userService;
 
     @GetMapping("/login")
-    public String login() {
-        return "/login";
+    public ModelAndView login() {
+        return new ModelAndView("login.html");
     }
 
     @PostMapping("/login")
