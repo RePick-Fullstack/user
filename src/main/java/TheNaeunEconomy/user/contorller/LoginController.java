@@ -1,8 +1,6 @@
 package TheNaeunEconomy.user.contorller;
 
 
-import TheNaeunEconomy.user.Repository.UserRepository;
-import TheNaeunEconomy.user.jwt.TokenProvider;
 import TheNaeunEconomy.user.request.LoginUserRequest;
 import TheNaeunEconomy.user.service.UserService;
 import lombok.RequiredArgsConstructor;
