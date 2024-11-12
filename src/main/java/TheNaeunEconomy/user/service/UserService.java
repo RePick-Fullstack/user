@@ -27,14 +27,8 @@ public class UserService {
             throw new IllegalStateException("이미 존재하는 이메일입니다.");
         });
 
-        User user = User.builder()
-                .email(request.getEmail())
-                .password(bCryptPasswordEncoder.encode(request.getPassword()))
-                .name(request.getName())
-                .nickname(request.getNickname())
-                .gender(request.getGender())
-                .birthDate(request.getBirthDate())
-                .build();
+        User user = new User(request.getEmail(), bCryptPasswordEncoder.encode(request.getPassword()), request.getName(),
+                request.getNickname(), request.getGender(), request.getBirthDate());
 
         return userRepository.save(user);
     }
