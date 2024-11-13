@@ -6,17 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
-public class AddUserRequest {
-
-    @NotBlank(message = "이메일은 필수 항목입니다.")
-    @Email(message = "잘못된 이메일 형식입니다.")
-    private String email;
-
+public class UpdateUserRequest {
     @NotBlank(message = "비밀번호는 필수 항목입니다.")
     @Size(min = 6, max = 20, message = "비밀번호는 6자 이상, 20자 이하로 입력해야 합니다.")
     private String password;
@@ -34,15 +25,5 @@ public class AddUserRequest {
     @NotNull(message = "생년월일은 필수 항목입니다.")
     private LocalDate birthDate;
 
-    @Override
-    public String toString() {
-        return "AddUserRequest{" +
-                "email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", nickname='" + nickname + '\'' +
-                ", gender='" + gender + '\'' +
-                ", birthDate=" + birthDate +
-                '}';
-    }
+    private LocalDate updateDate = LocalDate.now();
 }

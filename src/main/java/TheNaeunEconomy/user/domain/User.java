@@ -2,7 +2,7 @@ package TheNaeunEconomy.user.domain;
 
 
 import jakarta.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -32,19 +32,19 @@ public class User {
     @Column(name = "gender")
     private String gender;
     @Column(name = "birth_date")
-    private Date birthDate;
+    private LocalDate birthDate;
     @Column(name = "create_date")
-    private Date createDate;
+    private LocalDate createDate;
     @Column(name = "update_date")
-    private Date updateDate;
+    private LocalDate updateDate;
     @Column(name = "delete_date")
-    private Date deleteDate;
+    private LocalDate deleteDate;
     @Column(name = "is_billing")
     private Boolean isBilling;
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
-    public User(String email, String password, String name, String nickname, String gender, Date birthDate) {
+    public User(String email, String password, String name, String nickname, String gender, LocalDate birthDate) {
         this.email = email;
         this.password = password;
         this.name = name;
@@ -57,7 +57,7 @@ public class User {
 
     @PrePersist
     public void prePersist() {
-        Date currentDate = new Date();
+        LocalDate currentDate = LocalDate.now();
         this.createDate = currentDate;
         this.updateDate = currentDate;
     }
