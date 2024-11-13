@@ -21,6 +21,10 @@ public class AddUserRequest {
     @Size(min = 6, max = 20, message = "비밀번호는 6자 이상, 20자 이하로 입력해야 합니다.")
     private String password;
 
+    @NotBlank(message = "비밀번호는 필수 항목입니다.")
+    @Size(min = 6, max = 20, message = "비밀번호는 6자 이상, 20자 이하로 입력해야 합니다.")
+    private String confirmPassword;
+
     @NotBlank(message = "이름은 필수 항목입니다.")
     @Pattern(regexp = "^[가-힣]+$", message = "이름은 한글만 입력 가능합니다.")
     private String name;

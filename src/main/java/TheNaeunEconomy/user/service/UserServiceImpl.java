@@ -29,6 +29,10 @@ public class UserServiceImpl implements UserService {
             throw new IllegalStateException("이미 존재하는 이메일입니다.");
         });
 
+        if(! request.getPassword().equals(request.getConfirmPassword())){
+            throw new IllegalStateException("비밀번호가 틀려요.");
+        }
+
         User user = new User(request.getEmail(), bCryptPasswordEncoder.encode(request.getPassword()), request.getName(),
                 request.getNickname(), request.getGender(), request.getBirthDate());
 
@@ -51,7 +55,7 @@ public class UserServiceImpl implements UserService {
         }
 
         String token = tokenProvider.generateToken(user);
-
+        log.info("token: {}", ResponseEntity.ok(token));
         return ResponseEntity.ok(token);
     }
 
