@@ -1,6 +1,7 @@
 package TheNaeunEconomy.user.contorller;
 
 
+import TheNaeunEconomy.user.service.UserServiceImpl;
 import TheNaeunEconomy.user.service.request.LoginUserRequest;
 import TheNaeunEconomy.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RestController
 public class LoginController {
 
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
     @GetMapping("/login")
     public ModelAndView login() {

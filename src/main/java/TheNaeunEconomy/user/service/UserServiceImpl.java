@@ -67,7 +67,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(String token) {
-
     }
 
     public boolean isPasswordMatch(String rawPassword, String encodedPassword) {

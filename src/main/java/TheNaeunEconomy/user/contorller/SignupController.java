@@ -1,6 +1,7 @@
 package TheNaeunEconomy.user.contorller;
 
 
+import TheNaeunEconomy.user.service.UserServiceImpl;
 import TheNaeunEconomy.user.service.request.AddUserRequest;
 import TheNaeunEconomy.user.service.UserService;
 import jakarta.validation.Valid;
@@ -18,7 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RestController
 public class SignupController {
 
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
     @GetMapping("/signup")
     public ModelAndView signupPage() {
