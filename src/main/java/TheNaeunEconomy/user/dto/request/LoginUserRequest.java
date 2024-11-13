@@ -1,4 +1,4 @@
-package TheNaeunEconomy.user.request;
+package TheNaeunEconomy.user.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;

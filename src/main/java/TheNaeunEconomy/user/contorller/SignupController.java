@@ -1,7 +1,7 @@
 package TheNaeunEconomy.user.contorller;
 
 
-import TheNaeunEconomy.user.request.AddUserRequest;
+import TheNaeunEconomy.user.dto.request.AddUserRequest;
 import TheNaeunEconomy.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

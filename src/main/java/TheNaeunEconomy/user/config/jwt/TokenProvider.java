@@ -1,4 +1,4 @@
-package TheNaeunEconomy.user.jwt;
+package TheNaeunEconomy.user.config.jwt;
 
 import TheNaeunEconomy.user.domain.User;
 import io.jsonwebtoken.Claims;

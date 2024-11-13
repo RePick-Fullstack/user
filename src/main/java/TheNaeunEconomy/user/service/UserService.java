@@ -2,9 +2,9 @@ package TheNaeunEconomy.user.service;
 
 import TheNaeunEconomy.user.Repository.UserRepository;
 import TheNaeunEconomy.user.domain.User;
-import TheNaeunEconomy.user.jwt.TokenProvider;
-import TheNaeunEconomy.user.request.AddUserRequest;
-import TheNaeunEconomy.user.request.LoginUserRequest;
+import TheNaeunEconomy.user.config.jwt.TokenProvider;
+import TheNaeunEconomy.user.dto.request.AddUserRequest;
+import TheNaeunEconomy.user.dto.request.LoginUserRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
