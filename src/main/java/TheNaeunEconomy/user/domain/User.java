@@ -7,7 +7,6 @@ import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
 
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -16,10 +15,12 @@ import org.hibernate.annotations.GenericGenerator;
 public class User {
 
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "id", unique = true, updatable = false, nullable = false, columnDefinition = "BINARY(16)")
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", unique = true, updatable = false, nullable = false)
+    private Long id;
+
+    @Column(name = "uuid", unique = true, nullable = false, updatable = false)
+    private UUID uuid;
 
     @Column(name = "email", unique = true)
     private String email;
@@ -45,20 +46,16 @@ public class User {
     private Boolean isDeleted;
 
     public User(String email, String password, String name, String nickname, String gender, LocalDate birthDate) {
+        uuid = UUID.randomUUID();
         this.email = email;
         this.password = password;
         this.name = name;
         this.nickname = nickname;
         this.gender = gender;
         this.birthDate = birthDate;
+        this.createDate = LocalDate.now();
+        this.updateDate = LocalDate.now();
         this.isBilling = false;
         this.isDeleted = false;
-    }
-
-    @PrePersist
-    public void prePersist() {
-        LocalDate currentDate = LocalDate.now();
-        this.createDate = currentDate;
-        this.updateDate = currentDate;
     }
 }
