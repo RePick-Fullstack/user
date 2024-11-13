@@ -3,9 +3,9 @@ package TheNaeunEconomy.user.service;
 import TheNaeunEconomy.user.Repository.UserRepository;
 import TheNaeunEconomy.user.domain.User;
 import TheNaeunEconomy.user.config.jwt.TokenProvider;
-import TheNaeunEconomy.user.dto.request.AddUserRequest;
-import TheNaeunEconomy.user.dto.request.LoginUserRequest;
-import TheNaeunEconomy.user.dto.request.UpdateUserRequest;
+import TheNaeunEconomy.user.service.request.AddUserRequest;
+import TheNaeunEconomy.user.service.request.LoginUserRequest;
+import TheNaeunEconomy.user.service.request.UpdateUserRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -61,7 +61,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUser(UpdateUserRequest request) {
+    public void updateUser(UpdateUserRequest request, String token) {
+
+    }
+
+    @Override
+    public void deleteUser(String token) {
 
     }
 

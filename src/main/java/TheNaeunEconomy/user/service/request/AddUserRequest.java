@@ -1,4 +1,4 @@
-package TheNaeunEconomy.user.dto.request;
+package TheNaeunEconomy.user.service.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

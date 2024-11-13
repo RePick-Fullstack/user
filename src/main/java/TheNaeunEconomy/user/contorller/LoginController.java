@@ -1,7 +1,7 @@
 package TheNaeunEconomy.user.contorller;
 
 
-import TheNaeunEconomy.user.dto.request.LoginUserRequest;
+import TheNaeunEconomy.user.service.request.LoginUserRequest;
 import TheNaeunEconomy.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
