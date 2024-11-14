@@ -8,7 +8,6 @@ import TheNaeunEconomy.user.service.request.LoginUserRequest;
 import TheNaeunEconomy.user.service.request.UpdateUserRequest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +27,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User save(AddUserRequest request) {
+    public User saveUser(AddUserRequest request) {
         userRepository.findByEmail(request.getEmail()).ifPresent(user -> {
             throw new IllegalStateException("이미 존재하는 이메일입니다.");
         });
@@ -45,7 +44,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public ResponseEntity<String> login(LoginUserRequest request) {
+    public ResponseEntity<String> loginUser(LoginUserRequest request) {
         String email = request.getEmail();
         String password = request.getPassword();
 
@@ -64,28 +63,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void logout(String token) {
+    public void logoutUser(String token) {
     }
 
     @Override
     public void updateUser(UpdateUserRequest request, String token) {
-        tokenProvider.validateToken(token);
-
-        String userUuidFromToken = tokenProvider.getUserUuidFromToken(token);
+        String userUuidFromToken = extractUserUuidFromToken(token);
 
         User user = userRepository.findByUuid(UUID.fromString(userUuidFromToken))
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
 
         user.updateUserDetails(request);
-
         userRepository.save(user);
     }
 
     @Override
     public void deleteUser(String token) {
-        tokenProvider.validateToken(token);
-
-        String userUuidFromToken = tokenProvider.getUserUuidFromToken(token);
+        String userUuidFromToken = extractUserUuidFromToken(token);
 
         User user = userRepository.findByUuid(UUID.fromString(userUuidFromToken))
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
@@ -94,11 +88,18 @@ public class UserServiceImpl implements UserService {
         user.setDeleteDate(LocalDate.from(LocalDateTime.now()));
 
         userRepository.save(user);
-
         log.info("User with UUID: {} marked as deleted.", userUuidFromToken);
     }
 
     public boolean isPasswordMatch(String rawPassword, String encodedPassword) {
         return bCryptPasswordEncoder.matches(rawPassword, encodedPassword);
+    }
+
+    private String extractUserUuidFromToken(String token) {
+        if (!tokenProvider.validateToken(token)) {
+            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+        }
+
+        return tokenProvider.getUserUuidFromToken(token);
     }
 }

@@ -7,11 +7,11 @@ import TheNaeunEconomy.user.service.request.UpdateUserRequest;
 import org.springframework.http.ResponseEntity;
 
 public interface UserService {
-    User save(AddUserRequest request);
+    User saveUser(AddUserRequest request);
 
-    ResponseEntity<String> login(LoginUserRequest request);
+    ResponseEntity<String> loginUser(LoginUserRequest request);
 
-    void logout(String token);
+    void logoutUser(String token);
 
     void updateUser(UpdateUserRequest request, String token);
 
