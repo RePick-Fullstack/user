@@ -6,7 +6,8 @@ import TheNaeunEconomy.user.config.jwt.TokenProvider;
 import TheNaeunEconomy.user.service.request.AddUserRequest;
 import TheNaeunEconomy.user.service.request.LoginUserRequest;
 import TheNaeunEconomy.user.service.request.UpdateUserRequest;
-
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -82,7 +83,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(String token) {
+        tokenProvider.validateToken(token);
 
+        String userUuidFromToken = tokenProvider.getUserUuidFromToken(token);
+
+        User user = userRepository.findByUuid(UUID.fromString(userUuidFromToken))
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
+
+        user.setIsDeleted(true);
+        user.setDeleteDate(LocalDate.from(LocalDateTime.now()));
+
+        userRepository.save(user);
+
+        log.info("User with UUID: {} marked as deleted.", userUuidFromToken);
     }
 
     public boolean isPasswordMatch(String rawPassword, String encodedPassword) {
