@@ -13,7 +13,7 @@ public interface UserService {
 
     void logoutUser(String token);
 
-    void updateUser(UpdateUserRequest request, String token);
+    ResponseEntity<String> updateUser(UpdateUserRequest request, String token);
 
     void deleteUser(String token);
 }

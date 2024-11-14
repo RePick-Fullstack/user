@@ -39,7 +39,6 @@ public class UserSettingsController {
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
         }
-        userService.updateUser(request, token);
-        return ResponseEntity.ok("사용자 정보가 업데이트되었습니다.");
+        return userService.updateUser(request, token);
     }
 }

@@ -57,6 +57,10 @@ public class UserServiceImpl implements UserService {
             return ResponseEntity.status(404).body("비밀번호가 틀렸습니다.");
         }
 
+        if (user.getIsDeleted()) {
+            return ResponseEntity.status(404).body("당신은 휴면계정 처리가 되어 있습니다. 관리자한테 문의하세요.");
+        }
+
         String token = tokenProvider.generateToken(user);
         log.info("token: {}", token);
         return ResponseEntity.ok(token);
@@ -67,14 +71,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUser(UpdateUserRequest request, String token) {
+    public ResponseEntity<String> updateUser(UpdateUserRequest request, String token) {
         String userUuidFromToken = extractUserUuidFromToken(token);
 
         User user = userRepository.findByUuid(UUID.fromString(userUuidFromToken))
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
 
+        if (user.getIsDeleted()) {
+            return ResponseEntity.status(404).body("당신은 휴면계정 처리가 되어 있습니다. 관리자한테 문의하세요.");
+        }
+
         user.updateUserDetails(request);
         userRepository.save(user);
+        return ResponseEntity.ok("사용자 정보가 업데이트되었습니다.");
     }
 
     @Override
