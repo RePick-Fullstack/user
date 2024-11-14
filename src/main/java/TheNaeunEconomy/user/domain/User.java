@@ -77,5 +77,6 @@ public class User {
         if (request.getBirthDate() != null) {
             this.birthDate = request.getBirthDate();
         }
+        this.updateDate = LocalDate.now();
     }
 }

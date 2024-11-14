@@ -25,6 +25,4 @@ public class UpdateUserRequest {
 
     @Past(message = "생년월일은 과거 날짜여야 합니다.")
     private LocalDate birthDate;
-
-    private LocalDate updateDate = LocalDate.now();
 }
