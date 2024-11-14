@@ -6,6 +6,9 @@ import TheNaeunEconomy.user.config.jwt.TokenProvider;
 import TheNaeunEconomy.user.service.request.AddUserRequest;
 import TheNaeunEconomy.user.service.request.LoginUserRequest;
 import TheNaeunEconomy.user.service.request.UpdateUserRequest;
+
+import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +32,7 @@ public class UserServiceImpl implements UserService {
             throw new IllegalStateException("이미 존재하는 이메일입니다.");
         });
 
-        if(! request.getPassword().equals(request.getConfirmPassword())){
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
             throw new IllegalStateException("비밀번호가 틀려요.");
         }
 
@@ -55,22 +58,31 @@ public class UserServiceImpl implements UserService {
         }
 
         String token = tokenProvider.generateToken(user);
-        log.info("token: {}", ResponseEntity.ok(token));
+        log.info("token: {}", token);
         return ResponseEntity.ok(token);
     }
 
     @Override
     public void logout(String token) {
-
     }
 
     @Override
     public void updateUser(UpdateUserRequest request, String token) {
+        tokenProvider.validateToken(token);
 
+        String userUuidFromToken = tokenProvider.getUserUuidFromToken(token);
+
+        User user = userRepository.findByUuid(UUID.fromString(userUuidFromToken))
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
+
+        user.updateUserDetails(request);
+
+        userRepository.save(user);
     }
 
     @Override
     public void deleteUser(String token) {
+
     }
 
     public boolean isPasswordMatch(String rawPassword, String encodedPassword) {

@@ -3,6 +3,7 @@ package TheNaeunEconomy.user.service.request;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
@@ -30,23 +31,14 @@ public class AddUserRequest {
     private String name;
 
     @NotBlank(message = "닉네임은 필수 항목입니다.")
+    @Pattern(regexp = "^[가-힣\\s]+$", message = "닉네임은 한글과 띄어쓰기만 입력 가능합니다.")
     private String nickname;
 
     @NotNull(message = "성별은 필수 항목입니다.")
+    @Pattern(regexp = "^(M|F|기타)$", message = "성별은 M, F, 기타만 입력 가능합니다.")
     private String gender;
 
     @NotNull(message = "생년월일은 필수 항목입니다.")
+    @Past(message = "생년월일은 과거 날짜여야 합니다.")
     private LocalDate birthDate;
-
-    @Override
-    public String toString() {
-        return "AddUserRequest{" +
-                "email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", nickname='" + nickname + '\'' +
-                ", gender='" + gender + '\'' +
-                ", birthDate=" + birthDate +
-                '}';
-    }
 }

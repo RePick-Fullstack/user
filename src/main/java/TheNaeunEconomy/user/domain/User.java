@@ -1,6 +1,7 @@
 package TheNaeunEconomy.user.domain;
 
 
+import TheNaeunEconomy.user.service.request.UpdateUserRequest;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -57,5 +58,22 @@ public class User {
         this.updateDate = LocalDate.now();
         this.isBilling = false;
         this.isDeleted = false;
+    }
+    public void updateUserDetails(UpdateUserRequest request) {
+        if (request.getEmail() != null) {
+            this.email = request.getEmail();
+        }
+        if (request.getName() != null) {
+            this.name = request.getName();
+        }
+        if (request.getNickname() != null) {
+            this.nickname = request.getNickname();
+        }
+        if (request.getGender() != null) {
+            this.gender = request.getGender();
+        }
+        if (request.getBirthDate() != null) {
+            this.birthDate = request.getBirthDate();
+        }
     }
 }
