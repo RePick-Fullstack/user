@@ -11,12 +11,15 @@ import io.jsonwebtoken.SignatureException;
 import java.time.Duration;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
 public class TokenProvider {
 
+    private static final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
     private final JwtProperties jwtProperties;
 
     public String generateToken(User user) {
@@ -39,22 +42,21 @@ public class TokenProvider {
     public boolean validateToken(String token) {
         try {
             Jwts.parser().setSigningKey(jwtProperties.getSecretKey()).parseClaimsJws(token);
-
             return true;
         } catch (SignatureException e) {
-            System.out.println("Invalid JWT signature");
+            logger.error("Invalid JWT signature", e);
         } catch (ExpiredJwtException e) {
-            System.out.println("Expired JWT token");
+            logger.warn("Expired JWT token", e);
         } catch (MalformedJwtException e) {
-            System.out.println("Malformed JWT token");
+            logger.error("Malformed JWT token", e);
         } catch (Exception e) {
-            System.out.println("Invalid JWT token");
+            logger.error("Invalid JWT token", e);
         }
         return false;
     }
 
-    public String getUserIdFromToken(String token) {
+    public String getUserUuidFromToken(String token) {
         Claims claims = Jwts.parser().setSigningKey(jwtProperties.getSecretKey()).parseClaimsJws(token).getBody();
-        return claims.get("id", String.class);
+        return claims.get("uuid", String.class);
     }
 }
