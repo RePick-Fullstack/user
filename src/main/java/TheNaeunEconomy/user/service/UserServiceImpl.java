@@ -6,8 +6,11 @@ import TheNaeunEconomy.user.config.jwt.TokenProvider;
 import TheNaeunEconomy.user.service.request.AddUserRequest;
 import TheNaeunEconomy.user.service.request.LoginUserRequest;
 import TheNaeunEconomy.user.service.request.UpdateUserRequest;
+import TheNaeunEconomy.user.util.NicknameGenerator;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +38,10 @@ public class UserServiceImpl implements UserService {
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             throw new IllegalStateException("비밀번호가 틀려요.");
         }
+        if (request.getNickname().equals("")){
+            request.setNickname(NicknameGenerator.generate());
+        }
+
 
         User user = new User(request.getEmail(), bCryptPasswordEncoder.encode(request.getPassword()), request.getName(),
                 request.getNickname(), request.getGender(), request.getBirthDate());
@@ -58,7 +65,7 @@ public class UserServiceImpl implements UserService {
         }
 
         if (user.getIsDeleted()) {
-            return ResponseEntity.status(404).body("당신은 휴면계정 처리가 되어 있습니다. 관리자한테 문의하세요.");
+            return ResponseEntity.status(404).body("당신은 비활성화 계정 처리가 되어 있습니다. 관리자한테 문의하세요.");
         }
 
         String token = tokenProvider.generateToken(user);
@@ -78,7 +85,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
 
         if (user.getIsDeleted()) {
-            return ResponseEntity.status(404).body("당신은 휴면계정 처리가 되어 있습니다. 관리자한테 문의하세요.");
+            return ResponseEntity.status(404).body("당신은 비활성화 계정 처리가 되어 있습니다. 관리자한테 문의하세요.");
         }
 
         user.updateUserDetails(request);

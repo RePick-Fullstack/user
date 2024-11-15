@@ -3,6 +3,7 @@ package TheNaeunEconomy.user.config;
 import TheNaeunEconomy.user.Repository.UserRepository;
 import TheNaeunEconomy.user.domain.User;
 import TheNaeunEconomy.user.service.request.AddUserRequest;
+import TheNaeunEconomy.user.util.NicknameGenerator;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +30,6 @@ public class DataInitializer implements ApplicationRunner {
             "김민준", "이서연", "박지민", "최준호", "정다은", "조유진", "장하늘", "강지수", "오은영", "임서진"
     );
 
-    private static final List<String> ADJECTIVES = List.of(
-            "빠른", "똑똑한", "예쁜", "조용한", "큰", "작은", "친절한", "용감한", "이상한", "귀여운"
-    );
-
-    private static final List<String> FISH = List.of(
-            "고등어", "참치", "광어", "연어", "농어", "가자미", "상어", "황새치", "메기", "복어"
-    );
-
     @Override
     public void run(ApplicationArguments args) throws Exception {
         Random random = new Random();
@@ -47,7 +40,7 @@ public class DataInitializer implements ApplicationRunner {
             request.setPassword("password123");
             request.setConfirmPassword("password123");
             request.setName(NAMES.get(random.nextInt(NAMES.size())));
-            request.setNickname(ADJECTIVES.get(random.nextInt(ADJECTIVES.size())) + " " + FISH.get(random.nextInt(FISH.size())));
+            request.setNickname(NicknameGenerator.generate());
             request.setGender(i % 2 == 0 ? "M" : "F");
 
             int year = 1990 + random.nextInt(11);

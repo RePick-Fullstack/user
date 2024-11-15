@@ -49,7 +49,7 @@ public class User {
     private Boolean isDeleted;
 
     public User(String email, String password, String name, String nickname, String gender, LocalDate birthDate) {
-        uuid = UUID.randomUUID();
+        this.uuid = UUID.randomUUID();
         this.email = email;
         this.password = password;
         this.name = name;
@@ -61,6 +61,7 @@ public class User {
         this.isBilling = false;
         this.isDeleted = false;
     }
+
     public void updateUserDetails(UpdateUserRequest request) {
         if (request.getEmail() != null) {
             this.email = request.getEmail();
