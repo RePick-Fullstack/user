@@ -27,22 +27,23 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final TokenProvider tokenProvider;
 
+
     @Transactional
     @Override
     public ResponseEntity<String> saveUser(AddUserRequest request) {
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
+            throw new IllegalStateException("비밀번호가 틀려요.");
+        }
+
         userRepository.findByEmail(request.getEmail()).ifPresent(user -> {
             throw new IllegalStateException("이미 존재하는 이메일입니다.");
         });
 
-        if (!request.getPassword().equals(request.getConfirmPassword())) {
-            throw new IllegalStateException("비밀번호가 틀려요.");
-        }
-        if (request.getNickname().equals("")) {
-            request.setNickname(NicknameGenerator.generate());
-        }
+        String encodePassword = bCryptPasswordEncoder.encode(request.getPassword());
 
-        User user = new User(request.getEmail(), bCryptPasswordEncoder.encode(request.getPassword()), request.getName(),
-                request.getNickname(), request.getGender(), request.getBirthDate());
+        request.setNickname(request.getNickname().equals("") ? NicknameGenerator.generate() : request.getNickname());
+
+        User user = new User(request, encodePassword);
 
         userRepository.save(user);
 

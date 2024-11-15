@@ -1,6 +1,7 @@
 package TheNaeunEconomy.user.domain;
 
 
+import TheNaeunEconomy.user.service.request.AddUserRequest;
 import TheNaeunEconomy.user.service.request.UpdateUserRequest;
 import jakarta.persistence.*;
 import java.time.LocalDate;
@@ -48,14 +49,14 @@ public class User {
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
-    public User(String email, String password, String name, String nickname, String gender, LocalDate birthDate) {
+    public User(AddUserRequest request, String encodedPassword) {
         this.uuid = UUID.randomUUID();
-        this.email = email;
-        this.password = password;
-        this.name = name;
-        this.nickname = nickname;
-        this.gender = gender;
-        this.birthDate = birthDate;
+        this.email = request.getEmail();
+        this.password = encodedPassword;
+        this.name = request.getName();
+        this.nickname = request.getNickname();
+        this.gender = request.getGender();
+        this.birthDate = request.getBirthDate();
         this.createDate = LocalDate.now();
         this.updateDate = LocalDate.now();
         this.isBilling = false;

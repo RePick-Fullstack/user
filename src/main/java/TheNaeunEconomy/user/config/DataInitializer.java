@@ -58,14 +58,7 @@ public class DataInitializer implements ApplicationRunner {
     private void saveUser(AddUserRequest request) {
         String encodedPassword = bCryptPasswordEncoder.encode(request.getPassword());
 
-        User user = new User(
-                request.getEmail(),
-                encodedPassword,
-                request.getName(),
-                request.getNickname(),
-                request.getGender(),
-                request.getBirthDate()
-        );
+        User user = new User(request, encodedPassword);
 
         userRepository.save(user);
     }
