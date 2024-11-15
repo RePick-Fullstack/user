@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
 
         String encodePassword = bCryptPasswordEncoder.encode(request.getPassword());
 
-        request.setNickname(request.getNickname().equals("") ? NicknameGenerator.generate() : request.getNickname());
+        request.setNickname(request.getNickname().isEmpty() ? NicknameGenerator.generate() : request.getNickname());
 
         User user = new User(request, encodePassword);
 
