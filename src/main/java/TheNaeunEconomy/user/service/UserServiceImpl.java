@@ -9,8 +9,6 @@ import TheNaeunEconomy.user.service.request.UpdateUserRequest;
 import TheNaeunEconomy.user.util.NicknameGenerator;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
