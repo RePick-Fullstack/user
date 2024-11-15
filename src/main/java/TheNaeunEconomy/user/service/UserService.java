@@ -16,4 +16,7 @@ public interface UserService {
     ResponseEntity<String> updateUser(UpdateUserRequest request, String token);
 
     ResponseEntity<String> deleteUser(String token);
+
+    ResponseEntity<String> getUserName(String token);
+    ResponseEntity<String> getUserNickname(String token);
 }

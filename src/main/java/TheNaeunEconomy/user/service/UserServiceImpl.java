@@ -116,6 +116,28 @@ public class UserServiceImpl implements UserService {
         return ResponseEntity.ok("유저는 3개월 후 삭제 처리 됩니다.");
     }
 
+    @Override
+    public ResponseEntity<String> getUserName(String token) {
+        String userUuidFromToken = extractUserUuidFromToken(token);
+
+        User user = userRepository.findByUuid(UUID.fromString(userUuidFromToken))
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
+
+        String name = user.getName();
+        return ResponseEntity.ok(name);
+    }
+
+    @Override
+    public ResponseEntity<String> getUserNickname(String token) {
+        String userUuidFromToken = extractUserUuidFromToken(token);
+
+        User user = userRepository.findByUuid(UUID.fromString(userUuidFromToken))
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
+
+        String nickname = user.getNickname();
+        return ResponseEntity.ok(nickname);
+    }
+
     public boolean isPasswordMatch(String rawPassword, String encodedPassword) {
         return bCryptPasswordEncoder.matches(rawPassword, encodedPassword);
     }

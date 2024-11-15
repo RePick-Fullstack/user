@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -22,6 +23,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserSettingsController {
     private final UserServiceImpl userService;
 
+
+    @GetMapping("/name")
+    public ResponseEntity<String> getUserName(@RequestHeader HttpHeaders headers) {
+        String token = getToken(headers, "Bearer");
+        return userService.getUserName(token);
+    }
+
+    @GetMapping("/nickname")
+    public ResponseEntity<String> getUserNickname(@RequestHeader HttpHeaders headers) {
+        String token = getToken(headers, "Bearer");
+        return userService.getUserNickname(token);
+    }
 
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteUser(@RequestHeader HttpHeaders headers) {
