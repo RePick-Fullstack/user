@@ -1,19 +1,19 @@
 package TheNaeunEconomy.user.service;
 
-import TheNaeunEconomy.user.domain.User;
 import TheNaeunEconomy.user.service.request.AddUserRequest;
 import TheNaeunEconomy.user.service.request.LoginUserRequest;
 import TheNaeunEconomy.user.service.request.UpdateUserRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 
 public interface UserService {
-    User saveUser(AddUserRequest request);
+    ResponseEntity<String> saveUser(AddUserRequest request);
 
-    ResponseEntity<String> loginUser(LoginUserRequest request);
+    ResponseEntity<String> loginUser(LoginUserRequest request, HttpServletResponse response);
 
-    void logoutUser(String token);
+    ResponseEntity<String> logoutUser(String token);
 
     ResponseEntity<String> updateUser(UpdateUserRequest request, String token);
 
-    void deleteUser(String token);
+    ResponseEntity<String> deleteUser(String token);
 }

@@ -7,6 +7,7 @@ import TheNaeunEconomy.user.service.request.AddUserRequest;
 import TheNaeunEconomy.user.service.request.LoginUserRequest;
 import TheNaeunEconomy.user.service.request.UpdateUserRequest;
 import TheNaeunEconomy.user.util.NicknameGenerator;
+import jakarta.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -28,7 +29,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User saveUser(AddUserRequest request) {
+    public ResponseEntity<String> saveUser(AddUserRequest request) {
         userRepository.findByEmail(request.getEmail()).ifPresent(user -> {
             throw new IllegalStateException("이미 존재하는 이메일입니다.");
         });
@@ -36,20 +37,21 @@ public class UserServiceImpl implements UserService {
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             throw new IllegalStateException("비밀번호가 틀려요.");
         }
-        if (request.getNickname().equals("")){
+        if (request.getNickname().equals("")) {
             request.setNickname(NicknameGenerator.generate());
         }
-
 
         User user = new User(request.getEmail(), bCryptPasswordEncoder.encode(request.getPassword()), request.getName(),
                 request.getNickname(), request.getGender(), request.getBirthDate());
 
-        return userRepository.save(user);
+        userRepository.save(user);
+
+        return ResponseEntity.ok("회원가입에 성공 하였습니다.");
     }
 
     @Transactional
     @Override
-    public ResponseEntity<String> loginUser(LoginUserRequest request) {
+    public ResponseEntity<String> loginUser(LoginUserRequest request, HttpServletResponse response) {
         String email = request.getEmail();
         String password = request.getPassword();
 
@@ -66,13 +68,21 @@ public class UserServiceImpl implements UserService {
             return ResponseEntity.status(404).body("당신은 비활성화 계정 처리가 되어 있습니다. 관리자한테 문의하세요.");
         }
 
-        String token = tokenProvider.generateToken(user);
-        log.info("token: {}", token);
-        return ResponseEntity.ok(token);
+        String accessToken = tokenProvider.generateToken(user, 15);
+        String refreshToken = tokenProvider.generateToken(user, 60);
+
+        response.setHeader("ACCESS-TOKEN", accessToken);
+        response.setHeader("REFRESH-TOKEN", refreshToken);
+
+        log.info("accessToken : {}", accessToken);
+        log.info("refreshToken : {}", refreshToken);
+
+        return ResponseEntity.ok("로그인이 성공적으로 완료되었습니다.");
     }
 
     @Override
-    public void logoutUser(String token) {
+    public ResponseEntity<String> logoutUser(String token) {
+        return null;
     }
 
     @Override
@@ -92,7 +102,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(String token) {
+    public ResponseEntity<String> deleteUser(String token) {
         String userUuidFromToken = extractUserUuidFromToken(token);
 
         User user = userRepository.findByUuid(UUID.fromString(userUuidFromToken))
@@ -103,6 +113,7 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
         log.info("User with UUID: {} marked as deleted.", userUuidFromToken);
+        return ResponseEntity.ok("유저는 3개월 후 삭제 처리 됩니다.");
     }
 
     public boolean isPasswordMatch(String rawPassword, String encodedPassword) {

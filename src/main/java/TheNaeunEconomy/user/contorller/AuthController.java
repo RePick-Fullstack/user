@@ -4,6 +4,7 @@ package TheNaeunEconomy.user.contorller;
 import TheNaeunEconomy.user.service.UserServiceImpl;
 import TheNaeunEconomy.user.service.request.AddUserRequest;
 import TheNaeunEconomy.user.service.request.LoginUserRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,15 +23,14 @@ public class AuthController {
     private final UserServiceImpl userService;
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody LoginUserRequest request) {
-        log.info("Login user token: {}", userService.loginUser(request));
-        return userService.loginUser(request);
+    public ResponseEntity<String> loginUser(@RequestBody LoginUserRequest request, HttpServletResponse response) {
+        log.info("Login user token: {}", userService.loginUser(request, response));
+        return userService.loginUser(request, response);
     }
 
     @PostMapping("/signup")
     public ResponseEntity<String> registerUser(@Valid @RequestBody AddUserRequest request) {
         log.info("AddUserRequest = {}", request.toString());
-        userService.saveUser(request);
-        return ResponseEntity.ok("User registered successfully.");
+        return userService.saveUser(request);
     }
 }

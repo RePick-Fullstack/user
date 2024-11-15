@@ -22,8 +22,8 @@ public class TokenProvider {
     private static final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
     private final JwtProperties jwtProperties;
 
-    public String generateToken(User user) {
-        Duration expiredAt = Duration.ofMinutes(30);
+    public String generateToken(User user, int minutes) {
+        Duration expiredAt = Duration.ofMinutes(minutes);
         Date now = new Date();
         return makeToken(user, new Date(now.getTime() + expiredAt.toMillis()));
     }

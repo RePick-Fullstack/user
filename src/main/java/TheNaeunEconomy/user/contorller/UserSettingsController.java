@@ -2,6 +2,7 @@ package TheNaeunEconomy.user.contorller;
 
 import TheNaeunEconomy.user.service.UserServiceImpl;
 import TheNaeunEconomy.user.service.request.UpdateUserRequest;
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,21 +25,23 @@ public class UserSettingsController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteUser(@RequestHeader HttpHeaders headers) {
-        String token = headers.getFirst(HttpHeaders.AUTHORIZATION);
-        if (token != null && token.startsWith("Bearer")) {
-            token = token.substring(7);
-        }
-        userService.deleteUser(token);
-        return ResponseEntity.ok("Deleted User");
+        String token = getToken(headers, "Bearer");
+        return userService.deleteUser(token);
     }
 
     @PutMapping("/update")
     public ResponseEntity<String> updateUser(@Valid @RequestBody UpdateUserRequest request,
                                              @RequestHeader HttpHeaders headers) {
+        String token = getToken(headers, "Bearer ");
+        return userService.updateUser(request, token);
+    }
+
+    @Nullable
+    private static String getToken(HttpHeaders headers, String Bearer) {
         String token = headers.getFirst(HttpHeaders.AUTHORIZATION);
-        if (token != null && token.startsWith("Bearer ")) {
+        if (token != null && token.startsWith(Bearer)) {
             token = token.substring(7);
         }
-        return userService.updateUser(request, token);
+        return token;
     }
 }
