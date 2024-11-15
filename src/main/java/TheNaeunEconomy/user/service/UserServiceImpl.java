@@ -7,6 +7,7 @@ import TheNaeunEconomy.user.service.request.AddUserRequest;
 import TheNaeunEconomy.user.service.request.LoginUserRequest;
 import TheNaeunEconomy.user.service.request.UpdateUserRequest;
 import TheNaeunEconomy.user.util.NicknameGenerator;
+import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -57,16 +58,9 @@ public class UserServiceImpl implements UserService {
         String password = request.getPassword();
 
         User user = userRepository.findByEmail(email).orElse(null);
-        if (user == null) {
-            return ResponseEntity.status(404).body("존재하지 않는 사용자 입니다.");
-        }
-
-        if (!isPasswordMatch(password, user.getPassword())) {
-            return ResponseEntity.status(404).body("비밀번호가 틀렸습니다.");
-        }
-
-        if (user.getIsDeleted()) {
-            return ResponseEntity.status(404).body("당신은 비활성화 계정 처리가 되어 있습니다. 관리자한테 문의하세요.");
+        ResponseEntity<String> body = validateStringResponseEntity(user, password);
+        if (body != null) {
+            return body;
         }
 
         String accessToken = tokenProvider.generateToken(user, 15);
@@ -80,6 +74,7 @@ public class UserServiceImpl implements UserService {
 
         return ResponseEntity.ok("로그인이 성공적으로 완료되었습니다.");
     }
+
 
     @Override
     public ResponseEntity<String> logoutUser(String token) {
@@ -149,5 +144,21 @@ public class UserServiceImpl implements UserService {
         }
 
         return tokenProvider.getUserUuidFromToken(token);
+    }
+
+    @Nullable
+    private ResponseEntity<String> validateStringResponseEntity(User user, String password) {
+        if (user == null) {
+            return ResponseEntity.status(404).body("존재하지 않는 사용자 입니다.");
+        }
+
+        if (!isPasswordMatch(password, user.getPassword())) {
+            return ResponseEntity.status(404).body("비밀번호가 틀렸습니다.");
+        }
+
+        if (user.getIsDeleted()) {
+            return ResponseEntity.status(404).body("당신은 비활성화 계정 처리가 되어 있습니다. 관리자한테 문의하세요.");
+        }
+        return null;
     }
 }
