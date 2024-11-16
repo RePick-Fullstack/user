@@ -3,6 +3,7 @@ package TheNaeunEconomy.user.domain;
 
 import TheNaeunEconomy.user.service.request.AddUserRequest;
 import TheNaeunEconomy.user.service.request.UpdateUserRequest;
+import TheNaeunEconomy.user.util.NicknameGenerator;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -10,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -49,12 +51,13 @@ public class User {
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
-    public User(AddUserRequest request, String encodedPassword) {
+    public User(AddUserRequest request) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         this.uuid = UUID.randomUUID();
         this.email = request.getEmail();
-        this.password = encodedPassword;
+        this.password = encoder.encode(request.getPassword());
         this.name = request.getName();
-        this.nickname = request.getNickname();
+        this.nickname = request.getNickname().isEmpty() ? NicknameGenerator.generate() : request.getNickname();
         this.gender = request.getGender();
         this.birthDate = request.getBirthDate();
         this.createDate = LocalDate.now();

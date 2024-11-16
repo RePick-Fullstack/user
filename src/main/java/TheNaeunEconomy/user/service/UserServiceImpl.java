@@ -15,7 +15,6 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final TokenProvider tokenProvider;
 
 
@@ -40,11 +38,7 @@ public class UserServiceImpl implements UserService {
             throw new IllegalStateException("이미 존재하는 이메일입니다.");
         });
 
-        String encodePassword = bCryptPasswordEncoder.encode(request.getPassword());
-
-        request.setNickname(request.getNickname().isEmpty() ? NicknameGenerator.generate() : request.getNickname());
-
-        User user = new User(request, encodePassword);
+        User user = new User(request);
 
         userRepository.save(user);
 

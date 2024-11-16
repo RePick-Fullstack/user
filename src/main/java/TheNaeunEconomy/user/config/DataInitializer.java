@@ -5,11 +5,10 @@ import TheNaeunEconomy.user.domain.User;
 import TheNaeunEconomy.user.service.request.AddUserRequest;
 import TheNaeunEconomy.user.util.NicknameGenerator;
 import jakarta.annotation.PreDestroy;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -18,13 +17,10 @@ import java.util.Random;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class DataInitializer implements ApplicationRunner {
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final UserRepository userRepository;
 
     private static final List<String> NAMES = List.of(
             "김민준", "이서연", "박지민", "최준호", "정다은", "조유진", "장하늘", "강지수", "오은영", "임서진"
@@ -56,10 +52,7 @@ public class DataInitializer implements ApplicationRunner {
     }
 
     private void saveUser(AddUserRequest request) {
-        String encodedPassword = bCryptPasswordEncoder.encode(request.getPassword());
-
-        User user = new User(request, encodedPassword);
-
+        User user = new User(request);
         userRepository.save(user);
     }
 
