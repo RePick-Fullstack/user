@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<String> saveUser(AddUserRequest request) {
         if (!request.getPassword().equals(request.getConfirmPassword())) {
-            throw new IllegalStateException("비밀번호가 틀려요.");
+            throw new IllegalStateException("로그인 정보가 다릅니다.");
         }
 
         userRepository.findByEmail(request.getEmail()).ifPresent(user -> {
@@ -92,6 +92,20 @@ public class UserServiceImpl implements UserService {
         return ResponseEntity.ok("사용자 정보가 업데이트되었습니다.");
     }
 
+    public ResponseEntity<String> refreshToken(String refreshToken, HttpServletResponse response) {
+        try {
+            String newAccessToken = tokenProvider.refreshAccessToken(refreshToken);
+
+            response.setHeader("ACCESS-TOKEN", newAccessToken);
+
+            log.info("New access token generated: {}", newAccessToken);
+
+            return ResponseEntity.ok("새로운 액세스 토큰이 발급되었습니다.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body("리프레시 토큰이 유효하지 않거나 만료되었습니다.");
+        }
+    }
+
     @Override
     public ResponseEntity<String> deleteUser(String token) {
         String userUuidFromToken = extractUserUuidFromToken(token);
@@ -109,6 +123,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<String> getUserName(String token) {
+        tokenProvider.validateToken(token);
         String userUuidFromToken = extractUserUuidFromToken(token);
 
         User user = userRepository.findByUuid(UUID.fromString(userUuidFromToken))
@@ -120,6 +135,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<String> getUserNickname(String token) {
+        tokenProvider.validateToken(token);
         String userUuidFromToken = extractUserUuidFromToken(token);
 
         User user = userRepository.findByUuid(UUID.fromString(userUuidFromToken))

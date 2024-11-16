@@ -1,5 +1,6 @@
 package TheNaeunEconomy.user.config.jwt;
 
+import TheNaeunEconomy.user.Repository.UserRepository;
 import TheNaeunEconomy.user.domain.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -10,6 +11,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import java.time.Duration;
 import java.util.Date;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +20,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class TokenProvider {
+
+    private final UserRepository userRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
     private final JwtProperties jwtProperties;
@@ -53,6 +57,19 @@ public class TokenProvider {
             logger.error("Invalid JWT token", e);
         }
         return false;
+    }
+
+    public String refreshAccessToken(String refreshToken) {
+        if (!validateToken(refreshToken)) {
+            throw new IllegalArgumentException("유효하지 않은 리프레시 토큰입니다.");
+        }
+
+        String userUuidFromToken = getUserUuidFromToken(refreshToken);
+
+        User user = userRepository.findByUuid(UUID.fromString(userUuidFromToken))
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
+
+        return generateToken(user, 15);
     }
 
     public String getUserUuidFromToken(String token) {
