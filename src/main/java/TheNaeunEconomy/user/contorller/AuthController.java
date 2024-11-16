@@ -30,7 +30,6 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<String> registerUser(@Valid @RequestBody AddUserRequest request) {
-        log.info("AddUserRequest = {}", request.toString());
         return userService.saveUser(request);
     }
 }

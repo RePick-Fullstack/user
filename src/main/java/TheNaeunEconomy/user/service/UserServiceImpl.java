@@ -62,6 +62,10 @@ public class UserServiceImpl implements UserService {
 
         User user = userRepository.findByEmail(email).orElse(null);
 
+        if (user != null && user.getDeleteDate() != null) {
+            throw new NullPointerException();
+        }
+
         boolean passwordMatch = isPasswordMatch(bCryptPasswordEncoder.encode(password), user.getPassword());
 
         if (passwordMatch) {
@@ -108,6 +112,10 @@ public class UserServiceImpl implements UserService {
 
         User user = userRepository.findByUuid(UUID.fromString(userUuidFromToken))
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
+
+        if (user.getDeleteDate() != null) {
+            throw new NullPointerException();
+        }
 
         user.updateUserDetails(request);
 
