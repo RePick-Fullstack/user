@@ -10,7 +10,6 @@ import TheNaeunEconomy.user.service.reponse.UserNameResponse;
 import TheNaeunEconomy.user.service.request.AddUserRequest;
 import TheNaeunEconomy.user.service.request.LoginUserRequest;
 import TheNaeunEconomy.user.service.request.UpdateUserRequest;
-import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,7 +17,6 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,9 +34,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public ResponseEntity<String> saveUser(AddUserRequest request) {
-        if (!request.getPassword().equals(request.getConfirmPassword())) {
-            throw new IllegalStateException("로그인 정보가 다릅니다.");
-        }
 
         userRepository.findByEmail(request.getEmail()).ifPresent(user -> {
             throw new IllegalStateException("이미 존재하는 이메일입니다.");
@@ -80,19 +75,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public BodyBuilder updateUser(UpdateUserRequest request, String token) {
+    public User updateUser(UpdateUserRequest request, String token) {
         String userUuidFromToken = extractUserUuidFromToken(token);
 
         User user = userRepository.findByUuid(UUID.fromString(userUuidFromToken))
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
 
-        if (user.getIsDeleted()) {
-            return ResponseEntity.status(404);
-        }
-
         user.updateUserDetails(request);
-        userRepository.save(user);
-        return ResponseEntity.ok();
+
+        return userRepository.save(user);
     }
 
     public AccessTokenResponse refreshToken(String refreshToken, HttpServletResponse response) {
@@ -103,18 +94,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public BodyBuilder deleteUser(String token) {
+    public User deleteUser(String token) {
         String userUuidFromToken = extractUserUuidFromToken(token);
 
         User user = userRepository.findByUuid(UUID.fromString(userUuidFromToken))
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
 
-        user.setIsDeleted(true);
         //수정해야 함.
         user.setDeleteDate(LocalDate.from(LocalDateTime.now()));
 
-        userRepository.save(user);
-        return ResponseEntity.ok();
+        return userRepository.save(user);
     }
 
     @Override
@@ -138,21 +127,5 @@ public class UserServiceImpl implements UserService {
         }
 
         return tokenProvider.getUserUuidFromToken(token);
-    }
-
-    @Nullable
-    private ResponseEntity<String> validateStringResponseEntity(User user, String password) {
-        if (user == null) {
-            return ResponseEntity.status(404).body("존재하지 않는 사용자 입니다.");
-        }
-
-        if (!isPasswordMatch(password, user.getPassword())) {
-            return ResponseEntity.status(404).body("비밀번호가 틀렸습니다.");
-        }
-
-        if (user.getIsDeleted()) {
-            return ResponseEntity.status(404).body("당신은 비활성화 계정 처리가 되어 있습니다. 관리자한테 문의하세요.");
-        }
-        return null;
     }
 }

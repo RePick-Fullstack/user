@@ -1,6 +1,7 @@
 package TheNaeunEconomy.user.config;
 
 import TheNaeunEconomy.user.Repository.UserRepository;
+import TheNaeunEconomy.user.domain.Gender;
 import TheNaeunEconomy.user.domain.User;
 import TheNaeunEconomy.user.service.request.AddUserRequest;
 import TheNaeunEconomy.user.util.NicknameGenerator;
@@ -34,11 +35,9 @@ public class DataInitializer implements ApplicationRunner {
             AddUserRequest request = new AddUserRequest();
             request.setEmail("example" + i + "@gmail.com");
             request.setPassword("password123");
-            request.setConfirmPassword("password123");
             request.setName(NAMES.get(random.nextInt(NAMES.size())));
             request.setNickname(NicknameGenerator.generate());
-            request.setGender(i % 2 == 0 ? "M" : "F");
-
+            request.setGender(i % 2 == 0 ? Gender.MALE : Gender.FEMALE);
             int year = 1990 + random.nextInt(11);
             int month = 1 + random.nextInt(12);
             int day = 1 + random.nextInt(28);

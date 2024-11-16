@@ -13,15 +13,14 @@ import java.util.List;
 public class UserBatchService {
     private final UserRepository userRepository;
 
-    @Scheduled(cron = "0 0 0 1 * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
     public void performRealDelete() {
         LocalDateTime threeMonthsAgo = LocalDateTime.now().minusMonths(3);
 
-        List<User> usersToDelete = userRepository.findByIsDeletedTrueAndDeleteDateBefore(threeMonthsAgo);
+        List<User> usersToDelete = userRepository.findByDeleteDateBeforeAndDeleteDateIsNotNull(threeMonthsAgo);
 
-        for (User user : usersToDelete) {
-            userRepository.delete(user); // 3개월 후 실제 데이터베이스에서 삭제
-            System.out.println("User " + user.getEmail() + " has been deleted.");
+        if (!usersToDelete.isEmpty()) {
+            userRepository.deleteAll(usersToDelete);
         }
     }
 }

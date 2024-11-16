@@ -14,5 +14,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByUuid(UUID uuid);
 
-    List<User> findByIsDeletedTrueAndDeleteDateBefore(LocalDateTime threeMonthsAgo);
+    List<User> findByDeleteDateBeforeAndDeleteDateIsNotNull(LocalDateTime threeMonthsAgo);
 }

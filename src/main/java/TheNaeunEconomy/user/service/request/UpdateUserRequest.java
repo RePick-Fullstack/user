@@ -1,5 +1,6 @@
 package TheNaeunEconomy.user.service.request;
 
+import TheNaeunEconomy.user.domain.Gender;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
@@ -20,8 +21,7 @@ public class UpdateUserRequest {
     @Pattern(regexp = "^[가-힣\\s]+$", message = "닉네임은 한글과 띄어쓰기만 입력 가능합니다.")
     private String nickname;
 
-    @Pattern(regexp = "^(M|F|기타)$", message = "성별은 M, F, 기타만 입력 가능합니다.")
-    private String gender;
+    private Gender gender;
 
     @Past(message = "생년월일은 과거 날짜여야 합니다.")
     private LocalDate birthDate;

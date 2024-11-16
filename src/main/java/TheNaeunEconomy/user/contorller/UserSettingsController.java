@@ -1,5 +1,6 @@
 package TheNaeunEconomy.user.contorller;
 
+import TheNaeunEconomy.user.domain.User;
 import TheNaeunEconomy.user.service.UserServiceImpl;
 import TheNaeunEconomy.user.service.reponse.AccessTokenResponse;
 import TheNaeunEconomy.user.service.reponse.UserNameResponse;
@@ -37,16 +38,16 @@ public class UserSettingsController {
     }
 
     @DeleteMapping("/delete")
-    public BodyBuilder deleteUser(@RequestHeader HttpHeaders headers) {
+    public ResponseEntity<User> deleteUser(@RequestHeader HttpHeaders headers) {
         String token = getToken(headers, "Bearer");
-        return userService.deleteUser(token);
+        return ResponseEntity.ok(userService.deleteUser(token));
     }
 
     @PutMapping("/update")
-    public BodyBuilder updateUser(@Valid @RequestBody UpdateUserRequest request,
-                                  @RequestHeader HttpHeaders headers) {
+    public ResponseEntity<User> updateUser(@Valid @RequestBody UpdateUserRequest request,
+                                           @RequestHeader HttpHeaders headers) {
         String token = getToken(headers, "Bearer ");
-        return userService.updateUser(request, token);
+        return ResponseEntity.ok().body(userService.updateUser(request, token));
     }
 
     @PostMapping("/refresh-token")
