@@ -8,13 +8,14 @@ import TheNaeunEconomy.user.service.request.LoginUserRequest;
 import TheNaeunEconomy.user.service.request.UpdateUserRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 
 public interface UserService {
     ResponseEntity<String> saveUser(AddUserRequest request);
 
     ResponseEntity<LoginResponse> loginUser(LoginUserRequest request, HttpServletResponse response);
 
-    ResponseEntity<String> logoutUser(String token);
+    BodyBuilder logoutUser(String token);
 
     User updateUser(UpdateUserRequest request, String token);
 

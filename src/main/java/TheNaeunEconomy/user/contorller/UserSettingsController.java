@@ -37,6 +37,13 @@ public class UserSettingsController {
         return ResponseEntity.ok(userService.getUserName(token));
     }
 
+    @GetMapping("/logout")
+    public ResponseEntity<String> logoutUser(@RequestHeader HttpHeaders headers) {
+        String token = getToken(headers, "Bearer");
+        return ResponseEntity.ok(userService.logoutUser(token).toString());
+    }
+
+
     @DeleteMapping("/delete")
     public ResponseEntity<User> deleteUser(@RequestHeader HttpHeaders headers) {
         String token = getToken(headers, "Bearer");
@@ -53,7 +60,7 @@ public class UserSettingsController {
     @PostMapping("/refresh-token")
     public ResponseEntity<AccessTokenResponse> validateAndReissueAccessToken(@RequestHeader HttpHeaders headers, HttpServletResponse response) {
         String refreshToken = getToken(headers, "Bearer");
-        AccessTokenResponse accessToken =  userService.refreshToken(refreshToken, response);
+        AccessTokenResponse accessToken = (AccessTokenResponse) userService.refreshToken(refreshToken, response);
         return ResponseEntity.ok(accessToken);
     }
 

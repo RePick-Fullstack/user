@@ -1,6 +1,8 @@
 package TheNaeunEconomy.user.service;
 
+import TheNaeunEconomy.user.Repository.RefreshTokenRepository;
 import TheNaeunEconomy.user.Repository.UserRepository;
+import TheNaeunEconomy.user.domain.RefreshToken;
 import TheNaeunEconomy.user.domain.User;
 import TheNaeunEconomy.user.config.jwt.TokenProvider;
 import TheNaeunEconomy.user.service.reponse.AccessTokenResponse;
@@ -13,10 +15,12 @@ import TheNaeunEconomy.user.service.request.UpdateUserRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final TokenProvider tokenProvider;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -49,30 +54,50 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public ResponseEntity<LoginResponse> loginUser(LoginUserRequest request, HttpServletResponse response) {
-            String email = request.getEmail();
-            String password = request.getPassword();
+        String email = request.getEmail();
+        String password = request.getPassword();
 
-            User user = userRepository.findByEmail(email).orElse(null);
+        User user = userRepository.findByEmail(email).orElse(null);
 
-            boolean passwordMatch = isPasswordMatch(bCryptPasswordEncoder.encode(password), user.getPassword());
+        boolean passwordMatch = isPasswordMatch(bCryptPasswordEncoder.encode(password), user.getPassword());
 
-            if (passwordMatch) {
-                throw new IllegalArgumentException();
-            }
+        if (passwordMatch) {
+            throw new IllegalArgumentException();
+        }
 
         Token accessToken = tokenProvider.generateToken(user, 15);
         Token refreshToken = tokenProvider.generateToken(user, 60);
 
+        RefreshToken refreshTokenEntity = new RefreshToken(
+                user,
+                refreshToken.getValue(),
+                LocalDateTime.now().plusMinutes(60)
+        );
+
+        refreshTokenRepository.save(refreshTokenEntity);
+
         LoginResponse loginResponse = new LoginResponse(accessToken, refreshToken);
 
-            return ResponseEntity.ok().body(loginResponse);
+        return ResponseEntity.ok().body(loginResponse);
     }
 
 
+    @Transactional
     @Override
-    public ResponseEntity<String> logoutUser(String token) {
-        return null;
+    public BodyBuilder logoutUser(String token) {
+        String userUuidFromToken = extractUserUuidFromToken(token);
+
+        User user = userRepository.findByUuid(UUID.fromString(userUuidFromToken))
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
+
+        refreshTokenRepository.findByUserId(user.getId())
+                .ifPresent(refreshToken -> {
+                    refreshTokenRepository.delete(refreshToken);
+                });
+
+        return ResponseEntity.ok();
     }
+
 
     @Override
     public User updateUser(UpdateUserRequest request, String token) {
@@ -87,6 +112,16 @@ public class UserServiceImpl implements UserService {
     }
 
     public AccessTokenResponse refreshToken(String refreshToken, HttpServletResponse response) {
+        String userUuidFromToken = extractUserUuidFromToken(refreshToken);
+
+        User user = userRepository.findByUuid(UUID.fromString(userUuidFromToken))
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
+
+        Optional<RefreshToken> byUserId = refreshTokenRepository.findByUserId(user.getId());
+
+        if(byUserId.isEmpty()) {
+            throw new NullPointerException();
+        }
 
         Token newAccessToken = tokenProvider.validateAndReissueAccessToken(refreshToken);
 
