@@ -7,7 +7,7 @@ import TheNaeunEconomy.user.domain.User;
 import TheNaeunEconomy.user.config.jwt.TokenProvider;
 import TheNaeunEconomy.user.service.reponse.AccessTokenResponse;
 import TheNaeunEconomy.user.service.reponse.LoginResponse;
-import TheNaeunEconomy.user.config.jwt.Token;
+import TheNaeunEconomy.user.domain.Token;
 import TheNaeunEconomy.user.service.reponse.UserNameResponse;
 import TheNaeunEconomy.user.service.request.AddUserRequest;
 import TheNaeunEconomy.user.service.request.LoginUserRequest;
@@ -29,6 +29,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService {
+
+    private static final int ACCESS_TOKEN_TIME = 15;
+    private static final int REFRESH_TOKEN_TIME = 60;
 
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -65,13 +68,13 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException();
         }
 
-        Token accessToken = tokenProvider.generateToken(user, 15);
-        Token refreshToken = tokenProvider.generateToken(user, 60);
+        Token accessToken = tokenProvider.generateToken(user, ACCESS_TOKEN_TIME);
+        Token refreshToken = tokenProvider.generateToken(user, REFRESH_TOKEN_TIME);
 
         RefreshToken refreshTokenEntity = new RefreshToken(
                 user,
                 refreshToken.getValue(),
-                LocalDateTime.now().plusMinutes(60)
+                LocalDateTime.now().plusMinutes(REFRESH_TOKEN_TIME)
         );
 
         refreshTokenRepository.save(refreshTokenEntity);

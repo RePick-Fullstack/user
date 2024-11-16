@@ -1,6 +1,7 @@
 package TheNaeunEconomy.user.config.jwt;
 
 import TheNaeunEconomy.user.Repository.UserRepository;
+import TheNaeunEconomy.user.domain.Token;
 import TheNaeunEconomy.user.domain.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

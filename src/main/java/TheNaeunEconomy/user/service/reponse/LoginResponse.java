@@ -1,7 +1,7 @@
 package TheNaeunEconomy.user.service.reponse;
 
 
-import TheNaeunEconomy.user.config.jwt.Token;
+import TheNaeunEconomy.user.domain.Token;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

@@ -1,4 +1,4 @@
-package TheNaeunEconomy.user.config.jwt;
+package TheNaeunEconomy.user.domain;
 
 import lombok.Getter;
 
