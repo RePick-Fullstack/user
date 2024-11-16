@@ -6,7 +6,6 @@ import TheNaeunEconomy.user.config.jwt.TokenProvider;
 import TheNaeunEconomy.user.service.request.AddUserRequest;
 import TheNaeunEconomy.user.service.request.LoginUserRequest;
 import TheNaeunEconomy.user.service.request.UpdateUserRequest;
-import TheNaeunEconomy.user.util.NicknameGenerator;
 import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
@@ -15,6 +14,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +25,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
     @Transactional
