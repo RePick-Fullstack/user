@@ -26,10 +26,11 @@ public class TokenProvider {
     private static final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
     private final JwtProperties jwtProperties;
 
-    public String generateToken(User user, int minutes) {
+    public Token generateToken(User user, int minutes) {
         Duration expiredAt = Duration.ofMinutes(minutes);
         Date now = new Date();
-        return makeToken(user, new Date(now.getTime() + expiredAt.toMillis()));
+        String token = makeToken(user, new Date(now.getTime() + expiredAt.toMillis()));
+        return new Token(token);
     }
 
     private String makeToken(User user, Date expiry) {
@@ -59,7 +60,7 @@ public class TokenProvider {
         return false;
     }
 
-    public String refreshAccessToken(String refreshToken) {
+    public Token validateAndReissueAccessToken(String refreshToken) {
         if (!validateToken(refreshToken)) {
             throw new IllegalArgumentException("유효하지 않은 리프레시 토큰입니다.");
         }
@@ -69,7 +70,9 @@ public class TokenProvider {
         User user = userRepository.findByUuid(UUID.fromString(userUuidFromToken))
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
 
-        return generateToken(user, 15);
+        Token accessToken = generateToken(user, 15);
+
+        return accessToken;
     }
 
     public String getUserUuidFromToken(String token) {

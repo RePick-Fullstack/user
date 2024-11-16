@@ -2,6 +2,7 @@ package TheNaeunEconomy.user.contorller;
 
 
 import TheNaeunEconomy.user.service.UserServiceImpl;
+import TheNaeunEconomy.user.service.reponse.LoginResponse;
 import TheNaeunEconomy.user.service.request.AddUserRequest;
 import TheNaeunEconomy.user.service.request.LoginUserRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,8 +24,7 @@ public class AuthController {
     private final UserServiceImpl userService;
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody LoginUserRequest request, HttpServletResponse response) {
-        log.info("Login user token: {}", userService.loginUser(request, response));
+    public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginUserRequest request, HttpServletResponse response) {
         return userService.loginUser(request, response);
     }
 

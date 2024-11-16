@@ -20,6 +20,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @Entity
 public class User {
 
+    static BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, updatable = false, nullable = false)
@@ -52,10 +54,9 @@ public class User {
     private Boolean isDeleted;
 
     public User(AddUserRequest request) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         this.uuid = UUID.randomUUID();
         this.email = request.getEmail();
-        this.password = encoder.encode(request.getPassword());
+        this.password = bCryptPasswordEncoder.encode(request.getPassword());
         this.name = request.getName();
         this.nickname = request.getNickname().isEmpty() ? NicknameGenerator.generate() : request.getNickname();
         this.gender = request.getGender();

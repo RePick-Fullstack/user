@@ -3,6 +3,10 @@ package TheNaeunEconomy.user.service;
 import TheNaeunEconomy.user.Repository.UserRepository;
 import TheNaeunEconomy.user.domain.User;
 import TheNaeunEconomy.user.config.jwt.TokenProvider;
+import TheNaeunEconomy.user.service.reponse.AccessTokenResponse;
+import TheNaeunEconomy.user.service.reponse.LoginResponse;
+import TheNaeunEconomy.user.config.jwt.Token;
+import TheNaeunEconomy.user.service.reponse.UserNameResponse;
 import TheNaeunEconomy.user.service.request.AddUserRequest;
 import TheNaeunEconomy.user.service.request.LoginUserRequest;
 import TheNaeunEconomy.user.service.request.UpdateUserRequest;
@@ -14,6 +18,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,26 +53,24 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public ResponseEntity<String> loginUser(LoginUserRequest request, HttpServletResponse response) {
-        String email = request.getEmail();
-        String password = request.getPassword();
+    public ResponseEntity<LoginResponse> loginUser(LoginUserRequest request, HttpServletResponse response) {
+            String email = request.getEmail();
+            String password = request.getPassword();
 
-        User user = userRepository.findByEmail(email).orElse(null);
-        ResponseEntity<String> body = validateStringResponseEntity(user, password);
-        if (body != null) {
-            return body;
-        }
+            User user = userRepository.findByEmail(email).orElse(null);
 
-        String accessToken = tokenProvider.generateToken(user, 15);
-        String refreshToken = tokenProvider.generateToken(user, 60);
+            boolean passwordMatch = isPasswordMatch(bCryptPasswordEncoder.encode(password), user.getPassword());
 
-        response.setHeader("ACCESS-TOKEN", accessToken);
-        response.setHeader("REFRESH-TOKEN", refreshToken);
+            if (passwordMatch) {
+                throw new IllegalArgumentException();
+            }
 
-        log.info("accessToken : {}", accessToken);
-        log.info("refreshToken : {}", refreshToken);
+        Token accessToken = tokenProvider.generateToken(user, 15);
+        Token refreshToken = tokenProvider.generateToken(user, 60);
 
-        return ResponseEntity.ok("로그인이 성공적으로 완료되었습니다.");
+        LoginResponse loginResponse = new LoginResponse(accessToken, refreshToken);
+
+            return ResponseEntity.ok().body(loginResponse);
     }
 
 
@@ -77,72 +80,52 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<String> updateUser(UpdateUserRequest request, String token) {
+    public BodyBuilder updateUser(UpdateUserRequest request, String token) {
         String userUuidFromToken = extractUserUuidFromToken(token);
 
         User user = userRepository.findByUuid(UUID.fromString(userUuidFromToken))
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
 
         if (user.getIsDeleted()) {
-            return ResponseEntity.status(404).body("당신은 비활성화 계정 처리가 되어 있습니다. 관리자한테 문의하세요.");
+            return ResponseEntity.status(404);
         }
 
         user.updateUserDetails(request);
         userRepository.save(user);
-        return ResponseEntity.ok("사용자 정보가 업데이트되었습니다.");
+        return ResponseEntity.ok();
     }
 
-    public ResponseEntity<String> refreshToken(String refreshToken, HttpServletResponse response) {
-        try {
-            String newAccessToken = tokenProvider.refreshAccessToken(refreshToken);
+    public AccessTokenResponse refreshToken(String refreshToken, HttpServletResponse response) {
 
-            response.setHeader("ACCESS-TOKEN", newAccessToken);
+        Token newAccessToken = tokenProvider.validateAndReissueAccessToken(refreshToken);
 
-            log.info("New access token generated: {}", newAccessToken);
-
-            return ResponseEntity.ok("새로운 액세스 토큰이 발급되었습니다.");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).body("리프레시 토큰이 유효하지 않거나 만료되었습니다.");
-        }
+        return new AccessTokenResponse(newAccessToken);
     }
 
     @Override
-    public ResponseEntity<String> deleteUser(String token) {
+    public BodyBuilder deleteUser(String token) {
         String userUuidFromToken = extractUserUuidFromToken(token);
 
         User user = userRepository.findByUuid(UUID.fromString(userUuidFromToken))
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
 
         user.setIsDeleted(true);
+        //수정해야 함.
         user.setDeleteDate(LocalDate.from(LocalDateTime.now()));
 
         userRepository.save(user);
-        log.info("User with UUID: {} marked as deleted.", userUuidFromToken);
-        return ResponseEntity.ok("유저는 3개월 후 삭제 처리 됩니다.");
+        return ResponseEntity.ok();
     }
 
     @Override
-    public ResponseEntity<String> getUserName(String token) {
+    public UserNameResponse getUserName(String token) {
         tokenProvider.validateToken(token);
         String userUuidFromToken = extractUserUuidFromToken(token);
 
         User user = userRepository.findByUuid(UUID.fromString(userUuidFromToken))
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
 
-        String name = user.getName();
-        return ResponseEntity.ok(name);
-    }
-
-    @Override
-    public ResponseEntity<String> getUserNickname(String token) {
-        tokenProvider.validateToken(token);
-        String userUuidFromToken = extractUserUuidFromToken(token);
-
-        User user = userRepository.findByUuid(UUID.fromString(userUuidFromToken))
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
-
-        String nickname = user.getNickname();
-        return ResponseEntity.ok(nickname);
+        return new UserNameResponse(user.getName(), user.getNickname());
     }
 
     public boolean isPasswordMatch(String rawPassword, String encodedPassword) {

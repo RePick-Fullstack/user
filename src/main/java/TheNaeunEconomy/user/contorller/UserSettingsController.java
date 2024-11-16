@@ -1,6 +1,8 @@
 package TheNaeunEconomy.user.contorller;
 
 import TheNaeunEconomy.user.service.UserServiceImpl;
+import TheNaeunEconomy.user.service.reponse.AccessTokenResponse;
+import TheNaeunEconomy.user.service.reponse.UserNameResponse;
 import TheNaeunEconomy.user.service.request.UpdateUserRequest;
 import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletResponse;
@@ -9,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,34 +30,30 @@ public class UserSettingsController {
 
 
     @GetMapping("/name")
-    public ResponseEntity<String> getUserName(@RequestHeader HttpHeaders headers) {
+    public ResponseEntity<UserNameResponse> getUserName(@RequestHeader HttpHeaders headers) {
         String token = getToken(headers, "Bearer");
-        return userService.getUserName(token);
-    }
-
-    @GetMapping("/nickname")
-    public ResponseEntity<String> getUserNickname(@RequestHeader HttpHeaders headers) {
-        String token = getToken(headers, "Bearer");
-        return userService.getUserNickname(token);
+        userService.getUserName(token);
+        return ResponseEntity.ok(userService.getUserName(token));
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteUser(@RequestHeader HttpHeaders headers) {
+    public BodyBuilder deleteUser(@RequestHeader HttpHeaders headers) {
         String token = getToken(headers, "Bearer");
         return userService.deleteUser(token);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<String> updateUser(@Valid @RequestBody UpdateUserRequest request,
-                                             @RequestHeader HttpHeaders headers) {
+    public BodyBuilder updateUser(@Valid @RequestBody UpdateUserRequest request,
+                                  @RequestHeader HttpHeaders headers) {
         String token = getToken(headers, "Bearer ");
         return userService.updateUser(request, token);
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<String> refreshToken(@RequestHeader HttpHeaders headers, HttpServletResponse response) {
+    public ResponseEntity<AccessTokenResponse> validateAndReissueAccessToken(@RequestHeader HttpHeaders headers, HttpServletResponse response) {
         String refreshToken = getToken(headers, "Bearer");
-        return userService.refreshToken(refreshToken, response);
+        AccessTokenResponse accessToken =  userService.refreshToken(refreshToken, response);
+        return ResponseEntity.ok(accessToken);
     }
 
     @Nullable
