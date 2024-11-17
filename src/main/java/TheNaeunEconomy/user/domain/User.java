@@ -75,6 +75,19 @@ public class User {
         this.isBilling = false;
     }
 
+    public User(String email, String name) {
+        this.uuid = UUID.randomUUID();
+        this.email = email;
+        this.password = bCryptPasswordEncoder.encode("password123");
+        this.name = name;
+        this.nickname = NicknameGenerator.generate();
+        this.gender = Gender.OTHER;
+        this.birthDate = LocalDate.now();
+        this.createDate = LocalDate.now();
+        this.updateDate = LocalDate.now();
+        this.isBilling = false;
+    }
+
     public void updateUserDetails(UpdateUserRequest request) {
         if (request.getEmail() != null) {
             this.email = request.getEmail();

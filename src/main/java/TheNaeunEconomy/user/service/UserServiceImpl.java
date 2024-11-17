@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -39,9 +40,20 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
+    @Override
+    public Optional<User> findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public User registerUser(String email, String name) {
+        User user = new User(email, name);
+        return userRepository.save(user);
+    }
+
     @Transactional
     @Override
-    public ResponseEntity<String> saveUser(AddUserRequest request) {
+    public HttpStatus saveUser(AddUserRequest request) {
 
         userRepository.findByEmail(request.getEmail()).ifPresent(user -> {
             throw new IllegalStateException("이미 존재하는 이메일입니다.");
@@ -51,7 +63,7 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
 
-        return ResponseEntity.ok("회원가입에 성공 하였습니다.");
+        return HttpStatus.OK;
     }
 
     @Transactional
@@ -75,11 +87,8 @@ public class UserServiceImpl implements UserService {
         Token accessToken = tokenProvider.generateToken(user, ACCESS_TOKEN_TIME);
         Token refreshToken = tokenProvider.generateToken(user, REFRESH_TOKEN_TIME);
 
-        RefreshToken refreshTokenEntity = new RefreshToken(
-                user,
-                refreshToken.getValue(),
-                LocalDateTime.now().plusMinutes(REFRESH_TOKEN_TIME)
-        );
+        RefreshToken refreshTokenEntity = new RefreshToken(user, refreshToken.getValue(),
+                LocalDateTime.now().plusMinutes(REFRESH_TOKEN_TIME));
 
         refreshTokenRepository.save(refreshTokenEntity);
 
@@ -97,10 +106,9 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByUuid(UUID.fromString(userUuidFromToken))
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
 
-        refreshTokenRepository.findByUserId(user.getId())
-                .ifPresent(refreshToken -> {
-                    refreshTokenRepository.delete(refreshToken);
-                });
+        refreshTokenRepository.findByUserId(user.getId()).ifPresent(refreshToken -> {
+            refreshTokenRepository.delete(refreshToken);
+        });
 
         return ResponseEntity.ok();
     }
@@ -130,7 +138,7 @@ public class UserServiceImpl implements UserService {
 
         Optional<RefreshToken> byUserId = refreshTokenRepository.findByUserId(user.getId());
 
-        if(byUserId.isEmpty()) {
+        if (byUserId.isEmpty()) {
             throw new NullPointerException();
         }
 
