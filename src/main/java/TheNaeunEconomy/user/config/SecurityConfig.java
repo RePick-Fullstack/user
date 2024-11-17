@@ -32,7 +32,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource())).authorizeHttpRequests(
-                        auth -> auth.requestMatchers("/", "/api/v1/login", "/api/v1/signup").permitAll()
+                        auth -> auth.requestMatchers("/", "/api/v1/login", "/api/v1/signup", "/oauth/kakao/login/page", "/oauth/kakao/login/callback").permitAll()
                                 .requestMatchers("/api/v1/users/**").authenticated().anyRequest().authenticated())
                 .csrf(csrf -> csrf.disable());
 
