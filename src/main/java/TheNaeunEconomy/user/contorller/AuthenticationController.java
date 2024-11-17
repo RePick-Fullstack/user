@@ -5,6 +5,7 @@ import TheNaeunEconomy.user.Repository.UserRepository;
 import TheNaeunEconomy.user.service.KakaoService;
 import TheNaeunEconomy.user.service.UserService;
 import TheNaeunEconomy.user.service.UserServiceImpl;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,7 +41,11 @@ public class AuthenticationController {
 @GetMapping("/callback")
 public ResponseEntity<?> callback(@RequestParam("code") String code) {
     String accessToken = kakaoService.getAccessTokenFromKakao(code);
-    return new ResponseEntity<>(HttpStatus.OK);
-}
 
+    Map<String, Object> userInfo = kakaoService.getUserInfo(accessToken);
+
+    log.info("User Info: {}", userInfo);
+
+    return new ResponseEntity<>(userInfo, HttpStatus.OK);
+}
 }

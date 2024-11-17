@@ -56,4 +56,26 @@ public class KakaoService {
 
         return kakaoTokenResponse.getAccessToken();
     }
+
+    public Map<String, Object> getUserInfo(String accessToken) {
+        RestTemplate restTemplate = new RestTemplate();
+
+        // Authorization 헤더 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+
+        // 요청 보내기
+        ResponseEntity<Map> response = restTemplate.exchange(
+                KAUTH_USER_URL_HOST + "/v2/user/me",
+                HttpMethod.GET,
+                new HttpEntity<>(headers),
+                Map.class
+        );
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            return response.getBody();
+        } else {
+            throw new RuntimeException("Failed to fetch user info from Kakao");
+        }
+    }
 }
