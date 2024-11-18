@@ -47,6 +47,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User registerUser(String email, String name) {
+        Optional<User> existingUser = userRepository.findByEmail(email);
+
+        if (existingUser.isPresent()) {
+            return existingUser.get();
+        }
         User user = new User(email, name);
         return userRepository.save(user);
     }
@@ -175,5 +180,23 @@ public class UserServiceImpl implements UserService {
         }
 
         return tokenProvider.getUserUuidFromToken(token);
+    }
+
+    public ResponseEntity<LoginResponse> kakaoLoginUser(String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 이메일입니다."));
+
+        if (user.getDeleteDate() != null) {
+            throw new IllegalStateException("삭제된 사용자입니다.");
+        }
+
+        Token accessToken = tokenProvider.generateToken(user, ACCESS_TOKEN_TIME);
+        Token refreshToken = tokenProvider.generateToken(user, REFRESH_TOKEN_TIME);
+
+        refreshTokenRepository.save(
+                new RefreshToken(user, refreshToken.getToken(), LocalDateTime.now().plusMinutes(REFRESH_TOKEN_TIME)));
+
+        return ResponseEntity.ok(new LoginResponse(accessToken, refreshToken));
     }
 }
