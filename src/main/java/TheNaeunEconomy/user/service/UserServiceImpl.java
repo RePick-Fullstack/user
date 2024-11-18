@@ -86,8 +86,8 @@ public class UserServiceImpl implements UserService {
         Token accessToken = tokenProvider.generateToken(user, ACCESS_TOKEN_TIME);
         Token refreshToken = tokenProvider.generateToken(user, REFRESH_TOKEN_TIME);
 
-        refreshTokenRepository.save(new RefreshToken(user, refreshToken.getToken(),
-                LocalDateTime.now().plusMinutes(REFRESH_TOKEN_TIME)));
+        refreshTokenRepository.save(
+                new RefreshToken(user, refreshToken.getToken(), LocalDateTime.now().plusMinutes(REFRESH_TOKEN_TIME)));
 
         return ResponseEntity.ok(new LoginResponse(accessToken, refreshToken));
     }
