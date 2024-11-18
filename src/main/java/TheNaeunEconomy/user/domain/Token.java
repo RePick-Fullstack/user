@@ -4,17 +4,13 @@ import lombok.Getter;
 
 @Getter
 public class Token {
-    private String value;
+    private String token;
 
-    public Token(String value) {
-        this.value = value;
+    public Token(String token) {
+        this.token = token;
     }
 
     public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
+        return token;
     }
 }

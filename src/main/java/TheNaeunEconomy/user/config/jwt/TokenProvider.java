@@ -41,6 +41,7 @@ public class TokenProvider {
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
                 .setIssuedAt(now)
                 .setExpiration(expiry)
+                .claim("userId", user.getId())
                 .claim("uuid", user.getUuid())
                 .signWith(SignatureAlgorithm.HS256, jwtSecretKey)
                 .compact();

@@ -44,10 +44,8 @@ public class KakaoService {
                         .build(true))
                 .header(HttpHeaders.CONTENT_TYPE, HttpHeaderValues.APPLICATION_X_WWW_FORM_URLENCODED.toString())
                 .retrieve()
-                //TODO : Custom Exception
                 .bodyToMono(KakaoTokenResponse.class)
                 .block();
-
 
         log.info(" [Kakao Service] Access Token ------> {}", kakaoTokenResponse.getAccessToken());
         log.info(" [Kakao Service] Refresh Token ------> {}", kakaoTokenResponse.getRefreshToken());
@@ -60,11 +58,9 @@ public class KakaoService {
     public Map<String, Object> getUserInfo(String accessToken) {
         RestTemplate restTemplate = new RestTemplate();
 
-        // Authorization 헤더 설정
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
 
-        // 요청 보내기
         ResponseEntity<Map> response = restTemplate.exchange(
                 KAUTH_USER_URL_HOST + "/v2/user/me",
                 HttpMethod.GET,
