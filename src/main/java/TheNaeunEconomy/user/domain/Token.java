@@ -1,8 +1,6 @@
 package TheNaeunEconomy.user.domain;
 
-import lombok.Getter;
 
-@Getter
 public class Token {
     private String token;
 
@@ -10,7 +8,7 @@ public class Token {
         this.token = token;
     }
 
-    public String getValue() {
+    public String getToken() {
         return token;
     }
 }

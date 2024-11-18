@@ -1,0 +1,19 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/user?serverTimezone=Asia/Seoul
+    username: root
+    password: aaaaaaaa
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+jwt:
+  secret-key: 4Ixa3PT4KhLW1fz4bJoY8z2dR4Gk7jHpB3Yw8mQvL9NdXx5vT9Yw8VhN3rB4YxK2
+
+# Kakao ?? (?? ? ?? ??)
+# kakao:
+#   client-id: 425177266f9081ed665e51bd34048cc9
+#   client-secret: NXgY4VhOyaYJ1IaJsospn8laSzGzYo5n
+#   redirect-uri: http://localhost:8080/oauth/kakao/login/callback
+#   token-url: https://kauth.kakao.com/oauth/token

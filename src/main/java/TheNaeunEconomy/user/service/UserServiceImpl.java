@@ -72,31 +72,25 @@ public class UserServiceImpl implements UserService {
         String email = request.getEmail();
         String password = request.getPassword();
 
-        User user = userRepository.findByEmail(email).orElse(null);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 이메일입니다."));
 
-        if (user != null && user.getDeleteDate() != null) {
-            throw new NullPointerException();
+        if (user.getDeleteDate() != null) {
+            throw new IllegalStateException("삭제된 사용자입니다.");
         }
 
-        boolean passwordMatch = isPasswordMatch(bCryptPasswordEncoder.encode(password), user.getPassword());
-
-        if (passwordMatch) {
-            throw new IllegalArgumentException();
+        if (!isPasswordMatch(password, user.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
         Token accessToken = tokenProvider.generateToken(user, ACCESS_TOKEN_TIME);
         Token refreshToken = tokenProvider.generateToken(user, REFRESH_TOKEN_TIME);
 
-        RefreshToken refreshTokenEntity = new RefreshToken(user, refreshToken.getValue(),
-                LocalDateTime.now().plusMinutes(REFRESH_TOKEN_TIME));
+        refreshTokenRepository.save(new RefreshToken(user, refreshToken.getToken(),
+                LocalDateTime.now().plusMinutes(REFRESH_TOKEN_TIME)));
 
-        refreshTokenRepository.save(refreshTokenEntity);
-
-        LoginResponse loginResponse = new LoginResponse(accessToken, refreshToken);
-
-        return ResponseEntity.ok().body(loginResponse);
+        return ResponseEntity.ok(new LoginResponse(accessToken, refreshToken));
     }
-
 
     @Transactional
     @Override
