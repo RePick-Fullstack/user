@@ -16,16 +16,17 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
 public class TokenProvider {
-
+    private static final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
     private final UserRepository userRepository;
 
-    private static final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
-    private final JwtProperties jwtProperties;
+    @Value("${jwt.secret-key}")
+    private String jwtSecretKey;
 
     public Token generateToken(User user, int minutes) {
         Duration expiredAt = Duration.ofMinutes(minutes);
@@ -41,13 +42,13 @@ public class TokenProvider {
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .claim("uuid", user.getUuid())
-                .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
+                .signWith(SignatureAlgorithm.HS256, jwtSecretKey)
                 .compact();
     }
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(jwtProperties.getSecretKey()).parseClaimsJws(token);
+            Jwts.parser().setSigningKey(jwtSecretKey).parseClaimsJws(token);
             return true;
         } catch (SignatureException e) {
             logger.error("Invalid JWT signature", e);
@@ -77,7 +78,7 @@ public class TokenProvider {
     }
 
     public String getUserUuidFromToken(String token) {
-        Claims claims = Jwts.parser().setSigningKey(jwtProperties.getSecretKey()).parseClaimsJws(token).getBody();
+        Claims claims = Jwts.parser().setSigningKey(jwtSecretKey).parseClaimsJws(token).getBody();
         return claims.get("uuid", String.class);
     }
 }

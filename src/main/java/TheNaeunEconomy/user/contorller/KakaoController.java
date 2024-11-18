@@ -24,7 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RequiredArgsConstructor
 @Slf4j
 @RequestMapping("/oauth/kakao/login")
-public class AuthenticationController {
+public class KakaoController {
     private final KakaoService kakaoService;
     private final UserServiceImpl userService;
 
