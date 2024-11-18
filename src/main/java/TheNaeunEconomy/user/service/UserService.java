@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity.BodyBuilder;
 public interface UserService {
     Optional<User> findUserByEmail(String email);
 
-    User registerUser(String email);
+    User registerUser(String email, String name);
 
     HttpStatus saveUser(AddUserRequest request);
 
