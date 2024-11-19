@@ -1,7 +1,6 @@
 package TheNaeunEconomy.user.service;
 
 import TheNaeunEconomy.user.service.reponse.KakaoTokenResponse;
-import io.netty.handler.codec.http.HttpHeaderValues;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,33 +17,29 @@ import org.springframework.web.reactive.function.client.WebClient;
 @RequiredArgsConstructor
 @Service
 public class KakaoService {
-    RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate = new RestTemplate();
+
     @Value("${kakao.client-id}")
     private String clientId;
 
     @Value("${kakao.redirect-uri}")
-    private String redirectUri; // 설정 파일에서 가져온 redirect-uri
+    private String redirectUri;
 
     @Value("${kakao.token-url:https://kauth.kakao.com/oauth/token}")
-    private String KAUTH_TOKEN_URL_HOST;
+    private String tokenUrl;
 
-    @Value("${kakao.user-url-host:https://kapi.kakao.com}")
-    private String KAUTH_USER_URL_HOST;
+    @Value("${kakao.user-url:https://kapi.kakao.com/v2/user/me}")
+    private String userUrl;
 
-    /**
-     * Access Token을 가져오는 메서드
-     */
     public String getAccessTokenFromKakao(String code) {
-        KakaoTokenResponse kakaoTokenResponse = WebClient.create(KAUTH_TOKEN_URL_HOST)
-                .post()
-                .uri(uriBuilder -> uriBuilder
-                        .path("") // Path는 이미 URL에 포함되어 있음
-                        .queryParam("grant_type", "authorization_code")
-                        .queryParam("client_id", clientId)
-                        .queryParam("redirect_uri", redirectUri) // redirect_uri 추가
-                        .queryParam("code", code)
-                        .build())
+        WebClient webClient = WebClient.create();
+        KakaoTokenResponse kakaoTokenResponse = webClient.post()
+                .uri(tokenUrl)
                 .header(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded")
+                .bodyValue("grant_type=authorization_code" +
+                        "&client_id=" + clientId +
+                        "&redirect_uri=" + redirectUri +
+                        "&code=" + code)
                 .retrieve()
                 .bodyToMono(KakaoTokenResponse.class)
                 .block();
@@ -57,18 +52,24 @@ public class KakaoService {
         return kakaoTokenResponse.getAccessToken();
     }
 
-    /**
-     * 사용자 정보를 가져오는 메서드
-     */
     public Map<String, Object> getUserInfo(String accessToken) {
-        String url = "https://kapi.kakao.com/v2/user/me";
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
 
+        ResponseEntity<Map> response = restTemplate.exchange(
+                userUrl,
+                HttpMethod.GET,
+                entity,
+                Map.class
+        );
+
+        if (response.getBody() == null) {
+            throw new RuntimeException("Failed to retrieve user info from Kakao.");
+        }
+
+        log.info("User Info: {}", response.getBody());
         return response.getBody();
     }
-
 }

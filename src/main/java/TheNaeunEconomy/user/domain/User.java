@@ -2,6 +2,7 @@ package TheNaeunEconomy.user.domain;
 
 
 import TheNaeunEconomy.user.service.request.AddUserRequest;
+import TheNaeunEconomy.user.service.request.KakaoAccountInfo;
 import TheNaeunEconomy.user.service.request.UpdateUserRequest;
 import TheNaeunEconomy.user.util.NicknameGenerator;
 import jakarta.persistence.*;
@@ -75,18 +76,19 @@ public class User {
         this.isBilling = false;
     }
 
-    public User(String email, String name) {
+    public User(KakaoAccountInfo kakaoAccountInfo) {
         this.uuid = UUID.randomUUID();
-        this.email = email;
-        this.password = bCryptPasswordEncoder.encode("password123");
-        this.name = name;
+        this.email = kakaoAccountInfo.getEmail();
+        this.password = bCryptPasswordEncoder.encode("password123!");
+        this.name = kakaoAccountInfo.getName();
         this.nickname = NicknameGenerator.generate();
-        this.gender = Gender.OTHER;
-        this.birthDate = LocalDate.now();
+        this.gender = kakaoAccountInfo.getGender();
+        this.birthDate = kakaoAccountInfo.getBirthDate();
         this.createDate = LocalDate.now();
         this.updateDate = LocalDate.now();
         this.isBilling = false;
     }
+
 
     public void updateUserDetails(UpdateUserRequest request) {
         if (request.getEmail() != null) {

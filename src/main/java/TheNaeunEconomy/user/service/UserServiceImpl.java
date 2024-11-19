@@ -10,6 +10,7 @@ import TheNaeunEconomy.user.service.reponse.LoginResponse;
 import TheNaeunEconomy.user.domain.Token;
 import TheNaeunEconomy.user.service.reponse.UserNameResponse;
 import TheNaeunEconomy.user.service.request.AddUserRequest;
+import TheNaeunEconomy.user.service.request.KakaoAccountInfo;
 import TheNaeunEconomy.user.service.request.LoginUserRequest;
 import TheNaeunEconomy.user.service.request.UpdateUserRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -40,21 +41,6 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
-    @Override
-    public Optional<User> findUserByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
-
-    @Override
-    public User registerUser(String email, String name) {
-        Optional<User> existingUser = userRepository.findByEmail(email);
-
-        if (existingUser.isPresent()) {
-            return existingUser.get();
-        }
-        User user = new User(email, name);
-        return userRepository.save(user);
-    }
 
     @Transactional
     @Override
@@ -183,7 +169,6 @@ public class UserServiceImpl implements UserService {
     }
 
     public ResponseEntity<LoginResponse> kakaoLoginUser(String email) {
-
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 이메일입니다."));
 
@@ -198,5 +183,20 @@ public class UserServiceImpl implements UserService {
                 new RefreshToken(user, refreshToken.getToken(), LocalDateTime.now().plusMinutes(REFRESH_TOKEN_TIME)));
 
         return ResponseEntity.ok(new LoginResponse(accessToken, refreshToken));
+    }
+
+    @Override
+    public HttpStatus registerUser(KakaoAccountInfo kakaoAccountInfo) {
+        userRepository.findByEmail(kakaoAccountInfo.getEmail()).ifPresentOrElse(
+                user -> {
+                kakaoLoginUser(user.getEmail());
+                },
+                () -> {
+                    User user = new User(kakaoAccountInfo);
+
+                    userRepository.save(user);
+                }
+        );
+        return HttpStatus.OK;
     }
 }
