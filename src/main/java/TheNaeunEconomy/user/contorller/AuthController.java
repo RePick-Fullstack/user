@@ -26,13 +26,9 @@ public class AuthController {
 
     private final UserServiceImpl userService;
 
-    @GetMapping("/login")
-    public ResponseEntity<LoginResponse> loginUser(
-            @RequestParam String email,
-            @RequestParam String password,
-            HttpServletResponse response) {
-        LoginUserRequest loginUserRequest = new LoginUserRequest(email, password);
-        return userService.loginUser(loginUserRequest , response);
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginUserRequest request, HttpServletResponse response) {
+        return userService.loginUser(request, response);
     }
 
     @PostMapping("/signup")

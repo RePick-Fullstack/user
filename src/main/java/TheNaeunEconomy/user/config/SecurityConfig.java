@@ -37,8 +37,8 @@ public class SecurityConfig {
                                 "/",
                                 "/api/v1/login",
                                 "/api/v1/signup",
-                                "/oauth/kakao/login/page",
-                                "/oauth/kakao/login/callback"
+                                "/oauth/kakao/login/callback",
+                                "/oauth/kakao/login"
                         ).permitAll()
                         // 인증이 필요한 경로
                         .requestMatchers("/api/v1/users/**").authenticated()

@@ -189,13 +189,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public HttpStatus registerUser(KakaoAccountInfo kakaoAccountInfo) {
-        userRepository.findByEmail(kakaoAccountInfo.getEmail()).ifPresentOrElse(user -> {
-            kakaoLoginUser(user.getEmail());
-        }, () -> {
-            User user = new User(kakaoAccountInfo);
+        Optional<User> byEmail = userRepository.findByEmail(kakaoAccountInfo.getEmail());
 
-            userRepository.save(user);
-        });
+        if(byEmail.isPresent()) kakaoLoginUser(byEmail.get().getEmail());
+        else userRepository.save(new User(kakaoAccountInfo));
+
         return HttpStatus.OK;
     }
 }
