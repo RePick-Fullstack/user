@@ -12,7 +12,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import java.time.Duration;
 import java.util.Date;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +42,6 @@ public class TokenProvider {
                 .setExpiration(expiry)
                 .claim("userId", user.getId())
                 .claim("nickName", user.getNickname())
-                .claim("uuid", UUID.randomUUID().toString())
                 .signWith(SignatureAlgorithm.HS256, jwtSecretKey)
                 .compact();
     }
@@ -69,9 +67,9 @@ public class TokenProvider {
             throw new IllegalArgumentException("유효하지 않은 리프레시 토큰입니다.");
         }
 
-        String userUuidFromToken = getUserUuidFromToken(refreshToken);
+        Long userIdFromToken = Long.valueOf(getUserIdFromToken(refreshToken));
 
-        User user = userRepository.findByUuid(UUID.fromString(userUuidFromToken))
+        User user = userRepository.findById(userIdFromToken)
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
 
         Token accessToken = generateToken(user, 15);
@@ -79,8 +77,8 @@ public class TokenProvider {
         return accessToken;
     }
 
-    public String getUserUuidFromToken(String token) {
+    public String getUserIdFromToken(String token) {
         Claims claims = Jwts.parser().setSigningKey(jwtSecretKey).parseClaimsJws(token).getBody();
-        return claims.get("uuid", String.class);
+        return claims.get("id", String.class);
     }
 }

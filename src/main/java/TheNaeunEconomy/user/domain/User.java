@@ -7,7 +7,6 @@ import TheNaeunEconomy.user.service.request.UpdateUserRequest;
 import TheNaeunEconomy.user.util.NicknameGenerator;
 import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,9 +26,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, updatable = false, nullable = false)
     private Long id;
-
-    @Column(name = "uuid", unique = true, nullable = false, updatable = false, columnDefinition = "BINARY(16)")
-    private UUID uuid;
 
     @Column(name = "email", unique = true)
     private String email;
@@ -64,7 +60,6 @@ public class User {
 
 
     public User(AddUserRequest request) {
-        this.uuid = UUID.randomUUID();
         this.email = request.getEmail();
         this.password = bCryptPasswordEncoder.encode(request.getPassword());
         this.name = request.getName();
@@ -77,7 +72,6 @@ public class User {
     }
 
     public User(KakaoAccountInfo kakaoAccountInfo) {
-        this.uuid = UUID.randomUUID();
         this.email = kakaoAccountInfo.getEmail();
         this.password = bCryptPasswordEncoder.encode("password123!");
         this.name = kakaoAccountInfo.getName();

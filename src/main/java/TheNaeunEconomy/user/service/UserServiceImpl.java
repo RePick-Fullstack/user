@@ -17,7 +17,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -90,12 +89,11 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public BodyBuilder logoutUser(String token) {
-        String userUuidFromToken = extractUserUuidFromToken(token);
+        Long userIdFromToken = Long.valueOf(extractUserUuidFromToken(token));
 
-        User user = userRepository.findByUuid(UUID.fromString(userUuidFromToken))
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
+        Optional<User> user = userRepository.findById(userIdFromToken);
 
-        refreshTokenRepository.findByUserId(user.getId()).ifPresent(refreshToken -> {
+        refreshTokenRepository.findByUserId(user.get().getId()).ifPresent(refreshToken -> {
             refreshTokenRepository.delete(refreshToken);
         });
 
@@ -105,9 +103,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(UpdateUserRequest request, String token) {
-        String userUuidFromToken = extractUserUuidFromToken(token);
+        Long userIdFromToken = Long.valueOf(extractUserUuidFromToken(token));
 
-        User user = userRepository.findByUuid(UUID.fromString(userUuidFromToken))
+        User user = userRepository.findById(userIdFromToken)
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
 
         if (user.getDeleteDate() != null) {
@@ -120,9 +118,9 @@ public class UserServiceImpl implements UserService {
     }
 
     public AccessTokenResponse refreshToken(String refreshToken, HttpServletResponse response) {
-        String userUuidFromToken = extractUserUuidFromToken(refreshToken);
+        Long userIdFromToken = Long.valueOf(extractUserUuidFromToken(refreshToken));
 
-        User user = userRepository.findByUuid(UUID.fromString(userUuidFromToken))
+        User user = userRepository.findById(userIdFromToken)
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
 
         Optional<RefreshToken> byUserId = refreshTokenRepository.findByUserId(user.getId());
@@ -138,9 +136,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User deleteUser(String token) {
-        String userUuidFromToken = extractUserUuidFromToken(token);
+        Long userIdFormToken = Long.valueOf(extractUserUuidFromToken(token));
 
-        User user = userRepository.findByUuid(UUID.fromString(userUuidFromToken))
+        User user = userRepository.findById(userIdFormToken)
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
 
         //수정해야 함.
@@ -152,9 +150,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserNameResponse getUserName(String token) {
         tokenProvider.validateToken(token);
-        String userUuidFromToken = extractUserUuidFromToken(token);
+        Long userIdFromToken = Long.valueOf(extractUserUuidFromToken(token));
 
-        User user = userRepository.findByUuid(UUID.fromString(userUuidFromToken))
+        User user = userRepository.findById(userIdFromToken)
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
 
         return new UserNameResponse(user.getName(), user.getNickname());
@@ -169,7 +167,7 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
         }
 
-        return tokenProvider.getUserUuidFromToken(token);
+        return tokenProvider.getUserIdFromToken(token);
     }
 
     public ResponseEntity<LoginResponse> kakaoLoginUser(String email) {
@@ -191,16 +189,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public HttpStatus registerUser(KakaoAccountInfo kakaoAccountInfo) {
-        userRepository.findByEmail(kakaoAccountInfo.getEmail()).ifPresentOrElse(
-                user -> {
-                kakaoLoginUser(user.getEmail());
-                },
-                () -> {
-                    User user = new User(kakaoAccountInfo);
+        userRepository.findByEmail(kakaoAccountInfo.getEmail()).ifPresentOrElse(user -> {
+            kakaoLoginUser(user.getEmail());
+        }, () -> {
+            User user = new User(kakaoAccountInfo);
 
-                    userRepository.save(user);
-                }
-        );
+            userRepository.save(user);
+        });
         return HttpStatus.OK;
     }
 }
