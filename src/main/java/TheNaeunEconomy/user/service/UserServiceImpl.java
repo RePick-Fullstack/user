@@ -89,7 +89,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public BodyBuilder logoutUser(String token) {
-        Long userIdFromToken = Long.valueOf(extractUserUuidFromToken(token));
+        Long userIdFromToken = Long.valueOf(extractUserIdFromToken(token));
 
         Optional<User> user = userRepository.findById(userIdFromToken);
 
@@ -103,7 +103,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(UpdateUserRequest request, String token) {
-        Long userIdFromToken = Long.valueOf(extractUserUuidFromToken(token));
+        Long userIdFromToken = extractUserIdFromToken(token);
 
         User user = userRepository.findById(userIdFromToken)
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
@@ -118,7 +118,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public AccessTokenResponse refreshToken(String refreshToken, HttpServletResponse response) {
-        Long userIdFromToken = Long.valueOf(extractUserUuidFromToken(refreshToken));
+        Long userIdFromToken = Long.valueOf(extractUserIdFromToken(refreshToken));
 
         User user = userRepository.findById(userIdFromToken)
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
@@ -136,7 +136,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User deleteUser(String token) {
-        Long userIdFormToken = Long.valueOf(extractUserUuidFromToken(token));
+        Long userIdFormToken = Long.valueOf(extractUserIdFromToken(token));
 
         User user = userRepository.findById(userIdFormToken)
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
@@ -150,7 +150,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserNameResponse getUserName(String token) {
         tokenProvider.validateToken(token);
-        Long userIdFromToken = Long.valueOf(extractUserUuidFromToken(token));
+        Long userIdFromToken = Long.valueOf(extractUserIdFromToken(token));
 
         User user = userRepository.findById(userIdFromToken)
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
@@ -162,11 +162,11 @@ public class UserServiceImpl implements UserService {
         return bCryptPasswordEncoder.matches(rawPassword, encodedPassword);
     }
 
-    private String extractUserUuidFromToken(String token) {
+    private Long extractUserIdFromToken(String token) {
         if (!tokenProvider.validateToken(token)) {
             throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
         }
-
+        System.out.println(tokenProvider.getUserIdFromToken(token));
         return tokenProvider.getUserIdFromToken(token);
     }
 

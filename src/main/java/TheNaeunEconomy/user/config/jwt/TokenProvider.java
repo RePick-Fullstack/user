@@ -66,9 +66,8 @@ public class TokenProvider {
         if (!validateToken(refreshToken)) {
             throw new IllegalArgumentException("유효하지 않은 리프레시 토큰입니다.");
         }
-
-        Long userIdFromToken = Long.valueOf(getUserIdFromToken(refreshToken));
-
+        Long userIdFromToken = getUserIdFromToken(refreshToken);
+        System.out.println("123123" + userIdFromToken);
         User user = userRepository.findById(userIdFromToken)
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
 
@@ -77,8 +76,9 @@ public class TokenProvider {
         return accessToken;
     }
 
-    public String getUserIdFromToken(String token) {
+    public Long getUserIdFromToken(String token) {
         Claims claims = Jwts.parser().setSigningKey(jwtSecretKey).parseClaimsJws(token).getBody();
-        return claims.get("id", String.class);
+        System.out.println(claims.get("userId", Long.class));
+        return claims.get("userId", Long.class);
     }
 }

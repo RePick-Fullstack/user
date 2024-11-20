@@ -22,7 +22,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         String token = extractJwtFromRequest(request);
         if (token != null && tokenProvider.validateToken(token)) {
-            String userId = tokenProvider.getUserIdFromToken(token);
+            Long userId = tokenProvider.getUserIdFromToken(token);
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userId, null,
                     null);
             SecurityContextHolder.getContext().setAuthentication(authentication);
