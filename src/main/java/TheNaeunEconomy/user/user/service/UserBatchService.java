@@ -14,7 +14,7 @@ public class UserBatchService {
     private final UserRepository userRepository;
     private final UserServiceImpl userService;
 
-    @Scheduled(cron = "0 0 * * * ?")
+    @Scheduled(cron = "0 30 * * * ?")
     public void cleanUpExpiredTokens() {
         userService.deleteExpiredTokens();
     }

@@ -1,13 +1,11 @@
 package TheNaeunEconomy.user.user.service;
 
-import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import TheNaeunEconomy.user.user.domain.Gender;
 import TheNaeunEconomy.user.user.repository.UserRepository;
 import TheNaeunEconomy.user.jwt.RefreshTokenRepository;
 import TheNaeunEconomy.user.jwt.TokenProvider;
-import TheNaeunEconomy.user.user.service.UserServiceImpl;
 import TheNaeunEconomy.user.user.service.request.AddUserRequest;
 import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;

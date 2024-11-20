@@ -123,12 +123,9 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void logoutUser(String token) {
-        Optional<User> user = userRepository.findById(extractUserIdFromToken(token));
-
-        if (refreshTokenRepository.findByUserId(user.get().getId()).isPresent()) {
-            refreshTokenRepository.deleteById(user.get().getId());
-        }
+        refreshTokenRepository.deleteByRefreshToken(token);
     }
+
 
     public LoginResponse kakaoLoginUser(String email) {
         Optional<User> user = userRepository.findByEmail(email);
@@ -147,14 +144,8 @@ public class UserServiceImpl implements UserService {
     }
 
     public AccessTokenResponse refreshToken(String refreshToken) {
-        Optional<User> user = userRepository.findById(extractUserIdFromToken(refreshToken));
-
-        Optional<RefreshToken> byUserId = refreshTokenRepository.findByUserId(user.get().getId());
-
-        if (byUserId.isEmpty()) {
-            throw new NullPointerException();
-        }
-
+        refreshTokenRepository.findByRefreshToken(refreshToken);
+        refreshTokenRepository.updateExpirationDateByToken(LocalDateTime.now().plusMinutes(REFRESH_TOKEN_TIME), refreshToken);
         return new AccessTokenResponse(tokenProvider.validateAndReissueAccessToken(refreshToken));
     }
 
