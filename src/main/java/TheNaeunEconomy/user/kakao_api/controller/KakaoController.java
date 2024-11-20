@@ -9,8 +9,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,21 +20,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/oauth/kakao/login")
+@RequestMapping("/api/oauth/kakao")
 public class KakaoController {
     private final KakaoService kakaoService;
     private final UserServiceImpl userService;
 
-    @Value("${kakao.client-id}")
-    private String clientId;
-
-    @Value("${kakao.redirect-uri}")
-    private String redirectUri;
-
+    @SneakyThrows
     @GetMapping("/callback")
-    public ResponseEntity<LoginResponse> callback(@RequestParam("code") String code, HttpServletResponse response)
-            throws IOException {
-        Map<String, Object> userInfo = kakaoService.getUserInfo(kakaoService.getAccessTokenFromKakao(code));
+    public void callback(@RequestParam("code") String code, HttpServletResponse response) {
+        String accessToken = kakaoService.getAccessToken(code);
+        Map<String, Object> userInfo = kakaoService.getUserInfo(accessToken);
 
         Map<String, Object> kakaoAccount = (Map<String, Object>) userInfo.get("kakao_account");
 
@@ -48,7 +43,10 @@ public class KakaoController {
         KakaoAccountInfo kakaoAccountInfo = new KakaoAccountInfo(email, nickname, birthYear, birthDay, gender);
 
         userService.registerUser(kakaoAccountInfo);
+        LoginResponse loginResponse = userService.kakaoLoginUser(email);
+        String redirectUrl = "http://localhost:5173/?accessToken=" + loginResponse.getAccessToken().getToken()
+                + "&refreshToken=" + loginResponse.getRefreshToken().getToken();
 
-        return ResponseEntity.ok().body(userService.kakaoLoginUser(email));
+        response.sendRedirect(redirectUrl);
     }
 }

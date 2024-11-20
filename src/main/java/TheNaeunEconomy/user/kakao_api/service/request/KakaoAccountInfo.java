@@ -18,16 +18,11 @@ public class KakaoAccountInfo {
         String formattedDate = birthYear + "-" + birthDay.substring(0, 2) + "-" + birthDay.substring(2, 4);
 
         this.birthDate = LocalDate.parse(formattedDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        System.out.println(birthDate);
-        if (gender.equals("male"))
-        {
+        if (gender.equals("male")) {
             this.gender = Gender.MALE;
         }
-        if (gender.equals("female"))
-        {
+        if (gender.equals("female")) {
             this.gender = Gender.FEMALE;
         }
     }
-
-
 }

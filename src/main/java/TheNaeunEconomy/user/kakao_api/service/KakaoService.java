@@ -1,23 +1,22 @@
 package TheNaeunEconomy.user.kakao_api.service;
 
 import TheNaeunEconomy.user.kakao_api.service.response.KakaoTokenResponse;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class KakaoService {
-    private final RestTemplate restTemplate = new RestTemplate();
+
+    private final WebClient webClient;
 
     @Value("${kakao.client-id}")
     private String clientId;
@@ -25,49 +24,47 @@ public class KakaoService {
     @Value("${kakao.redirect-uri}")
     private String redirectUri;
 
-    @Value("${kakao.token-url:https://kauth.kakao.com/oauth/token}")
+    @Value("${kakao.token-url}")
     private String tokenUrl;
 
-    @Value("${kakao.user-url:https://kapi.kakao.com/v2/user/me}")
-    private String userUrl;
+    private static final String USER_INFO_URL = "https://kapi.kakao.com/v2/user/me";
 
-    public String getAccessTokenFromKakao(String code) {
-        WebClient webClient = WebClient.create();
-        KakaoTokenResponse kakaoTokenResponse = webClient.post()
-                .uri(tokenUrl)
-                .header(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded")
-                .bodyValue("grant_type=authorization_code" +
-                        "&client_id=" + clientId +
-                        "&redirect_uri=" + redirectUri +
-                        "&code=" + code)
-                .retrieve()
-                .bodyToMono(KakaoTokenResponse.class)
-                .block();
-
-        if (kakaoTokenResponse == null || kakaoTokenResponse.getAccessToken() == null) {
-            throw new RuntimeException("Failed to retrieve access token from Kakao.");
+    public String getAccessToken(String code) {
+        try {
+            return webClient.post()
+                    .uri(tokenUrl)
+                    .header(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded")
+                    .body(BodyInserters.fromFormData("grant_type", "authorization_code")
+                            .with("client_id", clientId)
+                            .with("redirect_uri", redirectUri)
+                            .with("code", code))
+                    .retrieve()
+                    .bodyToMono(KakaoTokenResponse.class)
+                    .block()
+                    .getAccessToken();
+        } catch (Exception e) {
+            log.error("Error while requesting access token", e);
+            throw new RuntimeException("Error while requesting access token", e);
         }
-
-        return kakaoTokenResponse.getAccessToken();
     }
 
-    public Map<String, Object> getUserInfo(String accessToken) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + accessToken);
 
-        HttpEntity<String> entity = new HttpEntity<>(headers);
+    public Map getUserInfo(String accessToken) {
+        try {
+            Map userInfo = webClient.get()
+                    .uri(USER_INFO_URL)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                    .retrieve()
+                    .bodyToMono(Map.class)
+                    .block();
 
-        ResponseEntity<Map> response = restTemplate.exchange(
-                userUrl,
-                HttpMethod.GET,
-                entity,
-                Map.class
-        );
-
-        if (response.getBody() == null) {
-            throw new RuntimeException("Failed to retrieve user info from Kakao.");
+            if (userInfo == null) {
+                throw new RuntimeException("Failed to retrieve user info from Kakao.");
+            }
+            return userInfo;
+        } catch (Exception e) {
+            log.error("Error while retrieving user info: {}", e.getMessage(), e);
+            throw new RuntimeException("Error while retrieving user info", e);
         }
-
-        return response.getBody();
     }
 }

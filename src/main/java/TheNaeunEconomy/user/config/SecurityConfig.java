@@ -36,7 +36,7 @@ public class SecurityConfig {
                                 "/",
                                 "/api/v1/login",
                                 "/api/v1/signup",
-                                "/oauth/kakao/login/callback"
+                                "/api/oauth/kakao/callback"
                         ).permitAll()
                         .requestMatchers("/api/v1/users/**").authenticated()
                         .anyRequest().authenticated()

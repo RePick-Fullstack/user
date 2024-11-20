@@ -145,7 +145,8 @@ public class UserServiceImpl implements UserService {
 
     public AccessTokenResponse refreshToken(String refreshToken) {
         refreshTokenRepository.findByRefreshToken(refreshToken);
-        refreshTokenRepository.updateExpirationDateByToken(LocalDateTime.now().plusMinutes(REFRESH_TOKEN_TIME), refreshToken);
+        refreshTokenRepository.updateExpirationDateByToken(LocalDateTime.now().plusMinutes(REFRESH_TOKEN_TIME),
+                refreshToken);
         return new AccessTokenResponse(tokenProvider.validateAndReissueAccessToken(refreshToken));
     }
 
