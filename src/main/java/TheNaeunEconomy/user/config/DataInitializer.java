@@ -1,9 +1,9 @@
 package TheNaeunEconomy.user.config;
 
-import TheNaeunEconomy.user.Repository.UserRepository;
-import TheNaeunEconomy.user.domain.Gender;
-import TheNaeunEconomy.user.domain.User;
-import TheNaeunEconomy.user.service.request.AddUserRequest;
+import TheNaeunEconomy.user.user.repository.UserRepository;
+import TheNaeunEconomy.user.user.domain.Gender;
+import TheNaeunEconomy.user.user.domain.User;
+import TheNaeunEconomy.user.user.service.request.AddUserRequest;
 import TheNaeunEconomy.user.util.NicknameGenerator;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +44,9 @@ public class DataInitializer implements ApplicationRunner {
 
             request.setBirthDate(LocalDate.of(year, month, day));
 
-            saveUser(request);
+            if (userRepository.findByEmail("example" + i + "@gmail.com") != null) {
+                saveUser(request);
+            }
         }
 
         log.info("100개의 더미 데이터가 성공적으로 삽입되었습니다.");
