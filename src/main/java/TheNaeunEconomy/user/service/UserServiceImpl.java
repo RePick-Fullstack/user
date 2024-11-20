@@ -41,6 +41,10 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
+    public void deleteExpiredTokens() {
+        refreshTokenRepository.deleteExpiredTokens();
+    }
+
 
     @Transactional
     @Override

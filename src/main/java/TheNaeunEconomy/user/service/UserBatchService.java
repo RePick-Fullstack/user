@@ -12,6 +12,13 @@ import java.util.List;
 @Service
 public class UserBatchService {
     private final UserRepository userRepository;
+    private final UserServiceImpl userService;
+
+    @Scheduled(cron = "0 0 * * * ?")
+    public void cleanUpExpiredTokens() {
+        userService.deleteExpiredTokens();
+        System.out.println("Expired tokens cleaned up.");
+    }
 
     @Scheduled(cron = "0 0 0 * * ?")
     public void performRealDelete() {

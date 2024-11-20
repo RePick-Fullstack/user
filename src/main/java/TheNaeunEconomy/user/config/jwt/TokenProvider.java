@@ -42,7 +42,8 @@ public class TokenProvider {
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .claim("userId", user.getId())
-                .claim("uuid", user.getUuid())
+                .claim("nickName", user.getNickname())
+                .claim("uuid", UUID.randomUUID().toString())
                 .signWith(SignatureAlgorithm.HS256, jwtSecretKey)
                 .compact();
     }
