@@ -48,7 +48,6 @@ public class KakaoService {
             throw new RuntimeException("Failed to retrieve access token from Kakao.");
         }
 
-        log.info("Access Token: {}", kakaoTokenResponse.getAccessToken());
         return kakaoTokenResponse.getAccessToken();
     }
 
@@ -69,7 +68,6 @@ public class KakaoService {
             throw new RuntimeException("Failed to retrieve user info from Kakao.");
         }
 
-        log.info("User Info: {}", response.getBody());
         return response.getBody();
     }
 }

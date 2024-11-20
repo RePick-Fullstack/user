@@ -7,10 +7,10 @@ import lombok.Getter;
 
 @Getter
 public class KakaoAccountInfo {
-    private String email;
-    private String name;
+    private final String email;
+    private final String name;
     private Gender gender;
-    private LocalDate birthDate;
+    private final LocalDate birthDate;
 
     public KakaoAccountInfo(String email, String name, String birthYear, String birthDay, String gender) {
         this.email = email;
