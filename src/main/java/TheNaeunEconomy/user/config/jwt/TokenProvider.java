@@ -1,5 +1,6 @@
 package TheNaeunEconomy.user.config.jwt;
 
+
 import TheNaeunEconomy.user.Repository.UserRepository;
 import TheNaeunEconomy.user.domain.Token;
 import TheNaeunEconomy.user.domain.User;
@@ -36,14 +37,9 @@ public class TokenProvider {
 
     private String makeToken(User user, Date expiry) {
         Date now = new Date();
-        return Jwts.builder()
-                .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
-                .setIssuedAt(now)
-                .setExpiration(expiry)
-                .claim("userId", user.getId())
-                .claim("nickName", user.getNickname())
-                .signWith(SignatureAlgorithm.HS256, jwtSecretKey)
-                .compact();
+        return Jwts.builder().setHeaderParam(Header.TYPE, Header.JWT_TYPE).setIssuedAt(now).setExpiration(expiry)
+                .claim("userId", user.getId()).claim("nickName", user.getNickname())
+                .signWith(SignatureAlgorithm.HS256, jwtSecretKey).compact();
     }
 
     public boolean validateToken(String token) {
@@ -78,7 +74,6 @@ public class TokenProvider {
 
     public Long getUserIdFromToken(String token) {
         Claims claims = Jwts.parser().setSigningKey(jwtSecretKey).parseClaimsJws(token).getBody();
-        System.out.println(claims.get("userId", Long.class));
         return claims.get("userId", Long.class);
     }
 }

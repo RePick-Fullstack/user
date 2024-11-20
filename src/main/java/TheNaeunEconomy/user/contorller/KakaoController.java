@@ -32,7 +32,7 @@ public class KakaoController {
     private String redirectUri;
 
     @GetMapping("/callback")
-    public void callback(@RequestParam("code") String code, HttpServletResponse response) throws IOException {
+    public ResponseEntity<LoginResponse> callback(@RequestParam("code") String code, HttpServletResponse response) throws IOException {
         log.info("Authorization Code: {}", code);
 
         // Step 1: Access Token 가져오기
@@ -53,14 +53,6 @@ public class KakaoController {
         // 사용자 등록 로직 호출
         KakaoAccountInfo kakaoAccountInfo = new KakaoAccountInfo(email, nickname, birthyear, birthday, gender);
         userService.registerUser(kakaoAccountInfo);
-
-        // 클라이언트로 리다이렉트
-        response.sendRedirect("http://localhost:5173?email=" + email);
-    }
-
-    @GetMapping()
-    public ResponseEntity<LoginResponse> getToken(@RequestParam String email) {
-        log.info("Get token: {}", email);
         return userService.kakaoLoginUser(email);
     }
 }
