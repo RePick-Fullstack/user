@@ -17,7 +17,6 @@ public class UserBatchService {
     @Scheduled(cron = "0 0 * * * ?")
     public void cleanUpExpiredTokens() {
         userService.deleteExpiredTokens();
-        System.out.println("Expired tokens cleaned up.");
     }
 
     @Scheduled(cron = "0 0 0 * * ?")

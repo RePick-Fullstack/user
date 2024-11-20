@@ -6,6 +6,7 @@ import TheNaeunEconomy.user.kakao_api.service.request.KakaoAccountInfo;
 import TheNaeunEconomy.user.user.service.request.UpdateUserRequest;
 import TheNaeunEconomy.user.util.NicknameGenerator;
 import jakarta.persistence.*;
+
 import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -82,7 +83,6 @@ public class User {
         this.updateDate = LocalDate.now();
         this.isBilling = false;
     }
-
 
     public void updateUserDetails(UpdateUserRequest request) {
         if (request.getEmail() != null) {
