@@ -14,19 +14,22 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AddUserRequest {
-
     @NotBlank(message = "이메일은 필수 항목입니다.")
     @Email(message = "잘못된 이메일 형식입니다.")
     private String email;
 
+
     @NotBlank(message = "비밀번호는 필수 항목입니다.")
-    @Size(min = 6, max = 20, message = "비밀번호는 6자 이상, 20자 이하로 입력해야 합니다.")
+    @Pattern(regexp = "/^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,18}$/")
+    @Size(min = 8, max = 18, message = "비밀번호는 8자 이상, 18자 이하이여야 하고 영문 숫자 특수기호 조합 8자리 이상이여야 합니다.")
     private String password;
 
     @NotBlank(message = "이름은 필수 항목입니다.")
     @Pattern(regexp = "^[가-힣]+$", message = "이름은 한글만 입력 가능합니다.")
+    @Size(max = 5)
     private String name;
 
+    @Size(max = 10)
     @Pattern(regexp = "^[가-힣\\s]*$", message = "닉네임은 한글과 띄어쓰기만 입력 가능합니다.")
     private String nickname;
 

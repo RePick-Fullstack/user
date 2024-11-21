@@ -41,13 +41,14 @@ public class KakaoController {
 
         if (userService.kakaoUserCheck(email)) {
             LoginResponse loginResponse = userService.kakaoLoginUser(email);
-            String redirectUrl = "http://localhost:5173/?accessToken=" + loginResponse.getAccessToken().getToken()
-                    + "&refreshToken=" + loginResponse.getRefreshToken().getToken();
+            String redirectUrl =
+                    "http://localhost:5173/?accessToken=" + loginResponse.getAccessToken().getToken() + "&refreshToken="
+                            + loginResponse.getRefreshToken().getToken();
             response.sendRedirect(redirectUrl);
         } else {
-            String redirectUrl = "http://localhost:5173/complete-profile?email="
-                    + URLEncoder.encode(email, "UTF-8")
-                    + "&name=" + URLEncoder.encode(nickname, "UTF-8");
+            String redirectUrl =
+                    "http://localhost:5173/complete-profile?email=" + URLEncoder.encode(email, "UTF-8") + "&name="
+                            + URLEncoder.encode(nickname, "UTF-8");
             response.sendRedirect(redirectUrl);
         }
     }

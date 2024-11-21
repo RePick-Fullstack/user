@@ -1,11 +1,11 @@
 package TheNaeunEconomy.user.user.service;
 
 import TheNaeunEconomy.user.jwt.RefreshTokenRepository;
+import TheNaeunEconomy.user.kakao_api.service.request.AccessToken;
 import TheNaeunEconomy.user.user.repository.UserRepository;
 import TheNaeunEconomy.user.jwt.RefreshToken;
 import TheNaeunEconomy.user.user.domain.User;
 import TheNaeunEconomy.user.jwt.TokenProvider;
-import TheNaeunEconomy.user.kakao_api.service.request.AccessTokenResponse;
 import TheNaeunEconomy.user.user.service.response.LoginResponse;
 import TheNaeunEconomy.user.jwt.Token;
 import TheNaeunEconomy.user.user.service.response.UserNameResponse;
@@ -144,11 +144,11 @@ public class UserServiceImpl implements UserService {
         return new LoginResponse(accessToken, refreshToken);
     }
 
-    public AccessTokenResponse refreshToken(String refreshToken) {
+    public AccessToken refreshToken(String refreshToken) {
         refreshTokenRepository.findByRefreshToken(refreshToken);
         refreshTokenRepository.updateExpirationDateByToken(LocalDateTime.now().plusMinutes(REFRESH_TOKEN_TIME),
                 refreshToken);
-        return new AccessTokenResponse(tokenProvider.validateAndReissueAccessToken(refreshToken));
+        return new AccessToken(tokenProvider.validateAndReissueAccessToken(refreshToken));
     }
 
     public boolean isPasswordMatch(String rawPassword, String encodedPassword) {
@@ -159,7 +159,6 @@ public class UserServiceImpl implements UserService {
         if (!tokenProvider.validateToken(token)) {
             throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
         }
-
         return tokenProvider.getUserIdFromToken(token);
     }
 }

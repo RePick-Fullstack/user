@@ -23,5 +23,6 @@ public interface UserService {
     User deleteUser(String token);
 
     UserNameResponse getUserName(String token);
+
     void registerUser(KakaoAccountInfo kakaoAccountInfo);
 }

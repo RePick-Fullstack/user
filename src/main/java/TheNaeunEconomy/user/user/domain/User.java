@@ -87,9 +87,6 @@ public class User {
     }
 
     public void updateUserDetails(UpdateUserRequest request) {
-        if (request.getEmail() != null) {
-            this.email = request.getEmail();
-        }
         if (request.getName() != null) {
             this.name = request.getName();
         }
