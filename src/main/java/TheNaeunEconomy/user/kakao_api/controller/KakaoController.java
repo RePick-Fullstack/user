@@ -2,17 +2,20 @@ package TheNaeunEconomy.user.kakao_api.controller;
 
 
 import TheNaeunEconomy.user.kakao_api.service.KakaoService;
+import TheNaeunEconomy.user.kakao_api.service.request.KakaoAccountInfo;
 import TheNaeunEconomy.user.user.service.UserServiceImpl;
 import TheNaeunEconomy.user.user.service.response.LoginResponse;
-import TheNaeunEconomy.user.kakao_api.service.request.KakaoAccountInfo;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import jakarta.validation.Valid;
+import java.net.URLEncoder;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,21 +35,27 @@ public class KakaoController {
         Map<String, Object> userInfo = kakaoService.getUserInfo(accessToken);
 
         Map<String, Object> kakaoAccount = (Map<String, Object>) userInfo.get("kakao_account");
-
         String email = (String) kakaoAccount.get("email");
         Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
         String nickname = profile != null ? (String) profile.get("nickname") : "Unknown";
-        String birthYear = (String) kakaoAccount.get("birthyear");
-        String birthDay = (String) kakaoAccount.get("birthday");
-        String gender = (String) kakaoAccount.get("gender");
 
-        KakaoAccountInfo kakaoAccountInfo = new KakaoAccountInfo(email, nickname, birthYear, birthDay, gender);
+        if (userService.kakaoUserCheck(email)) {
+            LoginResponse loginResponse = userService.kakaoLoginUser(email);
+            String redirectUrl = "http://localhost:5173/?accessToken=" + loginResponse.getAccessToken().getToken()
+                    + "&refreshToken=" + loginResponse.getRefreshToken().getToken();
+            response.sendRedirect(redirectUrl);
+        } else {
+            String redirectUrl = "http://localhost:5173/complete-profile?email="
+                    + URLEncoder.encode(email, "UTF-8")
+                    + "&name=" + URLEncoder.encode(nickname, "UTF-8");
+            response.sendRedirect(redirectUrl);
+        }
+    }
 
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> registerUser(@Valid @RequestBody KakaoAccountInfo kakaoAccountInfo) {
         userService.registerUser(kakaoAccountInfo);
-        LoginResponse loginResponse = userService.kakaoLoginUser(email);
-        String redirectUrl = "http://localhost:5173/?accessToken=" + loginResponse.getAccessToken().getToken()
-                + "&refreshToken=" + loginResponse.getRefreshToken().getToken();
-
-        response.sendRedirect(redirectUrl);
+        LoginResponse loginResponse = userService.kakaoLoginUser(kakaoAccountInfo.getEmail());
+        return ResponseEntity.ok().body(loginResponse);
     }
 }

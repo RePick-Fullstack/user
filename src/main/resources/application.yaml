@@ -13,8 +13,8 @@ jwt:
   secret-key: 4Ixa3PT4KhLW1fz4bJoY8z2dR4Gk7jHpB3Yw8mQvL9NdXx5vT9Yw8VhN3rB4YxK2
 
 kakao:
-  #client-id: 425177266f9081ed665e51bd34048cc9
-  #client-secret: NXgY4VhOyaYJ1IaJsospn8laSzGzYo5n
-  client-id: 26aa2297f0431d7a130b7f937f10eb4c
+  client-id: 425177266f9081ed665e51bd34048cc9
   redirect-uri: http://localhost:8080/api/oauth/kakao/callback
+  #client-secret: NXgY4VhOyaYJ1IaJsospn8laSzGzYo5n
+  #client-id: 26aa2297f0431d7a130b7f937f10eb4c
   token-url: https://kauth.kakao.com/oauth/token

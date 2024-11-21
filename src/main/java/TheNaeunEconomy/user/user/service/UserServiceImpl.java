@@ -126,13 +126,14 @@ public class UserServiceImpl implements UserService {
         refreshTokenRepository.deleteByRefreshToken(token);
     }
 
+    public boolean kakaoUserCheck(String email) {
+        Optional<User> byEmail = userRepository.findByEmail(email);
+        return byEmail.isPresent();
+    }
 
+    @Transactional
     public LoginResponse kakaoLoginUser(String email) {
         Optional<User> user = userRepository.findByEmail(email);
-
-        if (user.get().getDeleteDate() != null) {
-            throw new IllegalStateException("삭제된 사용자입니다.");
-        }
 
         Token accessToken = tokenProvider.generateToken(user.get(), ACCESS_TOKEN_TIME);
         Token refreshToken = tokenProvider.generateToken(user.get(), REFRESH_TOKEN_TIME);

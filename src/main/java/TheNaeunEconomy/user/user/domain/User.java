@@ -60,13 +60,14 @@ public class User {
     private Boolean isBilling;
 
 
-    public User(AddUserRequest request) {
-        this.email = request.getEmail();
-        this.password = bCryptPasswordEncoder.encode(request.getPassword());
-        this.name = request.getName();
-        this.nickname = request.getNickname().isEmpty() ? NicknameGenerator.generate() : request.getNickname();
-        this.gender = request.getGender();
-        this.birthDate = request.getBirthDate();
+    public User(AddUserRequest addUserRequest) {
+        this.email = addUserRequest.getEmail();
+        this.password = bCryptPasswordEncoder.encode(addUserRequest.getPassword());
+        this.name = addUserRequest.getName();
+        this.nickname =
+                addUserRequest.getNickname().isEmpty() ? NicknameGenerator.generate() : addUserRequest.getNickname();
+        this.gender = addUserRequest.getGender();
+        this.birthDate = addUserRequest.getBirthDate();
         this.createDate = LocalDate.now();
         this.updateDate = LocalDate.now();
         this.isBilling = false;
@@ -74,9 +75,10 @@ public class User {
 
     public User(KakaoAccountInfo kakaoAccountInfo) {
         this.email = kakaoAccountInfo.getEmail();
-        this.password = bCryptPasswordEncoder.encode("password123!");
+        this.password = bCryptPasswordEncoder.encode(kakaoAccountInfo.getEmail() + kakaoAccountInfo.getBirthDate());
         this.name = kakaoAccountInfo.getName();
-        this.nickname = NicknameGenerator.generate();
+        this.nickname = kakaoAccountInfo.getNickname().isEmpty() ? NicknameGenerator.generate()
+                : kakaoAccountInfo.getNickname();
         this.gender = kakaoAccountInfo.getGender();
         this.birthDate = kakaoAccountInfo.getBirthDate();
         this.createDate = LocalDate.now();
