@@ -19,7 +19,6 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
-    private static final int ACCESS_TOKEN_TIME = 15;
+    private static final int ACCESS_TOKEN_TIME = 1;
     private static final int REFRESH_TOKEN_TIME = 60;
 
     private final UserRepository userRepository;
@@ -39,26 +38,24 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public HttpStatus saveUser(AddUserRequest request) {
+    public User saveUser(AddUserRequest request) {
         userRepository.findByEmail(request.getEmail()).ifPresent(user -> {
             throw new IllegalStateException("이미 존재하는 이메일입니다.");
         });
 
-        User user = new User(request);
-
-        userRepository.save(user);
-
-        return HttpStatus.OK;
+        return userRepository.save(new User(request));
     }
 
+    @Transactional
     @Override
-    public void registerUser(KakaoAccountInfo kakaoAccountInfo) {
+    public LoginResponse registerUser(KakaoAccountInfo kakaoAccountInfo) {
         Optional<User> byEmail = userRepository.findByEmail(kakaoAccountInfo.getEmail());
 
         if (byEmail.isPresent()) {
-            kakaoLoginUser(byEmail.get().getEmail());
+            return kakaoLoginUser(byEmail.get().getEmail());
         } else {
             userRepository.save(new User(kakaoAccountInfo));
+            return kakaoLoginUser(kakaoAccountInfo.getEmail());
         }
     }
 
@@ -94,7 +91,6 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user.get());
     }
 
-    @Transactional
     public void deleteExpiredTokens() {
         refreshTokenRepository.deleteExpiredTokens();
     }
@@ -105,7 +101,7 @@ public class UserServiceImpl implements UserService {
         Optional<User> user = userRepository.findByEmail(request.getEmail());
 
         if (user.get().getDeleteDate() != null) {
-            throw new IllegalStateException("삭제된 사용자입니다.");
+            throw new IllegalStateException("삭제된 사용자입니다. 관리자한테 문의주세요.");
         }
         if (!isPasswordMatch(request.getPassword(), user.get().getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");

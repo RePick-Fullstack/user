@@ -32,4 +32,15 @@ public class KakaoAccountInfo {
     @NotNull(message = "생년월일은 필수 항목입니다.")
     @Past(message = "생년월일은 과거 날짜여야 합니다.")
     private LocalDate birthDate;
+
+    public KakaoAccountInfo() {
+    }
+
+    public KakaoAccountInfo(String email, String name, String nickname, Gender gender, LocalDate birthDate) {
+        this.email = email;
+        this.name = name;
+        this.nickname = nickname;
+        this.gender = gender;
+        this.birthDate = birthDate;
+    }
 }

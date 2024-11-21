@@ -8,11 +8,10 @@ import TheNaeunEconomy.user.kakao_api.service.request.KakaoAccountInfo;
 import TheNaeunEconomy.user.user.service.request.LoginUserRequest;
 import TheNaeunEconomy.user.user.service.request.UpdateUserRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.HttpStatus;
 
 public interface UserService {
 
-    HttpStatus saveUser(AddUserRequest request);
+    User saveUser(AddUserRequest request);
 
     LoginResponse loginUser(LoginUserRequest request, HttpServletResponse response);
 
@@ -24,5 +23,5 @@ public interface UserService {
 
     UserNameResponse getUserName(String token);
 
-    void registerUser(KakaoAccountInfo kakaoAccountInfo);
+    LoginResponse registerUser(KakaoAccountInfo kakaoAccountInfo);
 }

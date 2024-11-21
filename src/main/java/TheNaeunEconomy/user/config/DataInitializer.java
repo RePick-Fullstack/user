@@ -32,19 +32,16 @@ public class DataInitializer implements ApplicationRunner {
         Random random = new Random();
 
         for (int i = 1; i <= 100; i++) {
-            AddUserRequest request = new AddUserRequest();
-            request.setEmail("example" + i + "@gmail.com");
-            request.setPassword("password123");
-            request.setName(NAMES.get(random.nextInt(NAMES.size())));
-            request.setNickname(NicknameGenerator.generate());
-            request.setGender(i % 2 == 0 ? Gender.MALE : Gender.FEMALE);
             int year = 1990 + random.nextInt(11);
             int month = 1 + random.nextInt(12);
             int day = 1 + random.nextInt(28);
+            Gender gender = i % 2 == 0 ? Gender.MALE : Gender.FEMALE;
 
-            request.setBirthDate(LocalDate.of(year, month, day));
+            AddUserRequest request = new AddUserRequest("example" + i + "@gmail.com", "password123",
+                    NAMES.get(random.nextInt(NAMES.size())), NicknameGenerator.generate(), gender,
+                    LocalDate.of(year, month, day));
 
-            if (userRepository.findByEmail("example" + i + "@gmail.com") != null) {
+            if (userRepository.findByEmail("example" + i + "@gmail.com").isEmpty()) {
                 saveUser(request);
             }
         }
