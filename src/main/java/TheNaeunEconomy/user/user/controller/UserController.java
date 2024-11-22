@@ -60,7 +60,6 @@ public class UserController {
     @PostMapping("/refresh-token")
     public ResponseEntity<AccessToken> validateAndReissueAccessToken(@RequestHeader HttpHeaders headers) {
         String refreshToken = getToken(headers, "Bearer");
-        userService.refreshToken(refreshToken);
         return ResponseEntity.ok().body(userService.refreshToken(refreshToken));
     }
 
