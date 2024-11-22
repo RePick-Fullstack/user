@@ -28,8 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
-    private static final int ACCESS_TOKEN_TIME = 1;
-    private static final int REFRESH_TOKEN_TIME = 60;
+    private static final int ACCESS_TOKEN_HOUR_TIME = 1;
+    private static final int REFRESH_TOKEN_HOUR_TIME = 120;
 
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -61,9 +61,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserNameResponse getUserName(String token) {
-        tokenProvider.validateToken(token);
-
-        Optional<User> user = userRepository.findById(extractUserIdFromToken(token));
+        Optional<User> user = userRepository.findById(tokenProvider.getUserIdFromToken(token));
 
         return new UserNameResponse(user.get().getName(), user.get().getNickname());
     }
@@ -71,7 +69,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public User updateUser(UpdateUserRequest request, String token) {
-        Optional<User> user = userRepository.findById(extractUserIdFromToken(token));
+        Optional<User> user = userRepository.findById(tokenProvider.getUserIdFromToken(token));
 
         if (user.get().getDeleteDate() != null) {
             throw new NullPointerException();
@@ -84,7 +82,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public User deleteUser(String token) {
-        Optional<User> user = userRepository.findById(extractUserIdFromToken(token));
+        Optional<User> user = userRepository.findById(tokenProvider.getUserIdFromToken(token));
 
         user.get().setDeleteDate(LocalDate.from(LocalDateTime.now()));
 
@@ -107,11 +105,11 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
-        Token accessToken = tokenProvider.generateToken(user.get(), ACCESS_TOKEN_TIME);
-        Token refreshToken = tokenProvider.generateToken(user.get(), REFRESH_TOKEN_TIME);
+        Token accessToken = tokenProvider.generateToken(user.get(), ACCESS_TOKEN_HOUR_TIME);
+        Token refreshToken = tokenProvider.generateToken(user.get(), REFRESH_TOKEN_HOUR_TIME);
 
         refreshTokenRepository.save(new RefreshToken(user.get(), refreshToken.getToken(),
-                LocalDateTime.now().plusMinutes(REFRESH_TOKEN_TIME)));
+                LocalDateTime.now().plusHours(REFRESH_TOKEN_HOUR_TIME)));
 
         return new LoginResponse(accessToken, refreshToken);
     }
@@ -131,30 +129,23 @@ public class UserServiceImpl implements UserService {
     public LoginResponse kakaoLoginUser(String email) {
         Optional<User> user = userRepository.findByEmail(email);
 
-        Token accessToken = tokenProvider.generateToken(user.get(), ACCESS_TOKEN_TIME);
-        Token refreshToken = tokenProvider.generateToken(user.get(), REFRESH_TOKEN_TIME);
+        Token accessToken = tokenProvider.generateToken(user.get(), ACCESS_TOKEN_HOUR_TIME);
+        Token refreshToken = tokenProvider.generateToken(user.get(), REFRESH_TOKEN_HOUR_TIME);
 
         refreshTokenRepository.save(new RefreshToken(user.get(), refreshToken.getToken(),
-                LocalDateTime.now().plusMinutes(REFRESH_TOKEN_TIME)));
+                LocalDateTime.now().plusHours(REFRESH_TOKEN_HOUR_TIME)));
 
         return new LoginResponse(accessToken, refreshToken);
     }
 
     public AccessToken refreshToken(String refreshToken) {
         refreshTokenRepository.findByRefreshToken(refreshToken);
-        refreshTokenRepository.updateExpirationDateByToken(LocalDateTime.now().plusMinutes(REFRESH_TOKEN_TIME),
+        refreshTokenRepository.updateExpirationDateByToken(LocalDateTime.now().plusHours(REFRESH_TOKEN_HOUR_TIME),
                 refreshToken);
         return new AccessToken(tokenProvider.validateAndReissueAccessToken(refreshToken));
     }
 
     public boolean isPasswordMatch(String rawPassword, String encodedPassword) {
         return bCryptPasswordEncoder.matches(rawPassword, encodedPassword);
-    }
-
-    private Long extractUserIdFromToken(String token) {
-        if (!tokenProvider.validateToken(token)) {
-            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
-        }
-        return tokenProvider.getUserIdFromToken(token);
     }
 }

@@ -13,22 +13,22 @@ import io.jsonwebtoken.SignatureException;
 import java.time.Duration;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @RequiredArgsConstructor
 @Service
 public class TokenProvider {
-    private static final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
+    private static final int ACCESS_TOKEN_HOUR_TIME = 1;
     private final UserRepository userRepository;
 
     @Value("${jwt.secret-key}")
     private String jwtSecretKey;
 
-    public Token generateToken(User user, int minutes) {
-        Duration expiredAt = Duration.ofMinutes(minutes);
+    public Token generateToken(User user, int hours) {
+        Duration expiredAt = Duration.ofHours(hours);
         Date now = new Date();
         String token = makeToken(user, new Date(now.getTime() + expiredAt.toMillis()));
         return new Token(token);
@@ -46,15 +46,14 @@ public class TokenProvider {
             Jwts.parser().setSigningKey(jwtSecretKey).parseClaimsJws(token);
             return true;
         } catch (SignatureException e) {
-            logger.error("Invalid JWT signature", e);
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT signature", e);
         } catch (ExpiredJwtException e) {
-            logger.warn("Expired JWT token", e);
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Expired JWT token", e);
         } catch (MalformedJwtException e) {
-            logger.error("Malformed JWT token", e);
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Malformed JWT token", e);
         } catch (Exception e) {
-            logger.error("Invalid JWT token", e);
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT token", e);
         }
-        return false;
     }
 
     public Token validateAndReissueAccessToken(String refreshToken) {
@@ -65,7 +64,7 @@ public class TokenProvider {
         User user = userRepository.findById(userIdFromToken)
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
 
-        return generateToken(user, 15);
+        return generateToken(user, ACCESS_TOKEN_HOUR_TIME);
     }
 
     public Long getUserIdFromToken(String token) {
