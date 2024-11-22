@@ -1,6 +1,7 @@
 package TheNaeunEconomy.user.user.service.request;
 
 import TheNaeunEconomy.user.user.domain.Gender;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,10 +10,12 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 public class AddUserRequest {
+    public AddUserRequest() {
+    }
+
     @NotBlank(message = "이메일은 필수 항목입니다.")
     @Email(message = "잘못된 이메일 형식입니다.")
     private String email;
