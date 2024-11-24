@@ -8,5 +8,4 @@ import lombok.Getter;
 @Getter
 public class UserNameResponse {
     private String userName;
-    private String nickname;
 }

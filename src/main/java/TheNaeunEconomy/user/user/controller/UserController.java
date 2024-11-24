@@ -32,7 +32,6 @@ public class UserController {
     @GetMapping("/name")
     public ResponseEntity<UserNameResponse> getUserName(@RequestHeader HttpHeaders headers) {
         String token = getToken(headers, "Bearer");
-        userService.getUserName(token);
         return ResponseEntity.ok(userService.getUserName(token));
     }
 

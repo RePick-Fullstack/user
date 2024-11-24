@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
     public UserNameResponse getUserName(String token) {
         Optional<User> user = userRepository.findById(tokenProvider.getUserIdFromToken(token));
 
-        return new UserNameResponse(user.get().getName(), user.get().getNickname());
+        return new UserNameResponse(user.get().getName());
     }
 
     @Transactional
