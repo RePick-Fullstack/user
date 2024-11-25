@@ -1,8 +1,9 @@
 package TheNaeunEconomy.user.user.service;
 
-import TheNaeunEconomy.user.user.domain.Gender;
-import TheNaeunEconomy.user.user.domain.User;
-import TheNaeunEconomy.user.user.service.request.AddUserRequest;
+import TheNaeunEconomy.account.domain.Gender;
+import TheNaeunEconomy.account.domain.User;
+import TheNaeunEconomy.account.user.service.UserServiceImpl;
+import TheNaeunEconomy.account.user.service.request.AddUserRequest;
 import java.time.LocalDate;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
