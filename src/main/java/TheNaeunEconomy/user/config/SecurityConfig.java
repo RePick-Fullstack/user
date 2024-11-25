@@ -37,8 +37,7 @@ public class SecurityConfig {
                                 "/api/v1/login",
                                 "/api/v1/signup",
                                 "/api/oauth/kakao/callback",
-                                "/api/oauth/kakao/login",
-                                "/api/v1/users/refresh-token"
+                                "/api/oauth/kakao/login"
                         ).permitAll()
                         .requestMatchers("/api/v1/users/**").authenticated()
                         .anyRequest().authenticated()

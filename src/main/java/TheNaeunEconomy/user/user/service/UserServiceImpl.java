@@ -41,7 +41,6 @@ public class UserServiceImpl implements UserService {
         userRepository.findByEmail(request.getEmail()).ifPresent(user -> {
             throw new IllegalStateException("이미 존재하는 이메일입니다.");
         });
-
         return userRepository.save(new User(request));
     }
 
