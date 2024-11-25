@@ -40,7 +40,8 @@ public class SecurityConfig {
                                 "/api/oauth/kakao/callback",
                                 "/api/oauth/kakao/login"
                         ).permitAll()
-                        .requestMatchers("/api/v1/users/**").authenticated()
+                        .requestMatchers("/api/v1/users/**").hasRole("USER")
+                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
