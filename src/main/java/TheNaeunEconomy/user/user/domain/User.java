@@ -56,8 +56,13 @@ public class User {
     @Column(name = "delete_date")
     private LocalDate deleteDate;
 
+    @Column(name = "role")
+    private Role role;
+
     @Column(name = "is_billing")
     private Boolean isBilling;
+
+
 
 
     public User(AddUserRequest addUserRequest) {
@@ -70,6 +75,7 @@ public class User {
         this.birthDate = addUserRequest.getBirthDate();
         this.createDate = LocalDate.now();
         this.updateDate = LocalDate.now();
+        this.role = Role.USER;
         this.isBilling = false;
     }
 
@@ -83,6 +89,7 @@ public class User {
         this.birthDate = kakaoAccountInfo.getBirthDate();
         this.createDate = LocalDate.now();
         this.updateDate = LocalDate.now();
+        this.role = Role.USER;
         this.isBilling = false;
     }
 
