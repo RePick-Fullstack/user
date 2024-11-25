@@ -1,8 +1,8 @@
 package TheNaeunEconomy.user.user.controller;
 
-import TheNaeunEconomy.user.kakao_api.service.request.AccessToken;
 import TheNaeunEconomy.user.user.domain.User;
 import TheNaeunEconomy.user.user.service.UserServiceImpl;
+import TheNaeunEconomy.user.user.service.response.LoginResponse;
 import TheNaeunEconomy.user.user.service.response.UserNameResponse;
 import TheNaeunEconomy.user.user.service.request.UpdateUserRequest;
 import jakarta.annotation.Nullable;
@@ -57,7 +57,7 @@ public class UserController {
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<AccessToken> validateAndReissueAccessToken(@RequestHeader HttpHeaders headers) {
+    public ResponseEntity<LoginResponse> validateAndReissueAccessToken(@RequestHeader HttpHeaders headers) {
         String refreshToken = getToken(headers, "Bearer");
         return ResponseEntity.ok().body(userService.refreshToken(refreshToken));
     }

@@ -1,7 +1,6 @@
 package TheNaeunEconomy.user.user.service;
 
 import TheNaeunEconomy.user.jwt.RefreshTokenRepository;
-import TheNaeunEconomy.user.kakao_api.service.request.AccessToken;
 import TheNaeunEconomy.user.user.repository.UserRepository;
 import TheNaeunEconomy.user.jwt.RefreshToken;
 import TheNaeunEconomy.user.user.domain.User;
@@ -28,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
-    private static final int ACCESS_TOKEN_MINUTE_TIME = 30;
+    private static final int ACCESS_TOKEN_MINUTE_TIME = 1;
     private static final int REFRESH_TOKEN_MINUTE_TIME = 60;
 
     private final UserRepository userRepository;
@@ -60,8 +59,8 @@ public class UserServiceImpl implements UserService {
     public UserNameResponse getUserName(String token) {
         Long userId = tokenProvider.getUserIdFromToken(token);
 
-        return userRepository.findById(userId).map(user -> new UserNameResponse(user.getName())).orElseThrow(
-                () -> new IllegalArgumentException("토큰에 대한 사용자를 찾을 수 없습니다. " + token)); // User가 없을 경우 예외 처리
+        return userRepository.findById(userId).map(user -> new UserNameResponse(user.getName()))
+                .orElseThrow(() -> new IllegalArgumentException("토큰에 대한 사용자를 찾을 수 없습니다. " + token));
     }
 
 
@@ -103,13 +102,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("해당 이메일의 사용자가 존재하지 않습니다."));
 
-        if (user.getDeleteDate() != null) {
-            throw new IllegalStateException("삭제된 사용자입니다. 관리자한테 문의주세요.");
-        }
-
-        if (!isPasswordMatch(request.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        }
+        validateUser(user, request.getPassword());
 
         Token accessToken = tokenProvider.generateToken(user, ACCESS_TOKEN_MINUTE_TIME);
         Token refreshToken = tokenProvider.generateToken(user, REFRESH_TOKEN_MINUTE_TIME);
@@ -118,6 +111,16 @@ public class UserServiceImpl implements UserService {
                 LocalDateTime.now().plusMinutes(REFRESH_TOKEN_MINUTE_TIME)));
 
         return new LoginResponse(accessToken, refreshToken);
+    }
+
+    private void validateUser(User user, String rawPassword) {
+        if (user.getDeleteDate() != null) {
+            throw new IllegalStateException("삭제된 사용자입니다. 관리자에게 문의하세요.");
+        }
+
+        if (!isPasswordMatch(rawPassword, user.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
     }
 
 
@@ -146,13 +149,24 @@ public class UserServiceImpl implements UserService {
         return new LoginResponse(accessToken, refreshToken);
     }
 
+    @Transactional
+    public LoginResponse refreshToken(String refreshToken) {
+        refreshTokenRepository.findByRefreshToken(refreshToken)
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 리프레시 토큰입니다."));
 
-    public AccessToken refreshToken(String refreshToken) {
-        refreshTokenRepository.findByRefreshToken(refreshToken);
-        refreshTokenRepository.updateExpirationDateByToken(LocalDateTime.now().plusMinutes(REFRESH_TOKEN_MINUTE_TIME),
-                refreshToken);
-        return new AccessToken(tokenProvider.validateAndReissueAccessToken(refreshToken));
+        refreshTokenRepository.deleteByRefreshToken(refreshToken);
+
+        User user = userRepository.findById(tokenProvider.getUserIdFromToken(refreshToken))
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
+
+        Token newAccessToken = tokenProvider.generateToken(user, ACCESS_TOKEN_MINUTE_TIME);
+        Token newRefreshToken = tokenProvider.generateToken(user, REFRESH_TOKEN_MINUTE_TIME);
+
+        refreshTokenRepository.save(new RefreshToken(user, newRefreshToken.getToken(),
+                LocalDateTime.now().plusMinutes(REFRESH_TOKEN_MINUTE_TIME)));
+        return new LoginResponse(newAccessToken, newRefreshToken);
     }
+
 
     public void deleteExpiredTokens() {
         refreshTokenRepository.deleteExpiredTokens();
