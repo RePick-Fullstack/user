@@ -21,14 +21,14 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 @Service
 public class TokenProvider {
-    private static final int ACCESS_TOKEN_HOUR_TIME = 1;
+    private static final int ACCESS_TOKEN_MINUTE_TIME = 30;
     private final UserRepository userRepository;
 
     @Value("${jwt.secret-key}")
     private String jwtSecretKey;
 
-    public Token generateToken(User user, int hours) {
-        Duration expiredAt = Duration.ofHours(hours);
+    public Token generateToken(User user, int minutes) {
+        Duration expiredAt = Duration.ofMinutes(minutes);
         Date now = new Date();
         String token = makeToken(user, new Date(now.getTime() + expiredAt.toMillis()));
         return new Token(token);
@@ -64,7 +64,7 @@ public class TokenProvider {
         User user = userRepository.findById(userIdFromToken)
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
 
-        return generateToken(user, ACCESS_TOKEN_HOUR_TIME);
+        return generateToken(user, ACCESS_TOKEN_MINUTE_TIME);
     }
 
     public Long getUserIdFromToken(String token) {

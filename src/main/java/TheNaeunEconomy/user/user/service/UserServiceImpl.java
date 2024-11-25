@@ -28,8 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
-    private static final int ACCESS_TOKEN_HOUR_TIME = 1;
-    private static final int REFRESH_TOKEN_HOUR_TIME = 120;
+    private static final int ACCESS_TOKEN_MINUTE_TIME = 30;
+    private static final int REFRESH_TOKEN_MINUTE_TIME = 60;
 
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -50,8 +50,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public LoginResponse registerUser(KakaoAccountInfo kakaoAccountInfo) {
         return userRepository.findByEmail(kakaoAccountInfo.getEmail())
-                .map(existingUser -> kakaoLoginUser(existingUser.getEmail()))
-                .orElseGet(() -> {
+                .map(existingUser -> kakaoLoginUser(existingUser.getEmail())).orElseGet(() -> {
                     userRepository.save(new User(kakaoAccountInfo));
                     return kakaoLoginUser(kakaoAccountInfo.getEmail());
                 });
@@ -61,10 +60,8 @@ public class UserServiceImpl implements UserService {
     public UserNameResponse getUserName(String token) {
         Long userId = tokenProvider.getUserIdFromToken(token);
 
-        return userRepository.findById(userId)
-                .map(user -> new UserNameResponse(user.getName()))
-                .orElseThrow(
-                        () -> new IllegalArgumentException("토큰에 대한 사용자를 찾을 수 없습니다. " + token)); // User가 없을 경우 예외 처리
+        return userRepository.findById(userId).map(user -> new UserNameResponse(user.getName())).orElseThrow(
+                () -> new IllegalArgumentException("토큰에 대한 사용자를 찾을 수 없습니다. " + token)); // User가 없을 경우 예외 처리
     }
 
 
@@ -114,11 +111,11 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
-        Token accessToken = tokenProvider.generateToken(user, ACCESS_TOKEN_HOUR_TIME);
-        Token refreshToken = tokenProvider.generateToken(user, REFRESH_TOKEN_HOUR_TIME);
+        Token accessToken = tokenProvider.generateToken(user, ACCESS_TOKEN_MINUTE_TIME);
+        Token refreshToken = tokenProvider.generateToken(user, REFRESH_TOKEN_MINUTE_TIME);
 
         refreshTokenRepository.save(new RefreshToken(user, refreshToken.getToken(),
-                LocalDateTime.now().plusHours(REFRESH_TOKEN_HOUR_TIME)));
+                LocalDateTime.now().plusMinutes(REFRESH_TOKEN_MINUTE_TIME)));
 
         return new LoginResponse(accessToken, refreshToken);
     }
@@ -140,11 +137,11 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("해당 이메일의 사용자가 존재하지 않습니다."));
 
-        Token accessToken = tokenProvider.generateToken(user, ACCESS_TOKEN_HOUR_TIME);
-        Token refreshToken = tokenProvider.generateToken(user, REFRESH_TOKEN_HOUR_TIME);
+        Token accessToken = tokenProvider.generateToken(user, ACCESS_TOKEN_MINUTE_TIME);
+        Token refreshToken = tokenProvider.generateToken(user, REFRESH_TOKEN_MINUTE_TIME);
 
         refreshTokenRepository.save(new RefreshToken(user, refreshToken.getToken(),
-                LocalDateTime.now().plusHours(REFRESH_TOKEN_HOUR_TIME)));
+                LocalDateTime.now().plusMinutes(REFRESH_TOKEN_MINUTE_TIME)));
 
         return new LoginResponse(accessToken, refreshToken);
     }
@@ -152,9 +149,13 @@ public class UserServiceImpl implements UserService {
 
     public AccessToken refreshToken(String refreshToken) {
         refreshTokenRepository.findByRefreshToken(refreshToken);
-        refreshTokenRepository.updateExpirationDateByToken(LocalDateTime.now().plusHours(REFRESH_TOKEN_HOUR_TIME),
+        refreshTokenRepository.updateExpirationDateByToken(LocalDateTime.now().plusMinutes(REFRESH_TOKEN_MINUTE_TIME),
                 refreshToken);
         return new AccessToken(tokenProvider.validateAndReissueAccessToken(refreshToken));
+    }
+
+    public void deleteExpiredTokens() {
+        refreshTokenRepository.deleteExpiredTokens();
     }
 
     public boolean isPasswordMatch(String rawPassword, String encodedPassword) {
