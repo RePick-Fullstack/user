@@ -1,6 +1,5 @@
 package TheNaeunEconomy.user.user.service;
 
-import TheNaeunEconomy.user.jwt.TokenProvider;
 import TheNaeunEconomy.user.user.domain.Gender;
 import TheNaeunEconomy.user.user.domain.User;
 import TheNaeunEconomy.user.user.service.request.AddUserRequest;

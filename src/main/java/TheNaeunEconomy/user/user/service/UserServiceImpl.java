@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
-    private static final int ACCESS_TOKEN_MINUTE_TIME = 1;
+    private static final int ACCESS_TOKEN_MINUTE_TIME = 15;
     private static final int REFRESH_TOKEN_MINUTE_TIME = 60;
 
     private final UserRepository userRepository;
