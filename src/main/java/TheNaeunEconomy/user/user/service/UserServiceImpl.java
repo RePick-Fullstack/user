@@ -49,70 +49,80 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public LoginResponse registerUser(KakaoAccountInfo kakaoAccountInfo) {
-        Optional<User> byEmail = userRepository.findByEmail(kakaoAccountInfo.getEmail());
-
-        if (byEmail.isPresent()) {
-            return kakaoLoginUser(byEmail.get().getEmail());
-        } else {
-            userRepository.save(new User(kakaoAccountInfo));
-            return kakaoLoginUser(kakaoAccountInfo.getEmail());
-        }
+        return userRepository.findByEmail(kakaoAccountInfo.getEmail())
+                .map(existingUser -> kakaoLoginUser(existingUser.getEmail()))
+                .orElseGet(() -> {
+                    userRepository.save(new User(kakaoAccountInfo));
+                    return kakaoLoginUser(kakaoAccountInfo.getEmail());
+                });
     }
 
     @Override
     public UserNameResponse getUserName(String token) {
-        Optional<User> user = userRepository.findById(tokenProvider.getUserIdFromToken(token));
+        Long userId = tokenProvider.getUserIdFromToken(token);
 
-        return new UserNameResponse(user.get().getName());
+        return userRepository.findById(userId)
+                .map(user -> new UserNameResponse(user.getName()))
+                .orElseThrow(
+                        () -> new IllegalArgumentException("토큰에 대한 사용자를 찾을 수 없습니다. " + token)); // User가 없을 경우 예외 처리
     }
+
 
     @Transactional
     @Override
     public User updateUser(UpdateUserRequest request, String token) {
-        Optional<User> user = userRepository.findById(tokenProvider.getUserIdFromToken(token));
+        Long userId = tokenProvider.getUserIdFromToken(token);
 
-        if (user.get().getDeleteDate() != null) {
-            throw new NullPointerException();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("토큰에 대한 사용자를 찾을 수 없습니다. " + token));
+
+        if (user.getDeleteDate() != null) {
+            throw new IllegalStateException("사용자는 비활성화 상태 입니다.");
         }
-        user.get().updateUserDetails(request);
 
-        return userRepository.save(user.get());
+        user.updateUserDetails(request);
+
+        return userRepository.save(user);
     }
+
 
     @Transactional
     @Override
     public User deleteUser(String token) {
-        Optional<User> user = userRepository.findById(tokenProvider.getUserIdFromToken(token));
+        Long userId = tokenProvider.getUserIdFromToken(token);
 
-        user.get().setDeleteDate(LocalDate.from(LocalDateTime.now()));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("토큰에 대한 사용자를 찾을 수 없습니다. " + token));
 
-        return userRepository.save(user.get());
+        user.setDeleteDate(LocalDate.now());
+
+        return userRepository.save(user);
     }
 
-    public void deleteExpiredTokens() {
-        refreshTokenRepository.deleteExpiredTokens();
-    }
 
     @Transactional
     @Override
     public LoginResponse loginUser(LoginUserRequest request, HttpServletResponse response) {
-        Optional<User> user = userRepository.findByEmail(request.getEmail());
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일의 사용자가 존재하지 않습니다."));
 
-        if (user.get().getDeleteDate() != null) {
+        if (user.getDeleteDate() != null) {
             throw new IllegalStateException("삭제된 사용자입니다. 관리자한테 문의주세요.");
         }
-        if (!isPasswordMatch(request.getPassword(), user.get().getPassword())) {
+
+        if (!isPasswordMatch(request.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
-        Token accessToken = tokenProvider.generateToken(user.get(), ACCESS_TOKEN_HOUR_TIME);
-        Token refreshToken = tokenProvider.generateToken(user.get(), REFRESH_TOKEN_HOUR_TIME);
+        Token accessToken = tokenProvider.generateToken(user, ACCESS_TOKEN_HOUR_TIME);
+        Token refreshToken = tokenProvider.generateToken(user, REFRESH_TOKEN_HOUR_TIME);
 
-        refreshTokenRepository.save(new RefreshToken(user.get(), refreshToken.getToken(),
+        refreshTokenRepository.save(new RefreshToken(user, refreshToken.getToken(),
                 LocalDateTime.now().plusHours(REFRESH_TOKEN_HOUR_TIME)));
 
         return new LoginResponse(accessToken, refreshToken);
     }
+
 
     @Transactional
     @Override
@@ -127,16 +137,18 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public LoginResponse kakaoLoginUser(String email) {
-        Optional<User> user = userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일의 사용자가 존재하지 않습니다."));
 
-        Token accessToken = tokenProvider.generateToken(user.get(), ACCESS_TOKEN_HOUR_TIME);
-        Token refreshToken = tokenProvider.generateToken(user.get(), REFRESH_TOKEN_HOUR_TIME);
+        Token accessToken = tokenProvider.generateToken(user, ACCESS_TOKEN_HOUR_TIME);
+        Token refreshToken = tokenProvider.generateToken(user, REFRESH_TOKEN_HOUR_TIME);
 
-        refreshTokenRepository.save(new RefreshToken(user.get(), refreshToken.getToken(),
+        refreshTokenRepository.save(new RefreshToken(user, refreshToken.getToken(),
                 LocalDateTime.now().plusHours(REFRESH_TOKEN_HOUR_TIME)));
 
         return new LoginResponse(accessToken, refreshToken);
     }
+
 
     public AccessToken refreshToken(String refreshToken) {
         refreshTokenRepository.findByRefreshToken(refreshToken);
