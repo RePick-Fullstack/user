@@ -1,6 +1,7 @@
 package TheNaeunEconomy.user.jwt;
 
 
+import TheNaeunEconomy.user.user.domain.Role;
 import TheNaeunEconomy.user.user.repository.UserRepository;
 import TheNaeunEconomy.user.user.domain.User;
 import io.jsonwebtoken.Claims;
@@ -38,7 +39,9 @@ public class TokenProvider {
     private String makeToken(User user, Date expiry) {
         Date now = new Date();
         return Jwts.builder().setHeaderParam(Header.TYPE, Header.JWT_TYPE).setIssuedAt(now).setExpiration(expiry)
-                .claim("userId", user.getId()).claim("nickName", user.getNickname())
+                .claim("userId", user.getId())
+                .claim("nickName", user.getNickname())
+                .claim("role", user.getRole())
                 .signWith(SignatureAlgorithm.HS256, jwtSecretKey).compact();
     }
 
@@ -71,5 +74,10 @@ public class TokenProvider {
     public Long getUserIdFromToken(String token) {
         Claims claims = Jwts.parser().setSigningKey(jwtSecretKey).parseClaimsJws(token).getBody();
         return claims.get("userId", Long.class);
+    }
+
+    public Role getRoleFromToken(String token) {
+        Claims claims = Jwts.parser().setSigningKey(jwtSecretKey).parseClaimsJws(token).getBody();
+        return claims.get("role", Role.class);
     }
 }
