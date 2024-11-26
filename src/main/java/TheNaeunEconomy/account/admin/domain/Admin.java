@@ -1,5 +1,6 @@
 package TheNaeunEconomy.account.admin.domain;
 
+import TheNaeunEconomy.account.admin.service.request.AddAdminRequest;
 import TheNaeunEconomy.account.domain.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 
 @Table(name = "admins")
@@ -19,6 +21,8 @@ import lombok.Setter;
 @Setter
 @Entity
 public class Admin {
+    static BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, updatable = false, nullable = false)
@@ -35,4 +39,11 @@ public class Admin {
 
     @Column(name = "role")
     private Role role;
+
+    public Admin(AddAdminRequest addAdminRequest) {
+        this.adminCode = addAdminRequest.getAdminCode();
+        this.name = addAdminRequest.getName();
+        this.password = bCryptPasswordEncoder.encode(addAdminRequest.getPassword());
+        this.role = addAdminRequest.getRole();
+    }
 }
