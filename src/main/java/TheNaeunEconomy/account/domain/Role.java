@@ -1,5 +1,5 @@
 package TheNaeunEconomy.account.domain;
 
 public enum Role {
-    USER, ADMIN
+    USER, SUPER_ADMIN, ADMIN
 }

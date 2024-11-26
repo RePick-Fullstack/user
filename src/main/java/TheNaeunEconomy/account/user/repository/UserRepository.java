@@ -1,7 +1,7 @@
 package TheNaeunEconomy.account.user.repository;
 
 
-import TheNaeunEconomy.account.domain.User;
+import TheNaeunEconomy.account.user.domain.User;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;

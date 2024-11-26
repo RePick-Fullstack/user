@@ -1,6 +1,6 @@
 package TheNaeunEconomy.account.user.controller;
 
-import TheNaeunEconomy.account.domain.User;
+import TheNaeunEconomy.account.user.domain.User;
 import TheNaeunEconomy.account.user.service.UserServiceImpl;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import TheNaeunEconomy.account.user.service.response.UserNameResponse;

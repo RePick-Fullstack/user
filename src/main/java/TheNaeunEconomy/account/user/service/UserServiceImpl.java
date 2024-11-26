@@ -3,7 +3,7 @@ package TheNaeunEconomy.account.user.service;
 import TheNaeunEconomy.jwt.RefreshTokenRepository;
 import TheNaeunEconomy.account.user.repository.UserRepository;
 import TheNaeunEconomy.jwt.RefreshToken;
-import TheNaeunEconomy.account.domain.User;
+import TheNaeunEconomy.account.user.domain.User;
 import TheNaeunEconomy.jwt.TokenProvider;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import TheNaeunEconomy.jwt.Token;

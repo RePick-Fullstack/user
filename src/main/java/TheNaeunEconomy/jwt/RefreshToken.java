@@ -1,6 +1,6 @@
 package TheNaeunEconomy.jwt;
 
-import TheNaeunEconomy.account.domain.User;
+import TheNaeunEconomy.account.user.domain.User;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import lombok.Getter;

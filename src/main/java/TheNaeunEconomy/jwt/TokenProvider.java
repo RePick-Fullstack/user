@@ -2,7 +2,7 @@ package TheNaeunEconomy.jwt;
 
 import TheNaeunEconomy.account.domain.Role;
 import TheNaeunEconomy.account.user.repository.UserRepository;
-import TheNaeunEconomy.account.domain.User;
+import TheNaeunEconomy.account.user.domain.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Header;

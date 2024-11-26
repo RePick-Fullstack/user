@@ -2,7 +2,7 @@ package TheNaeunEconomy.config;
 
 import TheNaeunEconomy.account.user.repository.UserRepository;
 import TheNaeunEconomy.account.domain.Gender;
-import TheNaeunEconomy.account.domain.User;
+import TheNaeunEconomy.account.user.domain.User;
 import TheNaeunEconomy.account.user.service.request.AddUserRequest;
 import TheNaeunEconomy.util.NicknameGenerator;
 import jakarta.annotation.PreDestroy;

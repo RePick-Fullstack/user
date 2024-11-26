@@ -1,7 +1,7 @@
 package TheNaeunEconomy.account.user.service;
 
 import TheNaeunEconomy.account.user.repository.UserRepository;
-import TheNaeunEconomy.account.domain.User;
+import TheNaeunEconomy.account.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;

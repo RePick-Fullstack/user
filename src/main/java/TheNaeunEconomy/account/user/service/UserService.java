@@ -1,6 +1,6 @@
 package TheNaeunEconomy.account.user.service;
 
-import TheNaeunEconomy.account.domain.User;
+import TheNaeunEconomy.account.user.domain.User;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import TheNaeunEconomy.account.user.service.response.UserNameResponse;
 import TheNaeunEconomy.account.user.service.request.AddUserRequest;
