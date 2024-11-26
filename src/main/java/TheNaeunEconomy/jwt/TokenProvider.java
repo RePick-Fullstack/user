@@ -1,6 +1,5 @@
 package TheNaeunEconomy.jwt;
 
-
 import TheNaeunEconomy.account.domain.Role;
 import TheNaeunEconomy.account.user.repository.UserRepository;
 import TheNaeunEconomy.account.domain.User;
@@ -37,11 +36,15 @@ public class TokenProvider {
 
     private String makeToken(User user, Date expiry) {
         Date now = new Date();
-        return Jwts.builder().setHeaderParam(Header.TYPE, Header.JWT_TYPE).setIssuedAt(now).setExpiration(expiry)
+        return Jwts.builder()
+                .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+                .setIssuedAt(now)
+                .setExpiration(expiry)
                 .claim("userId", user.getId())
                 .claim("nickName", user.getNickname())
-                .claim("role", user.getRole())
-                .signWith(SignatureAlgorithm.HS256, jwtSecretKey).compact();
+                .claim("role", user.getRole().name()) // Store role as a String
+                .signWith(SignatureAlgorithm.HS256, jwtSecretKey)
+                .compact();
     }
 
     public boolean validateToken(String token) {
@@ -77,6 +80,7 @@ public class TokenProvider {
 
     public Role getRoleFromToken(String token) {
         Claims claims = Jwts.parser().setSigningKey(jwtSecretKey).parseClaimsJws(token).getBody();
-        return claims.get("role", Role.class);
+        String roleString = claims.get("role", String.class);
+        return Role.valueOf(roleString);
     }
 }

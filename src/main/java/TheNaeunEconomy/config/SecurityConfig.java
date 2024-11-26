@@ -40,11 +40,12 @@ public class SecurityConfig {
                                 "/api/oauth/kakao/callback",
                                 "/api/oauth/kakao/login"
                         ).permitAll()
-                        .requestMatchers("/api/v1/users/**").hasRole("USER")
-                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/users/**").hasAuthority("ROLE_USER")
+                        .requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthenticationFilter(tokenProvider),
+                        UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
