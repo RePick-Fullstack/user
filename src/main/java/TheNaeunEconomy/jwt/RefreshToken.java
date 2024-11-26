@@ -1,5 +1,6 @@
 package TheNaeunEconomy.jwt;
 
+import TheNaeunEconomy.account.admin.domain.Admin;
 import TheNaeunEconomy.account.user.domain.User;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -16,8 +17,13 @@ public class RefreshToken {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "admin_id", referencedColumnName = "id")
+    private Admin admin;
+
 
     @Column(name = "refresh_token", nullable = false)
     private String refreshToken;

@@ -1,5 +1,6 @@
 package TheNaeunEconomy.jwt;
 
+import TheNaeunEconomy.account.admin.domain.Admin;
 import TheNaeunEconomy.account.domain.Role;
 import TheNaeunEconomy.account.user.repository.UserRepository;
 import TheNaeunEconomy.account.user.domain.User;
@@ -47,6 +48,25 @@ public class TokenProvider {
                 .compact();
     }
 
+    public Token generateToken(Admin admin, int minutes) {
+        Duration expiredAt = Duration.ofMinutes(minutes);
+        Date now = new Date();
+        String token = makeToken(admin, new Date(now.getTime() + expiredAt.toMillis()));
+        return new Token(token);
+    }
+
+    private String makeToken(Admin admin, Date expiry) {
+        Date now = new Date();
+        return Jwts.builder()
+                .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+                .setIssuedAt(now)
+                .setExpiration(expiry)
+                .claim("userId", admin.getId())
+                .claim("role", admin.getRole().name())
+                .signWith(SignatureAlgorithm.HS256, jwtSecretKey)
+                .compact();
+    }
+
     public boolean validateToken(String token) {
         try {
             Jwts.parser().setSigningKey(jwtSecretKey).parseClaimsJws(token);
@@ -60,17 +80,6 @@ public class TokenProvider {
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT token", e);
         }
-    }
-
-    public Token validateAndReissueAccessToken(String refreshToken) {
-        if (!validateToken(refreshToken)) {
-            throw new IllegalArgumentException("유효하지 않은 리프레시 토큰입니다.");
-        }
-        Long userIdFromToken = getUserIdFromToken(refreshToken);
-        User user = userRepository.findById(userIdFromToken)
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 정보입니다."));
-
-        return generateToken(user, ACCESS_TOKEN_MINUTE_TIME);
     }
 
     public Long getUserIdFromToken(String token) {
