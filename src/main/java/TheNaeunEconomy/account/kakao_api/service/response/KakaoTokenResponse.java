@@ -1,4 +1,4 @@
-package TheNaeunEconomy.kakao_api.service.response;
+package TheNaeunEconomy.account.kakao_api.service.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

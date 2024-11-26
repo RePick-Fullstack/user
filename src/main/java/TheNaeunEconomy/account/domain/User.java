@@ -2,7 +2,7 @@ package TheNaeunEconomy.account.domain;
 
 
 import TheNaeunEconomy.account.user.service.request.AddUserRequest;
-import TheNaeunEconomy.kakao_api.service.request.KakaoAccountInfo;
+import TheNaeunEconomy.account.kakao_api.service.request.KakaoAccountInfo;
 import TheNaeunEconomy.account.user.service.request.UpdateUserRequest;
 import TheNaeunEconomy.util.NicknameGenerator;
 import jakarta.persistence.*;

@@ -1,4 +1,4 @@
-package TheNaeunEconomy.kakao_api.service.request;
+package TheNaeunEconomy.account.kakao_api.service.request;
 
 import TheNaeunEconomy.jwt.Token;
 import lombok.AllArgsConstructor;

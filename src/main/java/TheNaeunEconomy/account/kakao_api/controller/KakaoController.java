@@ -1,8 +1,8 @@
-package TheNaeunEconomy.kakao_api.controller;
+package TheNaeunEconomy.account.kakao_api.controller;
 
 
-import TheNaeunEconomy.kakao_api.service.KakaoService;
-import TheNaeunEconomy.kakao_api.service.request.KakaoAccountInfo;
+import TheNaeunEconomy.account.kakao_api.service.KakaoService;
+import TheNaeunEconomy.account.kakao_api.service.request.KakaoAccountInfo;
 import TheNaeunEconomy.account.user.service.UserServiceImpl;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import jakarta.servlet.http.HttpServletResponse;
