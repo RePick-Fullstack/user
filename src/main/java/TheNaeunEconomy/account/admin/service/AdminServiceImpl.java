@@ -10,25 +10,35 @@ import TheNaeunEconomy.jwt.RefreshTokenRepository;
 import TheNaeunEconomy.jwt.Token;
 import TheNaeunEconomy.jwt.TokenProvider;
 import java.time.LocalDateTime;
-import java.util.Optional;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@RequiredArgsConstructor
+
 @Service
 @Slf4j
 @Transactional
 public class AdminServiceImpl implements AdminService {
 
-    private final static int ACCESS_TOKEN_MINUTE_TIME = 30;
-    private final static int REFRESH_TOKEN_MINUTE_TIME = 60;
+    @Value("{ACCESS_TOKEN_MINUTE_TIME}")
+    private int ACCESS_TOKEN_MINUTE_TIME;
+    @Value("{REFRESH_TOKEN_MINUTE_TIME}")
+    private int REFRESH_TOKEN_MINUTE_TIME;
+
+    public AdminServiceImpl(BCryptPasswordEncoder bCryptPasswordEncoder, TokenProvider tokenProvider,
+                            RefreshTokenRepository refreshTokenRepository, AdminRepository adminRepository) {
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.tokenProvider = tokenProvider;
+        this.refreshTokenRepository = refreshTokenRepository;
+        this.adminRepository = adminRepository;
+    }
+
     private final AdminRepository adminRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final TokenProvider tokenProvider;
-    static BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
     @Override
@@ -38,16 +48,16 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public LoginResponse login(LoginAdminRequest loginAdminRequest) {
-        Optional<Admin> admin = adminRepository.findByAdminCode(loginAdminRequest.getAdminCode());
+        Admin admin = adminRepository.findByAdminCode(loginAdminRequest.getAdminCode()).orElseThrow();
 
-        if (!bCryptPasswordEncoder.matches(loginAdminRequest.getPassword(), admin.get().getPassword())) {
+        if (!bCryptPasswordEncoder.matches(loginAdminRequest.getPassword(), admin.getPassword())) {
             throw new IllegalStateException("비밀번호가 틀렸습니다.");
         }
 
-        Token accessToken = tokenProvider.generateToken(admin.orElse(null), ACCESS_TOKEN_MINUTE_TIME);
-        Token refreshToken = tokenProvider.generateToken(admin.orElse(null), REFRESH_TOKEN_MINUTE_TIME);
+        Token accessToken = tokenProvider.generateToken(admin, ACCESS_TOKEN_MINUTE_TIME);
+        Token refreshToken = tokenProvider.generateToken(admin, REFRESH_TOKEN_MINUTE_TIME);
 
-        refreshTokenRepository.save(new RefreshToken(admin.orElse(null), refreshToken.getToken(),
+        refreshTokenRepository.save(new RefreshToken(admin, refreshToken.getToken(),
                 LocalDateTime.now().plusMinutes(REFRESH_TOKEN_MINUTE_TIME)));
         return new LoginResponse(accessToken, refreshToken);
     }
