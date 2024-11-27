@@ -4,6 +4,7 @@ import TheNaeunEconomy.account.admin.domain.Admin;
 import TheNaeunEconomy.account.admin.repository.AdminRepository;
 import TheNaeunEconomy.account.admin.service.request.AddAdminRequest;
 import TheNaeunEconomy.account.admin.service.request.LoginAdminRequest;
+import TheNaeunEconomy.account.admin.service.request.UpdateAdminRequest;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import TheNaeunEconomy.jwt.domain.RefreshToken;
 import TheNaeunEconomy.jwt.RefreshTokenRepository;
@@ -60,5 +61,12 @@ public class AdminServiceImpl implements AdminService {
         refreshTokenRepository.save(new RefreshToken(admin, refreshToken.getToken(),
                 LocalDateTime.now().plusMinutes(REFRESH_TOKEN_MINUTE_TIME)));
         return new LoginResponse(accessToken, refreshToken);
+    }
+
+    public Admin updateAdmin(UpdateAdminRequest request, String token) {
+        Long adminId = tokenProvider.getAdminIdFromToken(token);
+        Admin admin = adminRepository.findById(adminId).orElseThrow();
+        admin.updateUserDetails(request);
+        return adminRepository.save(admin);
     }
 }
