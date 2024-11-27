@@ -4,13 +4,15 @@ package TheNaeunEconomy.account.admin.controller;
 import TheNaeunEconomy.account.admin.domain.Admin;
 import TheNaeunEconomy.account.admin.service.AdminServiceImpl;
 import TheNaeunEconomy.account.admin.service.request.AddAdminRequest;
+import TheNaeunEconomy.account.admin.service.request.DeleteAdminRequest;
 import TheNaeunEconomy.account.admin.service.request.UpdateAdminRequest;
-import TheNaeunEconomy.account.user.service.request.UpdateUserRequest;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,10 +32,17 @@ public class AdminController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Admin> updateAdmin(@RequestBody @Valid UpdateAdminRequest request,
-                                             @RequestHeader HttpHeaders headers) {
+    public ResponseEntity<Admin> updateAdmin(@RequestHeader HttpHeaders headers,
+                                             @RequestBody @Valid UpdateAdminRequest request) {
         String token = getToken(headers, "Bearer");
-        return ResponseEntity.ok().body(adminService.updateAdmin(request, token));
+        return ResponseEntity.ok().body(adminService.updateAdmin(token, request));
+    }
+
+    @DeleteMapping("/delete")
+    public BodyBuilder deleteAdmin(@RequestHeader HttpHeaders headers, @RequestBody @Valid DeleteAdminRequest request) {
+        String token = getToken(headers, "Bearer");
+        adminService.deleteAdmin(token, request);
+        return ResponseEntity.ok();
     }
 
     @Nullable

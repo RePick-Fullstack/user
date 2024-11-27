@@ -3,6 +3,7 @@ package TheNaeunEconomy.account.admin.service;
 import TheNaeunEconomy.account.admin.domain.Admin;
 import TheNaeunEconomy.account.admin.repository.AdminRepository;
 import TheNaeunEconomy.account.admin.service.request.AddAdminRequest;
+import TheNaeunEconomy.account.admin.service.request.DeleteAdminRequest;
 import TheNaeunEconomy.account.admin.service.request.LoginAdminRequest;
 import TheNaeunEconomy.account.admin.service.request.UpdateAdminRequest;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
@@ -63,10 +64,17 @@ public class AdminServiceImpl implements AdminService {
         return new LoginResponse(accessToken, refreshToken);
     }
 
-    public Admin updateAdmin(UpdateAdminRequest request, String token) {
+    @Override
+    public Admin updateAdmin(String token, UpdateAdminRequest request) {
         Long adminId = tokenProvider.getAdminIdFromToken(token);
         Admin admin = adminRepository.findById(adminId).orElseThrow();
         admin.updateUserDetails(request);
         return adminRepository.save(admin);
+    }
+
+    @Override
+    public void deleteAdmin(String token, DeleteAdminRequest request) {
+        tokenProvider.validateToken(token);
+        adminRepository.deleteById(request.getAdminId());
     }
 }
