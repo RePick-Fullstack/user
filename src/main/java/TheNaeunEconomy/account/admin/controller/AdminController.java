@@ -1,6 +1,5 @@
 package TheNaeunEconomy.account.admin.controller;
 
-import TheNaeunEconomy.account.admin.service.AdminService;
 import TheNaeunEconomy.account.admin.service.AdminServiceImpl;
 import TheNaeunEconomy.account.admin.service.request.AddAdminRequest;
 import lombok.RequiredArgsConstructor;

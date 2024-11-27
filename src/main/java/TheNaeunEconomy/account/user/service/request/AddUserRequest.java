@@ -1,6 +1,6 @@
 package TheNaeunEconomy.account.user.service.request;
 
-import TheNaeunEconomy.account.domain.Gender;
+import TheNaeunEconomy.account.user.domain.Gender;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

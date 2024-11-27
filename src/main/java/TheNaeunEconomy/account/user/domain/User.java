@@ -1,7 +1,6 @@
 package TheNaeunEconomy.account.user.domain;
 
 
-import TheNaeunEconomy.account.domain.Gender;
 import TheNaeunEconomy.account.domain.Role;
 import TheNaeunEconomy.account.user.service.request.AddUserRequest;
 import TheNaeunEconomy.account.kakao_api.service.request.KakaoAccountInfo;

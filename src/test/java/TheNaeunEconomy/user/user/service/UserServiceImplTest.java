@@ -1,6 +1,6 @@
 package TheNaeunEconomy.user.user.service;
 
-import TheNaeunEconomy.account.domain.Gender;
+import TheNaeunEconomy.account.user.domain.Gender;
 import TheNaeunEconomy.account.user.domain.User;
 import TheNaeunEconomy.account.user.service.UserServiceImpl;
 import TheNaeunEconomy.account.user.service.request.AddUserRequest;
