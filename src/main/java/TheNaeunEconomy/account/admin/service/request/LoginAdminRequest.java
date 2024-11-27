@@ -4,13 +4,13 @@ import lombok.Getter;
 
 @Getter
 public class LoginAdminRequest {
-    private Long adminCode;
+    private String adminCode;
     private String password;
 
     public LoginAdminRequest() {
     }
 
-    public LoginAdminRequest(Long adminCode, String password) {
+    public LoginAdminRequest(String adminCode, String password) {
         this.adminCode = adminCode;
         this.password = password;
     }

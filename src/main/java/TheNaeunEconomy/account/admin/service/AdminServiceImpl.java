@@ -37,8 +37,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public LoginResponse login(LoginAdminRequest loginAdminRequest) {
-        Admin admin = adminRepository.findById(loginAdminRequest.getAdminCode())
-                .orElseThrow(() -> new IllegalArgumentException("해당 코드의 관리자가 존재하지 않습니다."));
+        Admin admin = adminRepository.findByAdminCode(loginAdminRequest.getAdminCode());
 
         if (!bCryptPasswordEncoder.matches(loginAdminRequest.getPassword(), admin.getPassword())) {
             throw new IllegalStateException("비밀번호가 틀렸습니다.");

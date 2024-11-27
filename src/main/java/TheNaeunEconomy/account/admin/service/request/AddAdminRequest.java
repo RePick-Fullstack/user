@@ -11,7 +11,7 @@ import lombok.Getter;
 public class AddAdminRequest {
     @NotBlank(message = "아이디는 필수 항목입니다.")
     @Size(min = 8, max = 8, message = "아이디는 8자리이어야 합니다.")
-    private Long adminCode;
+    private String adminCode;
 
     @NotBlank(message = "비밀번호는 필수 항목입니다.")
     @Size(min = 8, max = 18, message = "비밀번호는 8자 이상, 18자 이하입니다.")
@@ -25,7 +25,7 @@ public class AddAdminRequest {
     @NotNull(message = "성별은 필수 항목입니다.")
     private Role role;
 
-    public AddAdminRequest(Long adminCode, String password, String name) {
+    public AddAdminRequest(String adminCode, String password, String name) {
         this.adminCode = adminCode;
         this.password = password;
         this.name = name;

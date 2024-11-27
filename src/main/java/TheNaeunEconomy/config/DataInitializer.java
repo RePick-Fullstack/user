@@ -50,7 +50,7 @@ public class DataInitializer implements ApplicationRunner {
             }
         }
 
-        AddAdminRequest addAdminRequest = new AddAdminRequest(1L, "password123!", "최창환");
+        AddAdminRequest addAdminRequest = new AddAdminRequest("cch5565", "password123!", "최창환");
         saveUser(addAdminRequest);
 
         log.info("100개의 더미 데이터가 성공적으로 삽입되었습니다.");

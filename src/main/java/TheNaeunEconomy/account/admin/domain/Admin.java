@@ -29,7 +29,7 @@ public class Admin {
     private Long id;
 
     @Column(name = "admin_code", unique = true)
-    private Long adminCode;
+    private String adminCode;
 
     @Column(name = "password")
     private String password;

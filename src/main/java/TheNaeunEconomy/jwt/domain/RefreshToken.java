@@ -21,7 +21,7 @@ public class RefreshToken {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "admin_id", referencedColumnName = "id")
+    @JoinColumn(name = "admin_id", referencedColumnName = "admin_code")
     private Admin admin;
 
 
