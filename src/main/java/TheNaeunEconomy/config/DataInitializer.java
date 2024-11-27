@@ -69,6 +69,7 @@ public class DataInitializer implements ApplicationRunner {
     @PreDestroy
     public void cleanUp() {
         userRepository.deleteAll();
+        adminRepository.deleteAll();
         log.info("애플리케이션 종료 시 모든 더미 데이터가 삭제되었습니다.");
     }
 }

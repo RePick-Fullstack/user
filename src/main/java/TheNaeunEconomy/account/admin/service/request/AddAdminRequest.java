@@ -22,7 +22,6 @@ public class AddAdminRequest {
     @Size(max = 5)
     private String name;
 
-    @NotNull(message = "성별은 필수 항목입니다.")
     private Role role;
 
     public AddAdminRequest(String adminCode, String password, String name) {
