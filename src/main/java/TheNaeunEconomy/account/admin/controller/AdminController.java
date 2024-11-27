@@ -39,10 +39,11 @@ public class AdminController {
     }
 
     @DeleteMapping("/delete")
-    public BodyBuilder deleteAdmin(@RequestHeader HttpHeaders headers, @RequestBody @Valid DeleteAdminRequest request) {
+    public ResponseEntity<String> deleteAdmin(@RequestHeader HttpHeaders headers,
+                                   @RequestBody @Valid DeleteAdminRequest request) {
         String token = getToken(headers, "Bearer");
         adminService.deleteAdmin(token, request);
-        return ResponseEntity.ok();
+        return ResponseEntity.ok().body("Deleted Admin");
     }
 
     @Nullable
