@@ -51,6 +51,9 @@ public class Admin {
     }
 
     public void updateUserDetails(UpdateAdminRequest request) {
+        if (request.getAdminCode() != null) {
+            this.adminCode = request.getAdminCode();
+        }
         if (request.getName() != null) {
             name = request.getName();
         }

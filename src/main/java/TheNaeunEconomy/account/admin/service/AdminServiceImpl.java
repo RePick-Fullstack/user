@@ -66,8 +66,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Admin updateAdmin(String token, UpdateAdminRequest request) {
-        Long adminId = tokenProvider.getAdminIdFromToken(token);
-        Admin admin = adminRepository.findById(adminId).orElseThrow();
+        Admin admin = adminRepository.findById(request.getAdminId()).orElseThrow();
         admin.updateUserDetails(request);
         return adminRepository.save(admin);
     }
