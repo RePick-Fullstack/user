@@ -1,4 +1,4 @@
-package TheNaeunEconomy.jwt;
+package TheNaeunEconomy.jwt.domain;
 
 import TheNaeunEconomy.account.admin.domain.Admin;
 import TheNaeunEconomy.account.user.domain.User;

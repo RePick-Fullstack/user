@@ -2,7 +2,7 @@ package TheNaeunEconomy.account.user.service;
 
 import TheNaeunEconomy.jwt.RefreshTokenRepository;
 import TheNaeunEconomy.account.user.repository.UserRepository;
-import TheNaeunEconomy.jwt.RefreshToken;
+import TheNaeunEconomy.jwt.domain.RefreshToken;
 import TheNaeunEconomy.account.user.domain.User;
 import TheNaeunEconomy.jwt.TokenProvider;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
@@ -12,7 +12,6 @@ import TheNaeunEconomy.account.user.service.request.AddUserRequest;
 import TheNaeunEconomy.account.kakao_api.service.request.KakaoAccountInfo;
 import TheNaeunEconomy.account.user.service.request.LoginUserRequest;
 import TheNaeunEconomy.account.user.service.request.UpdateUserRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
