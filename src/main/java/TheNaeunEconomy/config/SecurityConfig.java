@@ -41,6 +41,7 @@ public class SecurityConfig {
                                 "/api/oauth/kakao/login"
                         ).permitAll()
                         .requestMatchers("/api/v1/users/**").hasAuthority("ROLE_USER")
+                        .requestMatchers("/api/v1/admin/create").hasAuthority("ROLE_SUPER_ADMIN")
                         .requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )

@@ -43,7 +43,7 @@ public class TokenProvider {
                 .setExpiration(expiry)
                 .claim("userId", user.getId())
                 .claim("nickName", user.getNickname())
-                .claim("role", user.getRole().name()) // Store role as a String
+                .claim("role", user.getRole().name())
                 .signWith(SignatureAlgorithm.HS256, jwtSecretKey)
                 .compact();
     }
@@ -61,7 +61,7 @@ public class TokenProvider {
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
                 .setIssuedAt(now)
                 .setExpiration(expiry)
-                .claim("userId", admin.getId())
+                .claim("adminId", admin.getId())
                 .claim("role", admin.getRole().name())
                 .signWith(SignatureAlgorithm.HS256, jwtSecretKey)
                 .compact();
