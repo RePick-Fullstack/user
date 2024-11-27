@@ -50,8 +50,8 @@ public class UserController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<User> updateUser(@Valid @RequestBody UpdateUserRequest request,
-                                           @RequestHeader HttpHeaders headers) {
+    public ResponseEntity<User> updateUser(@RequestHeader HttpHeaders headers,
+                                           @RequestBody @Valid UpdateUserRequest request) {
         String token = getToken(headers, "Bearer ");
         return ResponseEntity.ok().body(userService.updateUser(request, token));
     }

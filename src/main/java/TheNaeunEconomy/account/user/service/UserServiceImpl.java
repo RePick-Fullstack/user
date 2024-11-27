@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
+@Transactional
 public class UserServiceImpl implements UserService {
 
     @Value("${jwt.ACCESS_TOKEN_MINUTE_TIME}")
@@ -43,7 +44,6 @@ public class UserServiceImpl implements UserService {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    @Transactional
     @Override
     public User saveUser(AddUserRequest request) {
         userRepository.findByEmail(request.getEmail()).ifPresent(user -> {
@@ -52,7 +52,6 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(new User(request));
     }
 
-    @Transactional
     @Override
     public LoginResponse registerUser(KakaoAccountInfo kakaoAccountInfo) {
         return userRepository.findByEmail(kakaoAccountInfo.getEmail())
@@ -71,7 +70,6 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    @Transactional
     @Override
     public User updateUser(UpdateUserRequest request, String token) {
         Long userId = tokenProvider.getUserIdFromToken(token);
@@ -88,8 +86,6 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-
-    @Transactional
     @Override
     public User deleteUser(String token) {
         Long userId = tokenProvider.getUserIdFromToken(token);
@@ -102,8 +98,6 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-
-    @Transactional
     @Override
     public LoginResponse loginUser(LoginUserRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
@@ -130,8 +124,6 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-
-    @Transactional
     @Override
     public void logoutUser(String token) {
         refreshTokenRepository.deleteByRefreshToken(token);
@@ -142,7 +134,6 @@ public class UserServiceImpl implements UserService {
         return byEmail.isPresent();
     }
 
-    @Transactional
     public LoginResponse kakaoLoginUser(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("해당 이메일의 사용자가 존재하지 않습니다."));
@@ -156,7 +147,6 @@ public class UserServiceImpl implements UserService {
         return new LoginResponse(accessToken, refreshToken);
     }
 
-    @Transactional
     public LoginResponse refreshToken(String refreshToken) {
         refreshTokenRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 리프레시 토큰입니다."));
@@ -173,7 +163,6 @@ public class UserServiceImpl implements UserService {
                 LocalDateTime.now().plusMinutes(REFRESH_TOKEN_MINUTE_TIME)));
         return new LoginResponse(newAccessToken, newRefreshToken);
     }
-
 
     public void deleteExpiredTokens() {
         refreshTokenRepository.deleteExpiredTokens();

@@ -89,9 +89,4 @@ public class TokenProvider {
         String roleString = claims.get("role", String.class);
         return Role.valueOf(roleString);
     }
-
-    public Long getAdminIdFromToken(String token) {
-        Claims claims = Jwts.parser().setSigningKey(jwtSecretKey).parseClaimsJws(token).getBody();
-        return claims.get("adminId", Long.class);
-    }
 }

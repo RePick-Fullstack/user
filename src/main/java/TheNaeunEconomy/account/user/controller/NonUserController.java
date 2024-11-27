@@ -25,12 +25,12 @@ public class NonUserController {
     private final UserServiceImpl userService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginUserRequest loginUserRequest) {
+    public ResponseEntity<LoginResponse> loginUser(@RequestBody @Valid LoginUserRequest loginUserRequest) {
         return ResponseEntity.ok().body(userService.loginUser(loginUserRequest));
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<User> registerUser(@Valid @RequestBody AddUserRequest request) {
+    public ResponseEntity<User> registerUser(@RequestBody @Valid AddUserRequest request) {
         return ResponseEntity.ok().body(userService.saveUser(request));
     }
 }
