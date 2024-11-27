@@ -36,11 +36,7 @@ public class SecurityConfig {
                                 "/api/v1/admin/login"
                         ).permitAll()
                         .requestMatchers("/api/v1/users/**").hasAuthority("ROLE_USER")
-                        .requestMatchers(
-                                "/api/v1/admin/signup",
-                                "/api/v1/admin/update",
-                                "api/v1/admin/delete"
-                                ).hasAuthority("ROLE_SUPER_ADMIN")
+                        .requestMatchers("/api/v1/admin/super/**").hasAuthority("ROLE_SUPER_ADMIN")
                         .requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )

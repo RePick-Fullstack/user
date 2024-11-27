@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/admin")
-public class AdminController {
+@RequestMapping("/api/v1/admin/super")
+public class SuperAdminController {
     private final AdminServiceImpl adminService;
 
     @PostMapping("/signup")
