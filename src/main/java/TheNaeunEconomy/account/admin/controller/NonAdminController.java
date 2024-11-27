@@ -3,6 +3,7 @@ package TheNaeunEconomy.account.admin.controller;
 import TheNaeunEconomy.account.admin.service.AdminServiceImpl;
 import TheNaeunEconomy.account.admin.service.request.LoginAdminRequest;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +18,7 @@ public class NonAdminController {
     private final AdminServiceImpl adminService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> loginAdmin(@RequestBody LoginAdminRequest loginAdminRequest) {
+    public ResponseEntity<LoginResponse> loginAdmin(@RequestBody @Valid LoginAdminRequest loginAdminRequest) {
         return ResponseEntity.ok().body(adminService.login(loginAdminRequest));
     }
 }

@@ -2,7 +2,6 @@ package TheNaeunEconomy.account.admin.service.request;
 
 import TheNaeunEconomy.account.domain.Role;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -10,7 +9,6 @@ import lombok.Getter;
 @Getter
 public class AddAdminRequest {
     @NotBlank(message = "아이디는 필수 항목입니다.")
-    @Size(min = 8, max = 8, message = "아이디는 8자리이어야 합니다.")
     private String adminCode;
 
     @NotBlank(message = "비밀번호는 필수 항목입니다.")
@@ -24,17 +22,13 @@ public class AddAdminRequest {
 
     private Role role;
 
-    public AddAdminRequest(String adminCode, String password, String name) {
-        this.adminCode = adminCode;
-        this.password = password;
-        this.name = name;
-        this.role = Role.ADMIN;
-    }
-
     public AddAdminRequest(String adminCode, String password, String name, Role role) {
         this.adminCode = adminCode;
         this.password = password;
         this.name = name;
         this.role = role;
+    }
+
+    public AddAdminRequest() {
     }
 }

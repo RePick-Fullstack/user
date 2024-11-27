@@ -50,8 +50,8 @@ public class AdminServiceImpl implements AdminService {
     public LoginResponse login(LoginAdminRequest loginAdminRequest) {
         Admin admin = adminRepository.findByAdminCode(loginAdminRequest.getAdminCode()).orElseThrow();
 
-        if (!bCryptPasswordEncoder.matches(loginAdminRequest.getPassword(), admin.getPassword())) {
-            throw new IllegalStateException("비밀번호가 틀렸습니다.");
+        if (bCryptPasswordEncoder.encode(loginAdminRequest.getPassword()).equals(admin.getPassword())) {
+            throw new IllegalStateException("비밀번호가 일치하지 않습니다.");
         }
 
         Token accessToken = tokenProvider.generateToken(admin, ACCESS_TOKEN_MINUTE_TIME);
