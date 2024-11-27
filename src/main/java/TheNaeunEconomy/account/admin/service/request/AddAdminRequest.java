@@ -28,6 +28,13 @@ public class AddAdminRequest {
         this.adminCode = adminCode;
         this.password = password;
         this.name = name;
-        this.role = Role.SUPER_ADMIN;
+        this.role = Role.ADMIN;
+    }
+
+    public AddAdminRequest(String adminCode, String password, String name, Role role) {
+        this.adminCode = adminCode;
+        this.password = password;
+        this.name = name;
+        this.role = role;
     }
 }

@@ -10,6 +10,7 @@ import TheNaeunEconomy.jwt.RefreshTokenRepository;
 import TheNaeunEconomy.jwt.Token;
 import TheNaeunEconomy.jwt.TokenProvider;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -37,16 +38,16 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public LoginResponse login(LoginAdminRequest loginAdminRequest) {
-        Admin admin = adminRepository.findByAdminCode(loginAdminRequest.getAdminCode());
+        Optional<Admin> admin = adminRepository.findByAdminCode(loginAdminRequest.getAdminCode());
 
-        if (!bCryptPasswordEncoder.matches(loginAdminRequest.getPassword(), admin.getPassword())) {
+        if (!bCryptPasswordEncoder.matches(loginAdminRequest.getPassword(), admin.get().getPassword())) {
             throw new IllegalStateException("비밀번호가 틀렸습니다.");
         }
 
-        Token accessToken = tokenProvider.generateToken(admin, ACCESS_TOKEN_MINUTE_TIME);
-        Token refreshToken = tokenProvider.generateToken(admin, REFRESH_TOKEN_MINUTE_TIME);
+        Token accessToken = tokenProvider.generateToken(admin.orElse(null), ACCESS_TOKEN_MINUTE_TIME);
+        Token refreshToken = tokenProvider.generateToken(admin.orElse(null), REFRESH_TOKEN_MINUTE_TIME);
 
-        refreshTokenRepository.save(new RefreshToken(admin, refreshToken.getToken(),
+        refreshTokenRepository.save(new RefreshToken(admin.orElse(null), refreshToken.getToken(),
                 LocalDateTime.now().plusMinutes(REFRESH_TOKEN_MINUTE_TIME)));
         return new LoginResponse(accessToken, refreshToken);
     }

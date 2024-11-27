@@ -3,10 +3,12 @@ package TheNaeunEconomy.config;
 import TheNaeunEconomy.account.admin.domain.Admin;
 import TheNaeunEconomy.account.admin.repository.AdminRepository;
 import TheNaeunEconomy.account.admin.service.request.AddAdminRequest;
+import TheNaeunEconomy.account.domain.Role;
 import TheNaeunEconomy.account.user.repository.UserRepository;
 import TheNaeunEconomy.account.user.domain.Gender;
 import TheNaeunEconomy.account.user.domain.User;
 import TheNaeunEconomy.account.user.service.request.AddUserRequest;
+import TheNaeunEconomy.jwt.RefreshTokenRepository;
 import TheNaeunEconomy.util.NicknameGenerator;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class DataInitializer implements ApplicationRunner {
 
+    private final RefreshTokenRepository refreshTokenRepository;
     private final UserRepository userRepository;
     private final AdminRepository adminRepository;
 
@@ -33,8 +36,10 @@ public class DataInitializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        Random random = new Random();
+        AddAdminRequest addAdminRequest = new AddAdminRequest("cch5565", "password123!", "최창환", Role.SUPER_ADMIN);
+        saveUser(addAdminRequest);
 
+        Random random = new Random();
         for (int i = 1; i <= 100; i++) {
             int year = 1990 + random.nextInt(11);
             int month = 1 + random.nextInt(12);
@@ -49,10 +54,6 @@ public class DataInitializer implements ApplicationRunner {
                 saveUser(request);
             }
         }
-
-        AddAdminRequest addAdminRequest = new AddAdminRequest("cch5565", "password123!", "최창환");
-        saveUser(addAdminRequest);
-
         log.info("100개의 더미 데이터가 성공적으로 삽입되었습니다.");
     }
 
@@ -68,6 +69,7 @@ public class DataInitializer implements ApplicationRunner {
 
     @PreDestroy
     public void cleanUp() {
+        refreshTokenRepository.deleteAll();
         userRepository.deleteAll();
         adminRepository.deleteAll();
         log.info("애플리케이션 종료 시 모든 더미 데이터가 삭제되었습니다.");
