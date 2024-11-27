@@ -7,7 +7,6 @@ import TheNaeunEconomy.account.user.service.request.AddUserRequest;
 import TheNaeunEconomy.account.kakao_api.service.request.KakaoAccountInfo;
 import TheNaeunEconomy.account.user.service.request.LoginUserRequest;
 import TheNaeunEconomy.account.user.service.request.UpdateUserRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 public interface UserService {
 
