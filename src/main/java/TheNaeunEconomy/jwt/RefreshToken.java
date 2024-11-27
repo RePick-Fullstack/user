@@ -37,6 +37,12 @@ public class RefreshToken {
         this.expirationDate = expirationDate;
     }
 
+    public RefreshToken(Admin admin, String refreshToken, LocalDateTime expirationDate) {
+        this.admin = admin;
+        this.refreshToken = refreshToken;
+        this.expirationDate = expirationDate;
+    }
+
     public RefreshToken() {
     }
 }

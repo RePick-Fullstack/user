@@ -25,9 +25,8 @@ public class NonUserController {
     private final UserServiceImpl userService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginUserRequest request,
-                                                   HttpServletResponse response) {
-        return ResponseEntity.ok().body(userService.loginUser(request, response));
+    public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginUserRequest loginUserRequest) {
+        return ResponseEntity.ok().body(userService.loginUser(loginUserRequest));
     }
 
     @PostMapping("/signup")

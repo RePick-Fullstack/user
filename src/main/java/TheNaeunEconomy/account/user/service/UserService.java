@@ -13,7 +13,7 @@ public interface UserService {
 
     User saveUser(AddUserRequest request);
 
-    LoginResponse loginUser(LoginUserRequest request, HttpServletResponse response);
+    LoginResponse loginUser(LoginUserRequest request);
 
     void logoutUser(String token);
 
