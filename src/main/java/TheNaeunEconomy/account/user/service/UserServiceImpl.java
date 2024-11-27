@@ -15,24 +15,33 @@ import TheNaeunEconomy.account.user.service.request.UpdateUserRequest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@RequiredArgsConstructor
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService {
 
-    private static final int ACCESS_TOKEN_MINUTE_TIME = 30;
-    private static final int REFRESH_TOKEN_MINUTE_TIME = 120;
+    @Value("${jwt.ACCESS_TOKEN_MINUTE_TIME}")
+    private int ACCESS_TOKEN_MINUTE_TIME;
+    @Value("${jwt.REFRESH_TOKEN_MINUTE_TIME}")
+    private int REFRESH_TOKEN_MINUTE_TIME;
 
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final TokenProvider tokenProvider;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    public UserServiceImpl(UserRepository userRepository, RefreshTokenRepository refreshTokenRepository,
+                           TokenProvider tokenProvider, BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.userRepository = userRepository;
+        this.refreshTokenRepository = refreshTokenRepository;
+        this.tokenProvider = tokenProvider;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
 
     @Transactional
     @Override

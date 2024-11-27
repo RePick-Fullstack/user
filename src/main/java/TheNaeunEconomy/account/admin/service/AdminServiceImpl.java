@@ -22,9 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class AdminServiceImpl implements AdminService {
 
-    @Value("{ACCESS_TOKEN_MINUTE_TIME}")
+    @Value("${jwt.ACCESS_TOKEN_MINUTE_TIME}")
     private int ACCESS_TOKEN_MINUTE_TIME;
-    @Value("{REFRESH_TOKEN_MINUTE_TIME}")
+    @Value("${jwt.REFRESH_TOKEN_MINUTE_TIME}")
     private int REFRESH_TOKEN_MINUTE_TIME;
 
     public AdminServiceImpl(BCryptPasswordEncoder bCryptPasswordEncoder, TokenProvider tokenProvider,
