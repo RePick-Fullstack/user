@@ -42,7 +42,7 @@ public class AdminServiceImpl implements AdminService {
         Admin admin = adminRepository.findById(loginAdminRequest.getAdminCode())
                 .orElseThrow(() -> new IllegalArgumentException("해당 코드의 관리자가 존재하지 않습니다."));
 
-        if (!admin.getPassword().equals(bCryptPasswordEncoder.encode(loginAdminRequest.getPassword()))) {
+        if (!bCryptPasswordEncoder.matches(loginAdminRequest.getPassword(), admin.getPassword())) {
             throw new IllegalStateException("비밀번호가 틀렸습니다.");
         }
 

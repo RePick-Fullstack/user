@@ -24,4 +24,11 @@ public class AddAdminRequest {
 
     @NotNull(message = "성별은 필수 항목입니다.")
     private Role role;
+
+    public AddAdminRequest(Long adminCode, String password, String name) {
+        this.adminCode = adminCode;
+        this.password = password;
+        this.name = name;
+        this.role = Role.SUPER_ADMIN;
+    }
 }

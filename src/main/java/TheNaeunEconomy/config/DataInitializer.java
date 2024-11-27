@@ -1,5 +1,8 @@
 package TheNaeunEconomy.config;
 
+import TheNaeunEconomy.account.admin.domain.Admin;
+import TheNaeunEconomy.account.admin.repository.AdminRepository;
+import TheNaeunEconomy.account.admin.service.request.AddAdminRequest;
 import TheNaeunEconomy.account.user.repository.UserRepository;
 import TheNaeunEconomy.account.user.domain.Gender;
 import TheNaeunEconomy.account.user.domain.User;
@@ -22,6 +25,7 @@ import java.util.Random;
 public class DataInitializer implements ApplicationRunner {
 
     private final UserRepository userRepository;
+    private final AdminRepository adminRepository;
 
     private static final List<String> NAMES = List.of(
             "김민준", "이서연", "박지민", "최준호", "정다은", "조유진", "장하늘", "강지수", "오은영", "임서진"
@@ -46,12 +50,20 @@ public class DataInitializer implements ApplicationRunner {
             }
         }
 
+        AddAdminRequest addAdminRequest = new AddAdminRequest(1L, "password123!", "최창환");
+        saveUser(addAdminRequest);
+
         log.info("100개의 더미 데이터가 성공적으로 삽입되었습니다.");
     }
 
     private void saveUser(AddUserRequest request) {
         User user = new User(request);
         userRepository.save(user);
+    }
+
+    private void saveUser(AddAdminRequest request) {
+        Admin admin = new Admin(request);
+        adminRepository.save(admin);
     }
 
     @PreDestroy
