@@ -2,7 +2,6 @@ package TheNaeunEconomy.jwt;
 
 import TheNaeunEconomy.account.admin.domain.Admin;
 import TheNaeunEconomy.account.domain.Role;
-import TheNaeunEconomy.account.user.repository.UserRepository;
 import TheNaeunEconomy.account.user.domain.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -22,8 +21,6 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 @Service
 public class TokenProvider {
-    private static final int ACCESS_TOKEN_MINUTE_TIME = 30;
-    private final UserRepository userRepository;
 
     @Value("${jwt.secret-key}")
     private String jwtSecretKey;

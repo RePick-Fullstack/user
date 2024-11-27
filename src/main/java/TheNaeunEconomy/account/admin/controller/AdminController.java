@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminController {
     private final AdminServiceImpl adminService;
 
-    @PostMapping("/create")
+    @PostMapping("/signup")
     public void createAdmin(AddAdminRequest request) {
         adminService.saveAdmin(request);
     }
