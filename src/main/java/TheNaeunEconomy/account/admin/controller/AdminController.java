@@ -42,9 +42,9 @@ public class AdminController {
         return ResponseEntity.ok().body(adminService.refreshToken(refreshToken));
     }
 
-    @PutMapping("/users/deactivate/{email}")
-    public ResponseEntity<User> deactivateUser(@PathVariable("email") String email) {
-        return ResponseEntity.ok().body(userService.deactivateEmail(email));
+    @PutMapping("/users/deactivate/{userId}")
+    public ResponseEntity<User> deactivateUser(@PathVariable("userId") Long userId) {
+        return ResponseEntity.ok().body(userService.deactivateUserId(userId));
     }
 
     @Nullable

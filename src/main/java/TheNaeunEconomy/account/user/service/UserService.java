@@ -29,7 +29,6 @@ public interface UserService {
     Page<User> findAll(Pageable pageable);
 
     User findByEmail(String email);
-
-    User deactivateEmail(String email);
-
+    
+    User deactivateUserId(Long userId);
 }

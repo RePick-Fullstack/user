@@ -186,8 +186,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User deactivateEmail(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow();
+    public User deactivateUserId(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow();
         if (user.getDeleteDate() != null) {
             user.setDeleteDate(null);
         }
