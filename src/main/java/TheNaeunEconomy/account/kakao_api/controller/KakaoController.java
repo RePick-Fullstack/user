@@ -1,6 +1,5 @@
 package TheNaeunEconomy.account.kakao_api.controller;
 
-
 import TheNaeunEconomy.account.kakao_api.service.KakaoService;
 import TheNaeunEconomy.account.kakao_api.service.request.KakaoAccountInfo;
 import TheNaeunEconomy.account.user.service.UserServiceImpl;
@@ -8,6 +7,7 @@ import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -48,7 +48,7 @@ public class KakaoController {
         } else {
             String redirectUrl =
                     "http://localhost:5173/complete-profile?email=" + URLEncoder.encode(email, "UTF-8") + "&name="
-                            + URLEncoder.encode(nickname, "UTF-8");
+                            + URLEncoder.encode(nickname, StandardCharsets.UTF_8);
             response.sendRedirect(redirectUrl);
         }
     }
