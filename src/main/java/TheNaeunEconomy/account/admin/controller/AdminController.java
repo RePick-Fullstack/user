@@ -7,6 +7,7 @@ import TheNaeunEconomy.account.user.service.UserServiceImpl;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
@@ -48,6 +49,11 @@ public class AdminController {
     @PutMapping("/users/deactivate/{userId}")
     public ResponseEntity<User> deactivateUser(@PathVariable("userId") Long userId) {
         return ResponseEntity.ok().body(userService.deactivateUserId(userId));
+    }
+
+    @GetMapping("/users/month")
+    public Map<String, Long> getUsersMonth() {
+        return userService.getUsersCountByMonth();
     }
 
     @Nullable

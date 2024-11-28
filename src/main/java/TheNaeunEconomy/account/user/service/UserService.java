@@ -7,8 +7,10 @@ import TheNaeunEconomy.account.user.service.request.AddUserRequest;
 import TheNaeunEconomy.account.kakao_api.service.request.KakaoAccountInfo;
 import TheNaeunEconomy.account.user.service.request.LoginUserRequest;
 import TheNaeunEconomy.account.user.service.request.UpdateUserRequest;
+import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 
 public interface UserService {
 
@@ -31,4 +33,6 @@ public interface UserService {
     User findByEmail(String email);
     
     User deactivateUserId(Long userId);
+
+    Map<String, Long> getUsersCountByMonth();
 }

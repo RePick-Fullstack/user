@@ -14,11 +14,15 @@ import TheNaeunEconomy.account.user.service.request.LoginUserRequest;
 import TheNaeunEconomy.account.user.service.request.UpdateUserRequest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -192,5 +196,18 @@ public class UserServiceImpl implements UserService {
             user.setDeleteDate(null);
         }
         return user;
+    }
+
+    @Override
+    public Map<String, Long> getUsersCountByMonth() {
+        List<Object[]> results = userRepository.countUsersByMonth();
+        Map<String, Long> monthlyUserCount = new LinkedHashMap<>();
+
+        for (Object[] result : results) {
+            String month = (String) result[0];
+            Long count = ((Number) result[1]).longValue();
+            monthlyUserCount.put(month, count);
+        }
+        return monthlyUserCount;
     }
 }
