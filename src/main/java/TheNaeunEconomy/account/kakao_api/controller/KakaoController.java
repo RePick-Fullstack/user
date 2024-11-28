@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/api/oauth/kakao")
+@RequestMapping("/api/v1/oauth/kakao")
 public class KakaoController {
     private final KakaoService kakaoService;
     private final UserServiceImpl userService;
