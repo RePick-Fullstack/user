@@ -27,4 +27,6 @@ public interface UserService {
     LoginResponse registerUser(KakaoAccountInfo kakaoAccountInfo);
 
     Page<User> findAll(Pageable pageable);
+
+    User findByEmail(String email);
 }
