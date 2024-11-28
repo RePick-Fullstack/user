@@ -16,4 +16,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT FUNCTION('DATE_FORMAT', u.createDate, '%Y-%m') AS month, COUNT(u) FROM User u GROUP BY FUNCTION('DATE_FORMAT', u.createDate, '%Y-%m')")
     List<Object[]> countUsersByMonth();
+
+    @Query(value = "SELECT DATE_FORMAT(delete_date, '%Y-%m') AS month, COUNT(*) AS count " +
+            "FROM users " +
+            "WHERE delete_date IS NOT NULL " +
+            "GROUP BY DATE_FORMAT(delete_date, '%Y-%m') " +
+            "ORDER BY month ASC",
+            nativeQuery = true)
+    List<Object[]> countDeletedUsersByMonthNative();
 }

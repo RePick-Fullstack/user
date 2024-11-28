@@ -210,4 +210,18 @@ public class UserServiceImpl implements UserService {
         }
         return monthlyUserCount;
     }
+
+    @Override
+    public Map<String, Long> countDeletedUsersByMonthNative() {
+        List<Object[]> results = userRepository.countDeletedUsersByMonthNative();
+        Map<String, Long> monthlyDeletedUserCount = new LinkedHashMap<>();
+
+        for (Object[] result : results) {
+            String month = (String) result[0]; // YYYY-MM 형식의 월
+            Long count = ((Number) result[1]).longValue(); // 카운트 값
+            monthlyDeletedUserCount.put(month, count);
+        }
+
+        return monthlyDeletedUserCount;
+    }
 }

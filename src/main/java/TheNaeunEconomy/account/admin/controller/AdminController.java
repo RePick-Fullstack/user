@@ -56,6 +56,11 @@ public class AdminController {
         return userService.getUsersCountByMonth();
     }
 
+    @GetMapping("/users/delete")
+    public Map<String, Long> getUsersDeleted() {
+        return userService.countDeletedUsersByMonthNative();
+    }
+
     @Nullable
     private static String getToken(HttpHeaders headers) {
         String token = headers.getFirst(HttpHeaders.AUTHORIZATION);
