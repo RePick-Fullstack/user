@@ -6,7 +6,7 @@ import TheNaeunEconomy.account.user.service.UserServiceImpl;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import TheNaeunEconomy.account.user.service.request.AddUserRequest;
 import TheNaeunEconomy.account.user.service.request.LoginUserRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import TheNaeunEconomy.account.user.service.response.UserResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,7 @@ public class NonUserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<User> registerUser(@RequestBody @Valid AddUserRequest request) {
-        return ResponseEntity.ok().body(userService.saveUser(request));
+    public ResponseEntity<UserResponse> saveUser(@RequestBody @Valid AddUserRequest request) {
+        return ResponseEntity.ok().body(new UserResponse(userService.saveUser(request)));
     }
 }

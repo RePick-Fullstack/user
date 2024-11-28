@@ -1,16 +1,15 @@
 package TheNaeunEconomy.account.user.controller;
 
-import TheNaeunEconomy.account.user.domain.User;
 import TheNaeunEconomy.account.user.service.UserServiceImpl;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import TheNaeunEconomy.account.user.service.response.UserNameResponse;
 import TheNaeunEconomy.account.user.service.request.UpdateUserRequest;
+import TheNaeunEconomy.account.user.service.response.UserResponse;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,24 +35,24 @@ public class UserController {
     }
 
     @GetMapping("/logout")
-    public HttpStatus logoutUser(@RequestHeader HttpHeaders headers) {
+    public ResponseEntity<String> logoutUser(@RequestHeader HttpHeaders headers) {
         String token = getToken(headers);
         userService.logoutUser(token);
-        return HttpStatus.OK;
+        return ResponseEntity.ok().body("로그아웃 되었습니다.");
     }
 
 
     @DeleteMapping("/delete")
-    public ResponseEntity<User> deleteUser(@RequestHeader HttpHeaders headers) {
+    public ResponseEntity<UserResponse> deleteUser(@RequestHeader HttpHeaders headers) {
         String token = getToken(headers);
-        return ResponseEntity.ok().body(userService.deleteUser(token));
+        return ResponseEntity.ok().body(new UserResponse(userService.deleteUser(token)));
     }
 
     @PutMapping("/update")
-    public ResponseEntity<User> updateUser(@RequestHeader HttpHeaders headers,
-                                           @RequestBody @Valid UpdateUserRequest request) {
+    public ResponseEntity<UserResponse> updateUser(@RequestHeader HttpHeaders headers,
+                                                   @RequestBody @Valid UpdateUserRequest request) {
         String token = getToken(headers);
-        return ResponseEntity.ok().body(userService.updateUser(request, token));
+        return ResponseEntity.ok().body(new UserResponse(userService.updateUser(request, token)));
     }
 
     @PostMapping("/refresh-token")
