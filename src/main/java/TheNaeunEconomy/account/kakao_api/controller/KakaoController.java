@@ -54,7 +54,7 @@ public class KakaoController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> registerUser(@Valid @RequestBody KakaoAccountInfo kakaoAccountInfo) {
+    public ResponseEntity<LoginResponse> registerUser(@RequestBody @Valid KakaoAccountInfo kakaoAccountInfo) {
         return ResponseEntity.ok().body(userService.registerUser(kakaoAccountInfo));
     }
 }
