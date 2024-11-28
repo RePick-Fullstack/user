@@ -31,13 +31,13 @@ public class UserController {
 
     @GetMapping("/name")
     public ResponseEntity<UserNameResponse> getUserName(@RequestHeader HttpHeaders headers) {
-        String token = getToken(headers, "Bearer");
+        String token = getToken(headers);
         return ResponseEntity.ok(userService.getUserName(token));
     }
 
     @GetMapping("/logout")
     public HttpStatus logoutUser(@RequestHeader HttpHeaders headers) {
-        String token = getToken(headers, "Bearer");
+        String token = getToken(headers);
         userService.logoutUser(token);
         return HttpStatus.OK;
     }
@@ -45,27 +45,27 @@ public class UserController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<User> deleteUser(@RequestHeader HttpHeaders headers) {
-        String token = getToken(headers, "Bearer");
+        String token = getToken(headers);
         return ResponseEntity.ok().body(userService.deleteUser(token));
     }
 
     @PutMapping("/update")
     public ResponseEntity<User> updateUser(@RequestHeader HttpHeaders headers,
                                            @RequestBody @Valid UpdateUserRequest request) {
-        String token = getToken(headers, "Bearer ");
+        String token = getToken(headers);
         return ResponseEntity.ok().body(userService.updateUser(request, token));
     }
 
     @PostMapping("/refresh-token")
     public ResponseEntity<LoginResponse> validateAndReissueAccessToken(@RequestHeader HttpHeaders headers) {
-        String refreshToken = getToken(headers, "Bearer");
+        String refreshToken = getToken(headers);
         return ResponseEntity.ok().body(userService.refreshToken(refreshToken));
     }
 
     @Nullable
-    private static String getToken(HttpHeaders headers, String Bearer) {
+    private static String getToken(HttpHeaders headers) {
         String token = headers.getFirst(HttpHeaders.AUTHORIZATION);
-        if (token != null && token.startsWith(Bearer)) {
+        if (token != null && token.startsWith("Bearer")) {
             token = token.substring(7);
         }
         return token;

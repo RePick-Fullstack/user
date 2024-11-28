@@ -5,7 +5,6 @@ import TheNaeunEconomy.account.user.domain.User;
 import TheNaeunEconomy.account.user.service.UserServiceImpl;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import jakarta.annotation.Nullable;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
@@ -32,14 +31,14 @@ public class AdminController {
 
     @PostMapping("/refresh-token")
     public ResponseEntity<LoginResponse> validateAndReissueAccessToken(@RequestHeader HttpHeaders headers) {
-        String refreshToken = getToken(headers, "Bearer");
+        String refreshToken = getToken(headers);
         return ResponseEntity.ok().body(adminService.refreshToken(refreshToken));
     }
 
     @Nullable
-    private static String getToken(HttpHeaders headers, String Bearer) {
+    private static String getToken(HttpHeaders headers) {
         String token = headers.getFirst(HttpHeaders.AUTHORIZATION);
-        if (token != null && token.startsWith(Bearer)) {
+        if (token != null && token.startsWith("Bearer")) {
             token = token.substring(7);
         }
         return token;
