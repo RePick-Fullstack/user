@@ -12,6 +12,7 @@ import TheNaeunEconomy.jwt.RefreshTokenRepository;
 import TheNaeunEconomy.jwt.Token;
 import TheNaeunEconomy.jwt.TokenProvider;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -75,5 +76,10 @@ public class AdminServiceImpl implements AdminService {
     public void deleteAdmin(String token, DeleteAdminRequest request) {
         tokenProvider.validateToken(token);
         adminRepository.deleteById(request.getAdminId());
+    }
+
+    @Override
+    public List<Admin> findAllAdmin() {
+        return adminRepository.findAll();
     }
 }

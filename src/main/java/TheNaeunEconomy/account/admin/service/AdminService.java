@@ -6,6 +6,7 @@ import TheNaeunEconomy.account.admin.service.request.DeleteAdminRequest;
 import TheNaeunEconomy.account.admin.service.request.LoginAdminRequest;
 import TheNaeunEconomy.account.admin.service.request.UpdateAdminRequest;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
+import java.util.List;
 
 public interface AdminService {
     Admin saveAdmin(AddAdminRequest addAdminRequest);
@@ -15,4 +16,6 @@ public interface AdminService {
     Admin updateAdmin(String token, UpdateAdminRequest updateAdminRequest);
 
     void deleteAdmin(String token, DeleteAdminRequest deleteAdminRequest);
+
+    List<Admin> findAllAdmin();
 }

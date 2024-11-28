@@ -8,11 +8,12 @@ import TheNaeunEconomy.account.admin.service.request.DeleteAdminRequest;
 import TheNaeunEconomy.account.admin.service.request.UpdateAdminRequest;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,10 +41,15 @@ public class SuperAdminController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteAdmin(@RequestHeader HttpHeaders headers,
-                                   @RequestBody @Valid DeleteAdminRequest request) {
+                                              @RequestBody @Valid DeleteAdminRequest request) {
         String token = getToken(headers, "Bearer");
         adminService.deleteAdmin(token, request);
         return ResponseEntity.ok().body("Deleted Admin");
+    }
+
+    @GetMapping("/info")
+    public ResponseEntity<List<Admin>> info() {
+        return ResponseEntity.ok().body(adminService.findAllAdmin());
     }
 
     @Nullable
