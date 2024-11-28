@@ -7,6 +7,8 @@ import TheNaeunEconomy.account.user.service.request.AddUserRequest;
 import TheNaeunEconomy.account.kakao_api.service.request.KakaoAccountInfo;
 import TheNaeunEconomy.account.user.service.request.LoginUserRequest;
 import TheNaeunEconomy.account.user.service.request.UpdateUserRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface UserService {
 
@@ -23,4 +25,6 @@ public interface UserService {
     UserNameResponse getUserName(String token);
 
     LoginResponse registerUser(KakaoAccountInfo kakaoAccountInfo);
+
+    Page<User> findAll(Pageable pageable);
 }
