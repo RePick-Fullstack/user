@@ -14,9 +14,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findByDeleteDateBeforeAndDeleteDateIsNotNull(LocalDateTime threeMonthsAgo);
 
-    @Query("SELECT FUNCTION('DATE_FORMAT', u.createDate, '%Y-%m') AS month, COUNT(u) " +
-            "FROM User u " +
-            "GROUP BY FUNCTION('DATE_FORMAT', u.createDate, '%Y-%m') " +
-            "ORDER BY month ASC")
+    @Query("SELECT FUNCTION('DATE_FORMAT', u.createDate, '%Y-%m') AS month, COUNT(u) FROM User u GROUP BY FUNCTION('DATE_FORMAT', u.createDate, '%Y-%m')")
     List<Object[]> countUsersByMonth();
 }
