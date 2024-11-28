@@ -91,7 +91,7 @@ public class AdminServiceImpl implements AdminService {
         refreshTokenRepository.deleteByRefreshToken(refreshToken);
 
         Admin admin = adminRepository.findById(tokenProvider.getAdminIdFromToken(refreshToken))
-                .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("해당 관리자를 찾을 수 없습니다."));
 
         Token newAccessToken = tokenProvider.generateToken(admin, ACCESS_TOKEN_MINUTE_TIME);
         Token newRefreshToken = tokenProvider.generateToken(admin, REFRESH_TOKEN_MINUTE_TIME);
