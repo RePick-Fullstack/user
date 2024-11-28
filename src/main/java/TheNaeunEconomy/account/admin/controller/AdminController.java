@@ -1,10 +1,12 @@
 package TheNaeunEconomy.account.admin.controller;
 
 import TheNaeunEconomy.account.admin.service.AdminServiceImpl;
+import TheNaeunEconomy.account.admin.service.request.EmailRequest;
 import TheNaeunEconomy.account.user.domain.User;
 import TheNaeunEconomy.account.user.service.UserServiceImpl;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import jakarta.annotation.Nullable;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,9 +34,9 @@ public class AdminController {
         return ResponseEntity.ok(userService.findAll(pageable));
     }
 
-    @GetMapping("/users/email/{email}")
-    public ResponseEntity<User> getUsersByEmail(@PathVariable("email") String email) {
-        return ResponseEntity.ok().body(userService.findByEmail(email));
+    @PostMapping("/users/email")
+    public ResponseEntity<User> getUsersByEmail(@RequestBody @Valid EmailRequest email) {
+        return ResponseEntity.ok().body(userService.findByEmail(email.getEmail()));
     }
 
     @PostMapping("/refresh-token")
