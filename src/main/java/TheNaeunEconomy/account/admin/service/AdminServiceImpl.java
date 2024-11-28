@@ -6,6 +6,7 @@ import TheNaeunEconomy.account.admin.service.request.AddAdminRequest;
 import TheNaeunEconomy.account.admin.service.request.DeleteAdminRequest;
 import TheNaeunEconomy.account.admin.service.request.LoginAdminRequest;
 import TheNaeunEconomy.account.admin.service.request.UpdateAdminRequest;
+import TheNaeunEconomy.account.user.domain.User;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import TheNaeunEconomy.jwt.domain.RefreshToken;
 import TheNaeunEconomy.jwt.RefreshTokenRepository;
@@ -81,5 +82,22 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public List<Admin> findAllAdmin() {
         return adminRepository.findAll();
+    }
+
+    public LoginResponse refreshToken(String refreshToken) {
+        refreshTokenRepository.findByRefreshToken(refreshToken)
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 리프레시 토큰입니다."));
+
+        refreshTokenRepository.deleteByRefreshToken(refreshToken);
+
+        Admin admin = adminRepository.findById(tokenProvider.getAdminIdFromToken(refreshToken))
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
+
+        Token newAccessToken = tokenProvider.generateToken(admin, ACCESS_TOKEN_MINUTE_TIME);
+        Token newRefreshToken = tokenProvider.generateToken(admin, REFRESH_TOKEN_MINUTE_TIME);
+
+        refreshTokenRepository.save(new RefreshToken(admin, newRefreshToken.getToken(),
+                LocalDateTime.now().plusMinutes(REFRESH_TOKEN_MINUTE_TIME)));
+        return new LoginResponse(newAccessToken, newRefreshToken);
     }
 }
