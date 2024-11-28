@@ -184,4 +184,13 @@ public class UserServiceImpl implements UserService {
     public boolean isPasswordMatch(String rawPassword, String encodedPassword) {
         return bCryptPasswordEncoder.matches(rawPassword, encodedPassword);
     }
+
+    @Override
+    public User deactivateEmail(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow();
+        if (user.getDeleteDate() != null) {
+            user.setDeleteDate(null);
+        }
+        return user;
+    }
 }
