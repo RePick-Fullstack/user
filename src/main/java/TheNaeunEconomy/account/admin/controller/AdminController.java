@@ -5,6 +5,7 @@ import TheNaeunEconomy.account.admin.service.request.EmailRequest;
 import TheNaeunEconomy.account.user.domain.User;
 import TheNaeunEconomy.account.user.service.UserServiceImpl;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
+import TheNaeunEconomy.account.user.service.response.UserCountResponse;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import java.util.Map;
@@ -51,6 +52,11 @@ public class AdminController {
         return ResponseEntity.ok().body(userService.deactivateUserId(userId));
     }
 
+    @PutMapping("/users/activate/{userId}")
+    public ResponseEntity<User> activateUser(@PathVariable("userId") Long userId) {
+        return ResponseEntity.ok().body(userService.activateUserId(userId));
+    }
+
     @GetMapping("/users/month")
     public Map<String, Long> getUsersMonth() {
         return userService.getUsersCountByMonth();
@@ -59,6 +65,11 @@ public class AdminController {
     @GetMapping("/users/delete")
     public Map<String, Long> getUsersDeleted() {
         return userService.countDeletedUsersByMonthNative();
+    }
+
+    @GetMapping("/users/count")
+    public ResponseEntity<UserCountResponse> getUserCount() {
+        return ResponseEntity.ok().body(userService.getUserCount());
     }
 
     @Nullable

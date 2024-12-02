@@ -1,5 +1,6 @@
 package TheNaeunEconomy.account.user.service;
 
+import TheNaeunEconomy.account.user.service.response.UserCountResponse;
 import TheNaeunEconomy.jwt.RefreshTokenRepository;
 import TheNaeunEconomy.account.user.repository.UserRepository;
 import TheNaeunEconomy.jwt.domain.RefreshToken;
@@ -22,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -190,15 +190,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User deactivateUserId(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow();
-        if (user.getDeleteDate() != null) {
-            user.setDeleteDate(null);
-        }
-        return user;
-    }
-
-    @Override
     public Map<String, Long> getUsersCountByMonth() {
         List<Object[]> results = userRepository.countUsersByMonth();
         Map<String, Long> monthlyUserCount = new LinkedHashMap<>();
@@ -223,5 +214,27 @@ public class UserServiceImpl implements UserService {
         }
 
         return monthlyDeletedUserCount;
+    }
+
+    public UserCountResponse getUserCount() {
+        return new UserCountResponse((int) userRepository.count());
+    }
+
+    @Override
+    public User deactivateUserId(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow();
+        if (user.getDeleteDate() == null) {
+            user.setDeleteDate(LocalDate.now());
+        }
+        return user;
+    }
+
+    @Override
+    public User activateUserId(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow();
+        if (user.getDeleteDate() != null) {
+            user.setDeleteDate(null);
+        }
+        return user;
     }
 }
