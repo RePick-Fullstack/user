@@ -7,6 +7,7 @@ import TheNaeunEconomy.account.domain.Role;
 import TheNaeunEconomy.account.user.repository.UserRepository;
 import TheNaeunEconomy.account.user.domain.Gender;
 import TheNaeunEconomy.account.user.domain.User;
+import TheNaeunEconomy.account.user.service.request.AddDevUserRequest;
 import TheNaeunEconomy.account.user.service.request.AddUserRequest;
 import TheNaeunEconomy.jwt.RefreshTokenRepository;
 import TheNaeunEconomy.util.NicknameGenerator;
@@ -40,13 +41,13 @@ public class DataInitializer implements ApplicationRunner {
         saveUser(addAdminRequest);
 
         Random random = new Random();
-        for (int i = 1; i <= 100; i++) {
+        for (int i = 1; i <= 1000; i++) {
             int year = 1990 + random.nextInt(11);
             int month = 1 + random.nextInt(12);
             int day = 1 + random.nextInt(28);
             Gender gender = i % 2 == 0 ? Gender.MALE : Gender.FEMALE;
 
-            AddUserRequest request = new AddUserRequest("example" + i + "@gmail.com", "password123",
+            AddDevUserRequest request = new AddDevUserRequest("example" + i + "@gmail.com", "password123",
                     NAMES.get(random.nextInt(NAMES.size())), NicknameGenerator.generate(), gender,
                     LocalDate.of(year, month, day));
 
@@ -57,7 +58,7 @@ public class DataInitializer implements ApplicationRunner {
         log.info("100개의 더미 데이터가 성공적으로 삽입되었습니다.");
     }
 
-    private void saveUser(AddUserRequest request) {
+    private void saveUser(AddDevUserRequest request) {
         User user = new User(request);
         userRepository.save(user);
     }

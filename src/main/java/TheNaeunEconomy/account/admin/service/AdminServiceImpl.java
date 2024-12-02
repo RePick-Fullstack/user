@@ -6,7 +6,6 @@ import TheNaeunEconomy.account.admin.service.request.AddAdminRequest;
 import TheNaeunEconomy.account.admin.service.request.DeleteAdminRequest;
 import TheNaeunEconomy.account.admin.service.request.LoginAdminRequest;
 import TheNaeunEconomy.account.admin.service.request.UpdateAdminRequest;
-import TheNaeunEconomy.account.user.domain.User;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import TheNaeunEconomy.jwt.domain.RefreshToken;
 import TheNaeunEconomy.jwt.RefreshTokenRepository;
@@ -87,6 +86,7 @@ public class AdminServiceImpl implements AdminService {
     public LoginResponse refreshToken(String refreshToken) {
         refreshTokenRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 리프레시 토큰입니다."));
+
 
         refreshTokenRepository.deleteByRefreshToken(refreshToken);
 
