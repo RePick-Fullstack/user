@@ -84,7 +84,6 @@ public class AdminServiceImpl implements AdminService {
     }
 
     public LoginResponse refreshToken(String refreshToken) {
-        System.out.println(refreshToken);
         refreshTokenRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 리프레시 토큰입니다."));
 
