@@ -8,7 +8,6 @@ import TheNaeunEconomy.account.user.repository.UserRepository;
 import TheNaeunEconomy.account.user.domain.Gender;
 import TheNaeunEconomy.account.user.domain.User;
 import TheNaeunEconomy.account.user.service.request.AddDevUserRequest;
-import TheNaeunEconomy.account.user.service.request.AddUserRequest;
 import TheNaeunEconomy.jwt.RefreshTokenRepository;
 import TheNaeunEconomy.util.NicknameGenerator;
 import jakarta.annotation.PreDestroy;
