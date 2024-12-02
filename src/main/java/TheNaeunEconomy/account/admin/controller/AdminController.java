@@ -5,9 +5,10 @@ import TheNaeunEconomy.account.admin.service.request.EmailRequest;
 import TheNaeunEconomy.account.user.domain.User;
 import TheNaeunEconomy.account.user.service.UserServiceImpl;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
-import TheNaeunEconomy.account.user.service.response.UserCountResponse;
+import TheNaeunEconomy.account.admin.service.response.UserCountResponse;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -36,11 +37,6 @@ public class AdminController {
         return ResponseEntity.ok(userService.findAll(pageable));
     }
 
-    @PostMapping("/users/email")
-    public ResponseEntity<User> getUsersByEmail(@RequestBody @Valid EmailRequest email) {
-        return ResponseEntity.ok().body(userService.findByEmail(email.getEmail()));
-    }
-
     @PostMapping("/refresh-token")
     public ResponseEntity<LoginResponse> validateAndReissueAccessToken(@RequestHeader HttpHeaders headers) {
         String refreshToken = getToken(headers);
@@ -62,14 +58,25 @@ public class AdminController {
         return userService.getUsersCountByMonth();
     }
 
+
+    @GetMapping("/users/count")
+    public ResponseEntity<UserCountResponse> getUserCount() {
+        return ResponseEntity.ok().body(userService.getUserCount());
+    }
+
+    @GetMapping("/users/gender/count")
+    public ResponseEntity<List<Object[]>> getUserGenderCount() {
+        return ResponseEntity.ok().body(userService.getUserGenderCount());
+    }
+
     @GetMapping("/users/delete")
     public Map<String, Long> getUsersDeleted() {
         return userService.countDeletedUsersByMonthNative();
     }
 
-    @GetMapping("/users/count")
-    public ResponseEntity<UserCountResponse> getUserCount() {
-        return ResponseEntity.ok().body(userService.getUserCount());
+    @PostMapping("/users/email")
+    public ResponseEntity<User> getUsersByEmail(@RequestBody @Valid EmailRequest email) {
+        return ResponseEntity.ok().body(userService.findByEmail(email.getEmail()));
     }
 
     @Nullable

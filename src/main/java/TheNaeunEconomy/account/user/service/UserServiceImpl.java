@@ -1,6 +1,6 @@
 package TheNaeunEconomy.account.user.service;
 
-import TheNaeunEconomy.account.user.service.response.UserCountResponse;
+import TheNaeunEconomy.account.admin.service.response.UserCountResponse;
 import TheNaeunEconomy.jwt.RefreshTokenRepository;
 import TheNaeunEconomy.account.user.repository.UserRepository;
 import TheNaeunEconomy.jwt.domain.RefreshToken;
@@ -236,5 +236,11 @@ public class UserServiceImpl implements UserService {
             user.setDeleteDate(null);
         }
         return user;
+    }
+
+    @Override
+    public List<Object[]> getUserGenderCount() {
+        return  userRepository.countUsersByGender();
+
     }
 }
