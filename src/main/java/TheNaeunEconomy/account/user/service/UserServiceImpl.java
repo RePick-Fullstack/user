@@ -1,6 +1,7 @@
 package TheNaeunEconomy.account.user.service;
 
 import TheNaeunEconomy.account.admin.service.response.UserCountResponse;
+import TheNaeunEconomy.account.naverapi.service.request.NaverAccountInfo;
 import TheNaeunEconomy.jwt.RefreshTokenRepository;
 import TheNaeunEconomy.account.user.repository.UserRepository;
 import TheNaeunEconomy.jwt.domain.RefreshToken;
@@ -10,7 +11,7 @@ import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import TheNaeunEconomy.jwt.Token;
 import TheNaeunEconomy.account.user.service.response.UserNameResponse;
 import TheNaeunEconomy.account.user.service.request.AddUserRequest;
-import TheNaeunEconomy.account.kakao_api.service.request.KakaoAccountInfo;
+import TheNaeunEconomy.account.kakaoapi.service.request.KakaoAccountInfo;
 import TheNaeunEconomy.account.user.service.request.LoginUserRequest;
 import TheNaeunEconomy.account.user.service.request.UpdateUserRequest;
 import java.time.LocalDate;
@@ -152,6 +153,10 @@ public class UserServiceImpl implements UserService {
     }
 
     public LoginResponse kakaoLoginUser(String email) {
+        return getLoginResponse(email);
+    }
+
+    private LoginResponse getLoginResponse(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("해당 이메일의 사용자가 존재하지 않습니다."));
 
@@ -192,6 +197,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public Map<String, Long> getUsersCountByMonth() {
         List<Object[]> results = userRepository.countUsersByMonth();
+        return getStringLongMap(results);
+    }
+
+    private Map<String, Long> getStringLongMap(List<Object[]> results) {
         Map<String, Long> monthlyUserCount = new LinkedHashMap<>();
 
         for (Object[] result : results) {
@@ -205,15 +214,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Map<String, Long> countDeletedUsersByMonthNative() {
         List<Object[]> results = userRepository.countDeletedUsersByMonthNative();
-        Map<String, Long> monthlyDeletedUserCount = new LinkedHashMap<>();
-
-        for (Object[] result : results) {
-            String month = (String) result[0]; // YYYY-MM 형식의 월
-            Long count = ((Number) result[1]).longValue(); // 카운트 값
-            monthlyDeletedUserCount.put(month, count);
-        }
-
-        return monthlyDeletedUserCount;
+        return getStringLongMap(results);
     }
 
     public UserCountResponse getUserCount() {
@@ -240,7 +241,28 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<Object[]> getUserGenderCount() {
-        return  userRepository.countUsersByGender();
+        return userRepository.countUsersByGender();
 
     }
+
+    @Override
+    public boolean naverUserCheck(String email) {
+        Optional<User> byEmail = userRepository.findByEmail(email);
+        return byEmail.isPresent();
+    }
+
+    @Override
+    public LoginResponse naverLoginUser(String email) {
+        return getLoginResponse(email);
+    }
+
+    @Override
+    public LoginResponse registerNaverUser(NaverAccountInfo naverAccountInfo) {
+        return userRepository.findByEmail(naverAccountInfo.getEmail())
+                .map(existingUser -> kakaoLoginUser(existingUser.getEmail())).orElseGet(() -> {
+                    userRepository.save(new User(naverAccountInfo));
+                    return kakaoLoginUser(naverAccountInfo.getEmail());
+                });
+    }
+
 }

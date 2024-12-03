@@ -4,9 +4,10 @@ package TheNaeunEconomy.account.user.domain;
 import static TheNaeunEconomy.account.user.domain.User.RandomDateGenerator.generateRandomDate;
 
 import TheNaeunEconomy.account.domain.Role;
+import TheNaeunEconomy.account.naverapi.service.request.NaverAccountInfo;
 import TheNaeunEconomy.account.user.service.request.AddDevUserRequest;
 import TheNaeunEconomy.account.user.service.request.AddUserRequest;
-import TheNaeunEconomy.account.kakao_api.service.request.KakaoAccountInfo;
+import TheNaeunEconomy.account.kakaoapi.service.request.KakaoAccountInfo;
 import TheNaeunEconomy.account.user.service.request.UpdateUserRequest;
 import TheNaeunEconomy.util.NicknameGenerator;
 import jakarta.persistence.*;
@@ -120,6 +121,20 @@ public class User {
                 : kakaoAccountInfo.getNickname();
         this.gender = kakaoAccountInfo.getGender();
         this.birthDate = kakaoAccountInfo.getBirthDate();
+        this.createDate = LocalDate.now();
+        this.updateDate = LocalDate.now();
+        this.role = Role.USER;
+        this.isBilling = false;
+    }
+
+    public User(NaverAccountInfo naverAccountInfo) {
+        this.email = naverAccountInfo.getEmail();
+        this.password = bCryptPasswordEncoder.encode(naverAccountInfo.getEmail() + naverAccountInfo.getBirthDate());
+        this.name = naverAccountInfo.getName();
+        this.nickname = naverAccountInfo.getNickname().isEmpty() ? NicknameGenerator.generate()
+                : naverAccountInfo.getNickname();
+        this.gender = naverAccountInfo.getGender();
+        this.birthDate = naverAccountInfo.getBirthDate();
         this.createDate = LocalDate.now();
         this.updateDate = LocalDate.now();
         this.role = Role.USER;

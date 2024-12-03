@@ -1,11 +1,12 @@
 package TheNaeunEconomy.account.user.service;
 
+import TheNaeunEconomy.account.naverapi.service.request.NaverAccountInfo;
 import TheNaeunEconomy.account.user.domain.User;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import TheNaeunEconomy.account.admin.service.response.UserCountResponse;
 import TheNaeunEconomy.account.user.service.response.UserNameResponse;
 import TheNaeunEconomy.account.user.service.request.AddUserRequest;
-import TheNaeunEconomy.account.kakao_api.service.request.KakaoAccountInfo;
+import TheNaeunEconomy.account.kakaoapi.service.request.KakaoAccountInfo;
 import TheNaeunEconomy.account.user.service.request.LoginUserRequest;
 import TheNaeunEconomy.account.user.service.request.UpdateUserRequest;
 import java.util.List;
@@ -28,6 +29,12 @@ public interface UserService {
     UserNameResponse getUserName(String token);
 
     LoginResponse registerUser(KakaoAccountInfo kakaoAccountInfo);
+
+    boolean naverUserCheck(String email);
+
+    LoginResponse naverLoginUser(String email);
+
+    LoginResponse registerNaverUser(NaverAccountInfo naverAccountInfo);
 
     Page<User> findAll(Pageable pageable);
 

@@ -1,6 +1,6 @@
-package TheNaeunEconomy.account.kakao_api.service;
+package TheNaeunEconomy.account.kakaoapi.service;
 
-import TheNaeunEconomy.account.kakao_api.service.response.KakaoTokenResponse;
+import TheNaeunEconomy.account.kakaoapi.service.response.KakaoTokenResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
