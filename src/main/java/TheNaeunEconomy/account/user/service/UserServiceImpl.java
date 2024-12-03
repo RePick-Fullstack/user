@@ -134,7 +134,7 @@ public class UserServiceImpl implements UserService {
 
     private void validateUser(User user, String rawPassword) {
         if (user.getDeleteDate() != null) {
-            throw new IllegalStateException("삭제된 사용자입니다. 관리자에게 문의하세요.");
+            throw new IllegalStateException("정지된 사용자입니다. 관리자에게 문의하세요.");
         }
 
         if (!isPasswordMatch(rawPassword, user.getPassword())) {
