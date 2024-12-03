@@ -8,7 +8,6 @@ import TheNaeunEconomy.account.user.repository.UserRepository;
 import TheNaeunEconomy.account.user.domain.Gender;
 import TheNaeunEconomy.account.user.domain.User;
 import TheNaeunEconomy.account.user.service.request.AddDevUserRequest;
-import TheNaeunEconomy.account.user.service.request.AddUserRequest;
 import TheNaeunEconomy.jwt.RefreshTokenRepository;
 import TheNaeunEconomy.util.NicknameGenerator;
 import jakarta.annotation.PreDestroy;
@@ -45,7 +44,7 @@ public class DataInitializer implements ApplicationRunner {
             int year = 1990 + random.nextInt(11);
             int month = 1 + random.nextInt(12);
             int day = 1 + random.nextInt(28);
-            Gender gender = i % 2 == 0 ? Gender.MALE : Gender.FEMALE;
+            Gender gender = random.nextBoolean() ? Gender.MALE : Gender.FEMALE;
 
             AddDevUserRequest request = new AddDevUserRequest("example" + i + "@gmail.com", "password123",
                     NAMES.get(random.nextInt(NAMES.size())), NicknameGenerator.generate(), gender,

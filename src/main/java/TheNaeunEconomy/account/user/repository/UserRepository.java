@@ -24,4 +24,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "ORDER BY month ASC",
             nativeQuery = true)
     List<Object[]> countDeletedUsersByMonthNative();
+
+    @Query("SELECT u.gender, COUNT(u) FROM User u WHERE u.deleteDate IS NULL GROUP BY u.gender")
+    List<Object[]> countUsersByGender();
 }

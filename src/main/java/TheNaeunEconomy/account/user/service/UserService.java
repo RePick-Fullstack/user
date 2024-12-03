@@ -2,12 +2,13 @@ package TheNaeunEconomy.account.user.service;
 
 import TheNaeunEconomy.account.user.domain.User;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
-import TheNaeunEconomy.account.user.service.response.UserCountResponse;
+import TheNaeunEconomy.account.admin.service.response.UserCountResponse;
 import TheNaeunEconomy.account.user.service.response.UserNameResponse;
 import TheNaeunEconomy.account.user.service.request.AddUserRequest;
 import TheNaeunEconomy.account.kakao_api.service.request.KakaoAccountInfo;
 import TheNaeunEconomy.account.user.service.request.LoginUserRequest;
 import TheNaeunEconomy.account.user.service.request.UpdateUserRequest;
+import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,4 +42,6 @@ public interface UserService {
     Map<String, Long> countDeletedUsersByMonthNative();
 
     UserCountResponse getUserCount();
+
+    List<Object[]> getUserGenderCount();
 }
