@@ -1,5 +1,4 @@
-package TheNaeunEconomy.account.kakao_api.service.request;
-
+package TheNaeunEconomy.account.naverapi.service.request;
 
 import TheNaeunEconomy.account.user.domain.Gender;
 import jakarta.validation.constraints.Email;
@@ -9,10 +8,11 @@ import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import lombok.Getter;
 
 @Getter
-public class KakaoAccountInfo {
+public class NaverAccountInfo {
     @NotBlank(message = "이메일은 필수 항목입니다.")
     @Email(message = "잘못된 이메일 형식입니다.")
     private String email;
@@ -33,14 +33,21 @@ public class KakaoAccountInfo {
     @Past(message = "생년월일은 과거 날짜여야 합니다.")
     private LocalDate birthDate;
 
-    public KakaoAccountInfo() {
+    public NaverAccountInfo() {
     }
 
-    public KakaoAccountInfo(String email, String name, String nickname, Gender gender, LocalDate birthDate) {
+    public NaverAccountInfo(String email, String name, String nickname, String gender, String year, String date) {
         this.email = email;
         this.name = name;
         this.nickname = nickname;
-        this.gender = gender;
-        this.birthDate = birthDate;
+        if (gender.equals("M")){
+            this.gender = Gender.MALE;
+        }
+        if (gender.equals("F")){
+            this.gender = Gender.FEMALE;
+        }
+        String fullDate = String.format("%s-%s", year, date);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        this.birthDate = LocalDate.parse(fullDate, formatter);;
     }
 }
