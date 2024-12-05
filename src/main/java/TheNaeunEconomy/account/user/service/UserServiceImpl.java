@@ -2,6 +2,7 @@ package TheNaeunEconomy.account.user.service;
 
 import TheNaeunEconomy.account.admin.service.response.UserCountResponse;
 import TheNaeunEconomy.account.naverapi.service.request.NaverAccountInfo;
+import TheNaeunEconomy.account.user.Dto.IsBilling;
 import TheNaeunEconomy.jwt.RefreshTokenRepository;
 import TheNaeunEconomy.account.user.repository.UserRepository;
 import TheNaeunEconomy.jwt.domain.RefreshToken;
@@ -214,5 +215,11 @@ public class UserServiceImpl implements UserService {
                     userRepository.save(new User(naverAccountInfo));
                     return kakaoLoginUser(naverAccountInfo.getEmail());
                 });
+    }
+
+    public void updateUserIsBilling(IsBilling isBilling) {
+        User user = userRepository.findById(isBilling.getUserId()).orElseThrow();
+        user.setIsBilling(isBilling.getIsBilling());
+        userRepository.save(user);
     }
 }

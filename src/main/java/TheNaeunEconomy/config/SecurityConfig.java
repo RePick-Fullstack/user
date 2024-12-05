@@ -28,13 +28,14 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/",
-                                "/api/v1/login",
-                                "/api/v1/signup",
+                                "/api/v1/users/login",
+                                "/api/v1/users/signup",
                                 "/api/v1/oauth/kakao/callback",
                                 "/api/v1/oauth/kakao/login",
                                 "/api/v1/oauth/naver/login",
                                 "/api/v1/oauth/naver/callback",
-                                "/api/v1/admin/login"
+                                "/api/v1/admin/login",
+                                "/api/v1/users/kafka/test"
                         ).permitAll() // 공용 엔드포인트 허용
                         .requestMatchers("/api/v1/users/**").hasAuthority("ROLE_USER")
                         .requestMatchers("/api/v1/admin/super/**").hasAuthority("ROLE_SUPER_ADMIN")

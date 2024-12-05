@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/kafka")
+@RequestMapping("/api/v1/users/kafka")
 @RequiredArgsConstructor
 public class KafkaTestController {
 
@@ -16,7 +16,7 @@ public class KafkaTestController {
 
     @GetMapping("/test")
     public String test() {
-        kafkaService.sendMessage(new IsBilling(1L, true));
+        kafkaService.sendMessage(new IsBilling(330483L, false));
         return "send message to kafka";
     }
 }

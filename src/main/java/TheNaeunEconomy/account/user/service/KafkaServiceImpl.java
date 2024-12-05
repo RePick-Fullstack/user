@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class KafkaServiceImpl implements KafkaService {
+
     private final KafkaTemplate<String, IsBilling> kafkaTemplate;
+    private final UserServiceImpl userService;
 
     @Override
     public void sendMessage(IsBilling isBilling) {
@@ -21,6 +23,7 @@ public class KafkaServiceImpl implements KafkaService {
     public void listen(IsBilling isBilling) {
         System.out.println("Consumer IsBilling : " + isBilling);
         //서비스 생성
+        userService.updateUserIsBilling(isBilling);
         //내용은 Dto/IsBilling  확인
     }
 }
