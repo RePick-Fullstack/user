@@ -10,9 +10,7 @@ import TheNaeunEconomy.jwt.TokenProvider;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import TheNaeunEconomy.jwt.Token;
 import TheNaeunEconomy.account.user.service.response.UserNameResponse;
-import TheNaeunEconomy.account.user.service.request.AddUserRequest;
 import TheNaeunEconomy.account.kakaoapi.service.request.KakaoAccountInfo;
-import TheNaeunEconomy.account.user.service.request.LoginUserRequest;
 import TheNaeunEconomy.account.user.service.request.UpdateUserRequest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,7 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
@@ -30,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 
 @Service
-@Slf4j
+@RequiredArgsConstructor
 @Transactional
 public class UserServiceImpl implements UserService {
 
@@ -42,15 +40,6 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final TokenProvider tokenProvider;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    public UserServiceImpl(UserRepository userRepository, RefreshTokenRepository refreshTokenRepository,
-                           TokenProvider tokenProvider, BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.userRepository = userRepository;
-        this.refreshTokenRepository = refreshTokenRepository;
-        this.tokenProvider = tokenProvider;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-    }
 
     @Override
     public LoginResponse registerUser(KakaoAccountInfo kakaoAccountInfo) {
@@ -227,5 +216,4 @@ public class UserServiceImpl implements UserService {
                     return kakaoLoginUser(naverAccountInfo.getEmail());
                 });
     }
-
 }
