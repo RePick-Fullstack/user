@@ -10,9 +10,7 @@ import TheNaeunEconomy.jwt.TokenProvider;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import TheNaeunEconomy.jwt.Token;
 import TheNaeunEconomy.account.user.service.response.UserNameResponse;
-import TheNaeunEconomy.account.user.service.request.AddUserRequest;
 import TheNaeunEconomy.account.kakaoapi.service.request.KakaoAccountInfo;
-import TheNaeunEconomy.account.user.service.request.LoginUserRequest;
 import TheNaeunEconomy.account.user.service.request.UpdateUserRequest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,17 +18,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 
 @Service
-@Slf4j
+@RequiredArgsConstructor
 @Transactional
 public class UserServiceImpl implements UserService {
 
@@ -42,23 +39,6 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final TokenProvider tokenProvider;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    public UserServiceImpl(UserRepository userRepository, RefreshTokenRepository refreshTokenRepository,
-                           TokenProvider tokenProvider, BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.userRepository = userRepository;
-        this.refreshTokenRepository = refreshTokenRepository;
-        this.tokenProvider = tokenProvider;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-    }
-
-    @Override
-    public User saveUser(AddUserRequest request) {
-        userRepository.findByEmail(request.getEmail()).ifPresent(user -> {
-            throw new IllegalStateException("이미 존재하는 이메일입니다.");
-        });
-        return userRepository.save(new User(request));
-    }
 
     @Override
     public LoginResponse registerUser(KakaoAccountInfo kakaoAccountInfo) {
@@ -117,32 +97,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public LoginResponse loginUser(LoginUserRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("해당 이메일의 사용자가 존재하지 않습니다."));
-
-        validateUser(user, request.getPassword());
-
-        Token accessToken = tokenProvider.generateToken(user, ACCESS_TOKEN_MINUTE_TIME);
-        Token refreshToken = tokenProvider.generateToken(user, REFRESH_TOKEN_MINUTE_TIME);
-
-        refreshTokenRepository.save(new RefreshToken(user, refreshToken.getToken(),
-                LocalDateTime.now().plusMinutes(REFRESH_TOKEN_MINUTE_TIME)));
-
-        return new LoginResponse(accessToken, refreshToken);
-    }
-
-    private void validateUser(User user, String rawPassword) {
-        if (user.getDeleteDate() != null) {
-            throw new IllegalStateException("정지된 사용자입니다. 관리자에게 문의하세요.");
-        }
-
-        if (!isPasswordMatch(rawPassword, user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        }
-    }
-
-    @Override
     public void logoutUser(String token) {
         refreshTokenRepository.deleteByRefreshToken(token);
     }
@@ -190,9 +144,6 @@ public class UserServiceImpl implements UserService {
         refreshTokenRepository.deleteExpiredTokens();
     }
 
-    public boolean isPasswordMatch(String rawPassword, String encodedPassword) {
-        return bCryptPasswordEncoder.matches(rawPassword, encodedPassword);
-    }
 
     @Override
     public Map<String, Long> getUsersCountByMonth() {
@@ -264,5 +215,4 @@ public class UserServiceImpl implements UserService {
                     return kakaoLoginUser(naverAccountInfo.getEmail());
                 });
     }
-
 }

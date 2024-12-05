@@ -1,21 +1,29 @@
 package TheNaeunEconomy.account.admin.service;
 
-import TheNaeunEconomy.account.admin.domain.Admin;
-import TheNaeunEconomy.account.admin.service.request.AddAdminRequest;
-import TheNaeunEconomy.account.admin.service.request.DeleteAdminRequest;
-import TheNaeunEconomy.account.admin.service.request.LoginAdminRequest;
-import TheNaeunEconomy.account.admin.service.request.UpdateAdminRequest;
+import TheNaeunEconomy.account.admin.service.response.UserCountResponse;
+import TheNaeunEconomy.account.user.domain.User;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import java.util.List;
+import java.util.Map;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface AdminService {
-    Admin saveAdmin(AddAdminRequest addAdminRequest);
+    Page<User> findAll(Pageable pageable);
 
-    LoginResponse login(LoginAdminRequest loginAdminRequest);
+    LoginResponse refreshToken(String refreshToken);
 
-    Admin updateAdmin(String token, UpdateAdminRequest updateAdminRequest);
+    User deactivateUserId(Long userId);
 
-    void deleteAdmin(String token, DeleteAdminRequest deleteAdminRequest);
+    User activateUserId(Long userId);
 
-    List<Admin> findAllAdmin();
+    Map<String, Long> getUsersCountByMonth();
+
+    UserCountResponse getUserCount();
+
+    List<Object[]> getUserGenderCount();
+
+    Map<String, Long> countDeletedUsersByMonthNative();
+
+    User findByEmail(String email);
 }

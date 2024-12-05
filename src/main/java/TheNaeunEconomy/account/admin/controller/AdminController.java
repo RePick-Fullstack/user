@@ -3,7 +3,6 @@ package TheNaeunEconomy.account.admin.controller;
 import TheNaeunEconomy.account.admin.service.AdminServiceImpl;
 import TheNaeunEconomy.account.admin.service.request.EmailRequest;
 import TheNaeunEconomy.account.user.domain.User;
-import TheNaeunEconomy.account.user.service.UserServiceImpl;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import TheNaeunEconomy.account.admin.service.response.UserCountResponse;
 import jakarta.annotation.Nullable;
@@ -30,11 +29,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminController {
 
     private final AdminServiceImpl adminService;
-    private final UserServiceImpl userService;
 
     @GetMapping("/users")
     public ResponseEntity<Page<User>> getUsers(Pageable pageable) {
-        return ResponseEntity.ok(userService.findAll(pageable));
+        return ResponseEntity.ok(adminService.findAll(pageable));
     }
 
     @PostMapping("/refresh-token")
@@ -45,38 +43,37 @@ public class AdminController {
 
     @PutMapping("/users/deactivate/{userId}")
     public ResponseEntity<User> deactivateUser(@PathVariable("userId") Long userId) {
-        return ResponseEntity.ok().body(userService.deactivateUserId(userId));
+        return ResponseEntity.ok().body(adminService.deactivateUserId(userId));
     }
 
     @PutMapping("/users/activate/{userId}")
     public ResponseEntity<User> activateUser(@PathVariable("userId") Long userId) {
-        return ResponseEntity.ok().body(userService.activateUserId(userId));
+        return ResponseEntity.ok().body(adminService.activateUserId(userId));
     }
 
     @GetMapping("/users/month")
     public Map<String, Long> getUsersMonth() {
-        return userService.getUsersCountByMonth();
+        return adminService.getUsersCountByMonth();
     }
-
 
     @GetMapping("/users/count")
     public ResponseEntity<UserCountResponse> getUserCount() {
-        return ResponseEntity.ok().body(userService.getUserCount());
+        return ResponseEntity.ok().body(adminService.getUserCount());
     }
 
     @GetMapping("/users/gender/count")
     public ResponseEntity<List<Object[]>> getUserGenderCount() {
-        return ResponseEntity.ok().body(userService.getUserGenderCount());
+        return ResponseEntity.ok().body(adminService.getUserGenderCount());
     }
 
     @GetMapping("/users/delete")
     public Map<String, Long> getUsersDeleted() {
-        return userService.countDeletedUsersByMonthNative();
+        return adminService.countDeletedUsersByMonthNative();
     }
 
     @PostMapping("/users/email")
     public ResponseEntity<User> getUsersByEmail(@RequestBody @Valid EmailRequest email) {
-        return ResponseEntity.ok().body(userService.findByEmail(email.getEmail()));
+        return ResponseEntity.ok().body(adminService.findByEmail(email.getEmail()));
     }
 
     @Nullable

@@ -2,7 +2,7 @@ package TheNaeunEconomy.user.user.service;
 
 import TheNaeunEconomy.account.user.domain.Gender;
 import TheNaeunEconomy.account.user.domain.User;
-import TheNaeunEconomy.account.user.service.UserServiceImpl;
+import TheNaeunEconomy.account.user.service.NonUserServiceImpl;
 import TheNaeunEconomy.account.user.service.request.AddUserRequest;
 import java.time.LocalDate;
 import org.assertj.core.api.Assertions;
@@ -15,7 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 class UserServiceImplTest {
 
     @Autowired
-    private UserServiceImpl userService;
+    private NonUserServiceImpl nonUserService;
 
     @Test
     @DisplayName("유저를 저장한 후 이메일이 제대로 저장이 되어있는지 확인한다.")
@@ -23,7 +23,7 @@ class UserServiceImplTest {
         AddUserRequest addUserRequest = new AddUserRequest("ckdghks5565@gmail.com", "password123", "최창환", "근면한 복어",
                 Gender.MALE, LocalDate.of(2001, 6, 5));
 
-        User user = userService.saveUser(addUserRequest);
+        User user = nonUserService.saveUser(addUserRequest);
 
         Assertions.assertThat(user.getEmail()).isEqualTo(addUserRequest.getEmail());
     }
