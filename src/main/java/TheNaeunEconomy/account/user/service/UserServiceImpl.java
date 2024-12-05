@@ -53,14 +53,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User saveUser(AddUserRequest request) {
-        userRepository.findByEmail(request.getEmail()).ifPresent(user -> {
-            throw new IllegalStateException("이미 존재하는 이메일입니다.");
-        });
-        return userRepository.save(new User(request));
-    }
-
-    @Override
     public LoginResponse registerUser(KakaoAccountInfo kakaoAccountInfo) {
         return userRepository.findByEmail(kakaoAccountInfo.getEmail())
                 .map(existingUser -> kakaoLoginUser(existingUser.getEmail())).orElseGet(() -> {
@@ -117,32 +109,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public LoginResponse loginUser(LoginUserRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("해당 이메일의 사용자가 존재하지 않습니다."));
-
-        validateUser(user, request.getPassword());
-
-        Token accessToken = tokenProvider.generateToken(user, ACCESS_TOKEN_MINUTE_TIME);
-        Token refreshToken = tokenProvider.generateToken(user, REFRESH_TOKEN_MINUTE_TIME);
-
-        refreshTokenRepository.save(new RefreshToken(user, refreshToken.getToken(),
-                LocalDateTime.now().plusMinutes(REFRESH_TOKEN_MINUTE_TIME)));
-
-        return new LoginResponse(accessToken, refreshToken);
-    }
-
-    private void validateUser(User user, String rawPassword) {
-        if (user.getDeleteDate() != null) {
-            throw new IllegalStateException("정지된 사용자입니다. 관리자에게 문의하세요.");
-        }
-
-        if (!isPasswordMatch(rawPassword, user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        }
-    }
-
-    @Override
     public void logoutUser(String token) {
         refreshTokenRepository.deleteByRefreshToken(token);
     }
@@ -190,9 +156,6 @@ public class UserServiceImpl implements UserService {
         refreshTokenRepository.deleteExpiredTokens();
     }
 
-    public boolean isPasswordMatch(String rawPassword, String encodedPassword) {
-        return bCryptPasswordEncoder.matches(rawPassword, encodedPassword);
-    }
 
     @Override
     public Map<String, Long> getUsersCountByMonth() {

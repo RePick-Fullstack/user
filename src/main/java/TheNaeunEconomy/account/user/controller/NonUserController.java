@@ -1,6 +1,7 @@
 package TheNaeunEconomy.account.user.controller;
 
 
+import TheNaeunEconomy.account.user.service.NonUserServiceImpl;
 import TheNaeunEconomy.account.user.service.UserServiceImpl;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import TheNaeunEconomy.account.user.service.request.AddUserRequest;
@@ -21,15 +22,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1")
 public class NonUserController {
 
-    private final UserServiceImpl userService;
+    private final NonUserServiceImpl nonUserService;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> loginUser(@RequestBody @Valid LoginUserRequest loginUserRequest) {
-        return ResponseEntity.ok().body(userService.loginUser(loginUserRequest));
+        return ResponseEntity.ok().body(nonUserService.loginUser(loginUserRequest));
     }
 
     @PostMapping("/signup")
     public ResponseEntity<UserResponse> saveUser(@RequestBody @Valid AddUserRequest request) {
-        return ResponseEntity.ok().body(new UserResponse(userService.saveUser(request)));
+        return ResponseEntity.ok().body(new UserResponse(nonUserService.saveUser(request)));
     }
 }

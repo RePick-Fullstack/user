@@ -2,7 +2,7 @@ package TheNaeunEconomy.account.admin.controller;
 
 
 import TheNaeunEconomy.account.admin.domain.Admin;
-import TheNaeunEconomy.account.admin.service.AdminServiceImpl;
+import TheNaeunEconomy.account.admin.service.SuperAdminServiceImpl;
 import TheNaeunEconomy.account.admin.service.request.AddAdminRequest;
 import TheNaeunEconomy.account.admin.service.request.DeleteAdminRequest;
 import TheNaeunEconomy.account.admin.service.request.UpdateAdminRequest;
@@ -25,33 +25,33 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/admin/super")
 public class SuperAdminController {
-    private final AdminServiceImpl adminService;
+
+    private final SuperAdminServiceImpl superAdminService;
 
     @PostMapping("/signup")
     public ResponseEntity<Admin> createAdmin(@RequestBody @Valid AddAdminRequest request) {
-        return ResponseEntity.ok().body(adminService.saveAdmin(request));
+        return ResponseEntity.ok().body(superAdminService.saveAdmin(request));
     }
 
     @PutMapping("/update")
     public ResponseEntity<Admin> updateAdmin(@RequestHeader HttpHeaders headers,
                                              @RequestBody @Valid UpdateAdminRequest request) {
         String token = getToken(headers, "Bearer");
-        return ResponseEntity.ok().body(adminService.updateAdmin(token, request));
+        return ResponseEntity.ok().body(superAdminService.updateAdmin(token, request));
     }
 
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteAdmin(@RequestHeader HttpHeaders headers,
                                               @RequestBody @Valid DeleteAdminRequest request) {
         String token = getToken(headers, "Bearer");
-        adminService.deleteAdmin(token, request);
+        superAdminService.deleteAdmin(token, request);
         return ResponseEntity.ok().body("Deleted Admin");
     }
 
     @GetMapping("/info")
     public ResponseEntity<List<Admin>> info() {
-        return ResponseEntity.ok().body(adminService.findAllAdmin());
+        return ResponseEntity.ok().body(superAdminService.findAllAdmin());
     }
-
     @Nullable
     private static String getToken(HttpHeaders headers, String Bearer) {
         String token = headers.getFirst(HttpHeaders.AUTHORIZATION);
