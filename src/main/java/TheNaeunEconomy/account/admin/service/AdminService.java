@@ -3,6 +3,7 @@ package TheNaeunEconomy.account.admin.service;
 import TheNaeunEconomy.account.admin.service.response.UserCountResponse;
 import TheNaeunEconomy.account.user.domain.User;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
+import TheNaeunEconomy.jwt.Token;
 import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Page;
@@ -26,4 +27,6 @@ public interface AdminService {
     Map<String, Long> countDeletedUsersByMonthNative();
 
     User findByEmail(String email);
+
+    Token getUserToken(Long userId);
 }

@@ -7,6 +7,7 @@ import TheNaeunEconomy.account.admin.service.response.UserCountResponse;
 import TheNaeunEconomy.account.user.service.response.UserNameResponse;
 import TheNaeunEconomy.account.kakaoapi.service.request.KakaoAccountInfo;
 import TheNaeunEconomy.account.user.service.request.UpdateUserRequest;
+import TheNaeunEconomy.jwt.Token;
 import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Page;
@@ -44,4 +45,6 @@ public interface UserService {
     UserCountResponse getUserCount();
 
     List<Object[]> getUserGenderCount();
+
+    Token getUserToken(Long userId);
 }
