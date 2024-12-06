@@ -16,7 +16,7 @@ public class KafkaTestController {
 
     @GetMapping("/test")
     public String test() {
-        kafkaService.sendMessage(new IsBilling(330483L, false));
+        kafkaService.sendMessage(new IsBilling(331311L, true));
         return "send message to kafka";
     }
 }

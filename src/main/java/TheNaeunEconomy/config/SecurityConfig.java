@@ -36,7 +36,7 @@ public class SecurityConfig {
                                 "/api/v1/oauth/naver/callback",
                                 "/api/v1/admin/login",
                                 "/api/v1/users/kafka/test"
-                        ).permitAll() // 공용 엔드포인트 허용
+                        ).permitAll()
                         .requestMatchers("/api/v1/users/**").hasAuthority("ROLE_USER")
                         .requestMatchers("/api/v1/admin/super/**").hasAuthority("ROLE_SUPER_ADMIN")
                         .requestMatchers("/api/v1/admin/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_SUPER_ADMIN")

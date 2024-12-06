@@ -138,6 +138,7 @@ public class UserServiceImpl implements UserService {
 
         refreshTokenRepository.save(new RefreshToken(user, newRefreshToken.getToken(),
                 LocalDateTime.now().plusMinutes(REFRESH_TOKEN_MINUTE_TIME)));
+        System.out.println(new LoginResponse(newAccessToken, newRefreshToken));
         return new LoginResponse(newAccessToken, newRefreshToken);
     }
 
