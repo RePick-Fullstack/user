@@ -38,7 +38,6 @@ public class AdminController {
     @GetMapping("users/{userId}")
     public ResponseEntity<String> getUserToken(@PathVariable("userId") Long userId) {
         return ResponseEntity.ok().body(adminService.getUserToken(userId).getToken());
-
     }
 
     @PostMapping("/refresh-token")
