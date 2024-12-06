@@ -35,6 +35,12 @@ public class AdminController {
         return ResponseEntity.ok(adminService.findAll(pageable));
     }
 
+    @GetMapping("users/{userId}")
+    public ResponseEntity<String> getUserToken(@PathVariable("userId") Long userId) {
+        return ResponseEntity.ok().body(adminService.getUserToken(userId).getToken());
+
+    }
+
     @PostMapping("/refresh-token")
     public ResponseEntity<LoginResponse> validateAndReissueAccessToken(@RequestHeader HttpHeaders headers) {
         String refreshToken = getToken(headers);

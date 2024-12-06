@@ -93,4 +93,9 @@ public class AdminServiceImpl implements AdminService {
     public User findByEmail(String email) {
         return userService.findByEmail(email);
     }
+
+    @Override
+    public Token getUserToken(Long userId) {
+        return userService.getUserToken(userId);
+    }
 }

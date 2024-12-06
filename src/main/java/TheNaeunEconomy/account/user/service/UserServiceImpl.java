@@ -199,6 +199,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Token getUserToken(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow();
+        return tokenProvider.generateToken(user, ACCESS_TOKEN_MINUTE_TIME);
+    }
+
+    @Override
     public boolean naverUserCheck(String email) {
         Optional<User> byEmail = userRepository.findByEmail(email);
         return byEmail.isPresent();
