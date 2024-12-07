@@ -6,6 +6,7 @@ import TheNaeunEconomy.account.admin.service.SuperAdminServiceImpl;
 import TheNaeunEconomy.account.admin.service.request.AddAdminRequest;
 import TheNaeunEconomy.account.admin.service.request.DeleteAdminRequest;
 import TheNaeunEconomy.account.admin.service.request.UpdateAdminRequest;
+import TheNaeunEconomy.jwt.TokenProvider;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SuperAdminController {
 
     private final SuperAdminServiceImpl superAdminService;
+    private final TokenProvider tokenProvider;
 
     @PostMapping("/signup")
     public ResponseEntity<Admin> createAdmin(@RequestBody @Valid AddAdminRequest request) {
@@ -36,14 +38,14 @@ public class SuperAdminController {
     @PutMapping("/update")
     public ResponseEntity<Admin> updateAdmin(@RequestHeader HttpHeaders headers,
                                              @RequestBody @Valid UpdateAdminRequest request) {
-        String token = getToken(headers, "Bearer");
+        String token = tokenProvider.getToken(headers);
         return ResponseEntity.ok().body(superAdminService.updateAdmin(token, request));
     }
 
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteAdmin(@RequestHeader HttpHeaders headers,
                                               @RequestBody @Valid DeleteAdminRequest request) {
-        String token = getToken(headers, "Bearer");
+        String token = tokenProvider.getToken(headers);
         superAdminService.deleteAdmin(token, request);
         return ResponseEntity.ok().body("Deleted Admin");
     }
@@ -51,13 +53,5 @@ public class SuperAdminController {
     @GetMapping("/info")
     public ResponseEntity<List<Admin>> info() {
         return ResponseEntity.ok().body(superAdminService.findAllAdmin());
-    }
-    @Nullable
-    private static String getToken(HttpHeaders headers, String Bearer) {
-        String token = headers.getFirst(HttpHeaders.AUTHORIZATION);
-        if (token != null && token.startsWith(Bearer)) {
-            token = token.substring(7);
-        }
-        return token;
     }
 }

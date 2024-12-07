@@ -16,14 +16,10 @@ public class KafkaServiceImpl implements KafkaService {
     @Override
     public void sendMessage(IsBilling isBilling) {
         kafkaTemplate.send("tosspayments", isBilling);
-        System.out.println("Producer Sent : " + isBilling);
     }
 
     @KafkaListener(id = "user", topics = "tosspayments")
     public void listen(IsBilling isBilling) {
-        System.out.println("Consumer IsBilling : " + isBilling);
-        //서비스 생성
         userService.updateUserIsBilling(isBilling);
-        //내용은 Dto/IsBilling  확인
     }
 }
