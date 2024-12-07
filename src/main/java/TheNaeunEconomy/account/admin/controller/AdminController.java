@@ -5,6 +5,7 @@ import TheNaeunEconomy.account.admin.service.request.EmailRequest;
 import TheNaeunEconomy.account.user.domain.User;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import TheNaeunEconomy.account.admin.service.response.UserCountResponse;
+import TheNaeunEconomy.jwt.Token;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -31,13 +32,13 @@ public class AdminController {
     private final AdminServiceImpl adminService;
 
     @GetMapping("/users")
-    public ResponseEntity<Page<User>> getUsers(Pageable pageable) {
+    public ResponseEntity<Page<User>> users(Pageable pageable) {
         return ResponseEntity.ok(adminService.findAll(pageable));
     }
 
     @GetMapping("users/{userId}")
-    public ResponseEntity<String> getUserToken(@PathVariable("userId") Long userId) {
-        return ResponseEntity.ok().body(adminService.getUserToken(userId).getToken());
+    public ResponseEntity<Token> userToken(@PathVariable("userId") Long userId) {
+        return ResponseEntity.ok().body(adminService.getUserToken(userId));
     }
 
     @PostMapping("/refresh-token")
