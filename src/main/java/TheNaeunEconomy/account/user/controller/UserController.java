@@ -5,6 +5,7 @@ import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import TheNaeunEconomy.account.user.service.response.UserNameResponse;
 import TheNaeunEconomy.account.user.service.request.UpdateUserRequest;
 import TheNaeunEconomy.account.user.service.response.UserResponse;
+import TheNaeunEconomy.jwt.TokenProvider;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,18 +26,20 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequestMapping("/api/v1/users")
 public class UserController {
+
     private final UserServiceImpl userService;
+    private final TokenProvider tokenProvider;
 
 
     @GetMapping("/name")
-    public ResponseEntity<UserNameResponse> getUserName(@RequestHeader HttpHeaders headers) {
-        String token = getToken(headers);
+    public ResponseEntity<UserNameResponse> userName(@RequestHeader HttpHeaders headers) {
+        String token = tokenProvider.getToken(headers);
         return ResponseEntity.ok(userService.getUserName(token));
     }
 
     @GetMapping("/logout")
     public ResponseEntity<String> logoutUser(@RequestHeader HttpHeaders headers) {
-        String token = getToken(headers);
+        String token = tokenProvider.getToken(headers);
         userService.logoutUser(token);
         return ResponseEntity.ok().body("로그아웃 되었습니다.");
     }
@@ -44,29 +47,20 @@ public class UserController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<UserResponse> deleteUser(@RequestHeader HttpHeaders headers) {
-        String token = getToken(headers);
+        String token = tokenProvider.getToken(headers);
         return ResponseEntity.ok().body(new UserResponse(userService.deleteUser(token)));
     }
 
     @PutMapping("/update")
     public ResponseEntity<UserResponse> updateUser(@RequestHeader HttpHeaders headers,
                                                    @RequestBody @Valid UpdateUserRequest request) {
-        String token = getToken(headers);
+        String token = tokenProvider.getToken(headers);
         return ResponseEntity.ok().body(new UserResponse(userService.updateUser(request, token)));
     }
 
     @PostMapping("/refresh-token")
     public ResponseEntity<LoginResponse> validateAndReissueAccessToken(@RequestHeader HttpHeaders headers) {
-        String refreshToken = getToken(headers);
+        String refreshToken = tokenProvider.getToken(headers);
         return ResponseEntity.ok().body(userService.refreshToken(refreshToken));
-    }
-
-    @Nullable
-    private static String getToken(HttpHeaders headers) {
-        String token = headers.getFirst(HttpHeaders.AUTHORIZATION);
-        if (token != null && token.startsWith("Bearer")) {
-            token = token.substring(7);
-        }
-        return token;
     }
 }

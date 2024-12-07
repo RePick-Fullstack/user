@@ -5,7 +5,8 @@ import TheNaeunEconomy.account.admin.service.request.EmailRequest;
 import TheNaeunEconomy.account.user.domain.User;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import TheNaeunEconomy.account.admin.service.response.UserCountResponse;
-import jakarta.annotation.Nullable;
+import TheNaeunEconomy.jwt.Token;
+import TheNaeunEconomy.jwt.TokenProvider;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
@@ -29,21 +30,21 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminController {
 
     private final AdminServiceImpl adminService;
+    private final TokenProvider tokenProvider;
 
     @GetMapping("/users")
-    public ResponseEntity<Page<User>> getUsers(Pageable pageable) {
+    public ResponseEntity<Page<User>> users(Pageable pageable) {
         return ResponseEntity.ok(adminService.findAll(pageable));
     }
 
     @GetMapping("users/{userId}")
-    public ResponseEntity<String> getUserToken(@PathVariable("userId") Long userId) {
-        return ResponseEntity.ok().body(adminService.getUserToken(userId).getToken());
-
+    public ResponseEntity<Token> userToken(@PathVariable("userId") Long userId) {
+        return ResponseEntity.ok().body(adminService.getUserToken(userId));
     }
 
     @PostMapping("/refresh-token")
     public ResponseEntity<LoginResponse> validateAndReissueAccessToken(@RequestHeader HttpHeaders headers) {
-        String refreshToken = getToken(headers);
+        String refreshToken = tokenProvider.getToken(headers);
         return ResponseEntity.ok().body(adminService.refreshToken(refreshToken));
     }
 
@@ -58,36 +59,27 @@ public class AdminController {
     }
 
     @GetMapping("/users/month")
-    public Map<String, Long> getUsersMonth() {
+    public Map<String, Long> usersMonth() {
         return adminService.getUsersCountByMonth();
     }
 
     @GetMapping("/users/count")
-    public ResponseEntity<UserCountResponse> getUserCount() {
+    public ResponseEntity<UserCountResponse>userCount() {
         return ResponseEntity.ok().body(adminService.getUserCount());
     }
 
     @GetMapping("/users/gender/count")
-    public ResponseEntity<List<Object[]>> getUserGenderCount() {
+    public ResponseEntity<List<Object[]>> userGenderCount() {
         return ResponseEntity.ok().body(adminService.getUserGenderCount());
     }
 
     @GetMapping("/users/delete")
-    public Map<String, Long> getUsersDeleted() {
+    public Map<String, Long> usersDeleted() {
         return adminService.countDeletedUsersByMonthNative();
     }
 
     @PostMapping("/users/email")
-    public ResponseEntity<User> getUsersByEmail(@RequestBody @Valid EmailRequest email) {
+    public ResponseEntity<User> usersByEmail(@RequestBody @Valid EmailRequest email) {
         return ResponseEntity.ok().body(adminService.findByEmail(email.getEmail()));
-    }
-
-    @Nullable
-    private static String getToken(HttpHeaders headers) {
-        String token = headers.getFirst(HttpHeaders.AUTHORIZATION);
-        if (token != null && token.startsWith("Bearer")) {
-            token = token.substring(7);
-        }
-        return token;
     }
 }
