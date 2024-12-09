@@ -2,11 +2,10 @@ package TheNaeunEconomy.account.user.controller;
 
 import TheNaeunEconomy.account.user.service.UserServiceImpl;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
-import TheNaeunEconomy.account.user.service.response.UserNameResponse;
 import TheNaeunEconomy.account.user.service.request.UpdateUserRequest;
+import TheNaeunEconomy.account.user.service.response.UserNickNameResponse;
 import TheNaeunEconomy.account.user.service.response.UserResponse;
 import TheNaeunEconomy.jwt.TokenProvider;
-import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +31,7 @@ public class UserController {
 
 
     @GetMapping("/name")
-    public ResponseEntity<UserNameResponse> userName(@RequestHeader HttpHeaders headers) {
+    public ResponseEntity<UserNickNameResponse> userName(@RequestHeader HttpHeaders headers) {
         String token = tokenProvider.getToken(headers);
         return ResponseEntity.ok(userService.getUserName(token));
     }
