@@ -14,7 +14,6 @@ spring:
     consumer:
       value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
       auto-offset-reset: earliest
-
 jwt:
   secret-key: 4Ixa3PT4KhLW1fz4bJoY8z2dR4Gk7jHpB3Yw8mQvL9NdXx5vT9Yw8VhN3rB4YxK2
   ACCESS_TOKEN_MINUTE_TIME: 30
@@ -25,7 +24,6 @@ kakao:
   #client-secret: NXgY4VhOyaYJ1IaJsospn8laSzGzYo5n
   #client-id: 26aa2297f0431d7a130b7f937f10eb4c
   token-url: https://kauth.kakao.com/oauth/token
-
 naver:
   client-id: A_aQx4dtFzTavl7L6lVf
   client-secret: LCXsU5_Skl

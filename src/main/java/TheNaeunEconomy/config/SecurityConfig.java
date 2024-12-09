@@ -14,6 +14,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -42,7 +43,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/admin/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_SUPER_ADMIN")
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthenticationFilter(tokenProvider),
+                        UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -50,7 +52,9 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:5175")); // 허용할 클라이언트 도메인
+        configuration.setAllowedOrigins(
+                List.of("http://k8s-repick-59dd78f5ea-980331128.us-east-1.elb.amazonaws.com", "http://localhost:5173",
+                        "http://localhost:5175")); // 허용할 클라이언트 도메인
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // 허용할 HTTP 메소드
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type")); // 허용할 요청 헤더
         configuration.setAllowCredentials(true); // 인증 정보 허용
