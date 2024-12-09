@@ -4,9 +4,9 @@ import TheNaeunEconomy.account.naverapi.service.request.NaverAccountInfo;
 import TheNaeunEconomy.account.user.domain.User;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import TheNaeunEconomy.account.admin.service.response.UserCountResponse;
-import TheNaeunEconomy.account.user.service.response.UserNameResponse;
 import TheNaeunEconomy.account.kakaoapi.service.request.KakaoAccountInfo;
 import TheNaeunEconomy.account.user.service.request.UpdateUserRequest;
+import TheNaeunEconomy.account.user.service.response.UserNickNameResponse;
 import TheNaeunEconomy.jwt.Token;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +20,7 @@ public interface UserService {
 
     User deleteUser(String token);
 
-    UserNameResponse getUserName(String token);
+    UserNickNameResponse getUserName(String token);
 
     LoginResponse registerUser(KakaoAccountInfo kakaoAccountInfo);
 

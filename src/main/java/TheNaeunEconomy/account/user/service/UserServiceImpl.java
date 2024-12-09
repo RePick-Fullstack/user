@@ -3,6 +3,7 @@ package TheNaeunEconomy.account.user.service;
 import TheNaeunEconomy.account.admin.service.response.UserCountResponse;
 import TheNaeunEconomy.account.naverapi.service.request.NaverAccountInfo;
 import TheNaeunEconomy.account.user.Dto.IsBilling;
+import TheNaeunEconomy.account.user.service.response.UserNickNameResponse;
 import TheNaeunEconomy.jwt.RefreshTokenRepository;
 import TheNaeunEconomy.account.user.repository.UserRepository;
 import TheNaeunEconomy.jwt.domain.RefreshToken;
@@ -10,7 +11,6 @@ import TheNaeunEconomy.account.user.domain.User;
 import TheNaeunEconomy.jwt.TokenProvider;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import TheNaeunEconomy.jwt.Token;
-import TheNaeunEconomy.account.user.service.response.UserNameResponse;
 import TheNaeunEconomy.account.kakaoapi.service.request.KakaoAccountInfo;
 import TheNaeunEconomy.account.user.service.request.UpdateUserRequest;
 import java.time.LocalDate;
@@ -61,10 +61,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserNameResponse getUserName(String token) {
+    public UserNickNameResponse getUserName(String token) {
         Long userId = tokenProvider.getUserIdFromToken(token);
 
-        return userRepository.findById(userId).map(user -> new UserNameResponse(user.getName()))
+        return userRepository.findById(userId).map(user -> new UserNickNameResponse(user.getNickname()))
                 .orElseThrow(() -> new IllegalArgumentException("토큰에 대한 사용자를 찾을 수 없습니다. " + token));
     }
 
