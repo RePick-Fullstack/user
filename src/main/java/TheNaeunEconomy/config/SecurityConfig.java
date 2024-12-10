@@ -54,7 +54,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(
-                List.of("http://k8s-repick-59dd78f5ea-980331128.us-east-1.elb.amazonaws.com", "http://localhost:5173",
+                List.of("https://repick.site", "http://k8s-repick-59dd78f5ea-980331128.us-east-1.elb.amazonaws.com", "http://localhost:5173",
                         "http://localhost:5175")); // 허용할 클라이언트 도메인
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // 허용할 HTTP 메소드
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type")); // 허용할 요청 헤더
