@@ -40,8 +40,8 @@ public class DataInitializer implements ApplicationRunner {
         saveUser(addAdminRequest);
 
         Random random = new Random();
-        for (int i = 1; i <= 100; i++) {
-            int year = 1990 + random.nextInt(11);
+        for (int i = 1; i <= 1000; i++) {
+            int year = 1980 + random.nextInt(11);
             int month = 1 + random.nextInt(12);
             int day = 1 + random.nextInt(28);
             Gender gender = random.nextBoolean() ? Gender.MALE : Gender.FEMALE;
