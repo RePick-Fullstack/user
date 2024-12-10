@@ -30,6 +30,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/",
                                 "/api/v1/users/login",
+                                "/api/v1/users/ping",
                                 "/api/v1/users/signup",
                                 "/api/v1/oauth/kakao/callback",
                                 "/api/v1/oauth/kakao/login",

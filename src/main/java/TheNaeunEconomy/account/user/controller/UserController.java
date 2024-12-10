@@ -29,6 +29,10 @@ public class UserController {
     private final UserServiceImpl userService;
     private final TokenProvider tokenProvider;
 
+    @GetMapping("/ping")
+    public ResponseEntity<String> ping() {
+        return ResponseEntity.ok("pong");
+    }
 
     @GetMapping("/name")
     public ResponseEntity<UserNickNameResponse> userName(@RequestHeader HttpHeaders headers) {
