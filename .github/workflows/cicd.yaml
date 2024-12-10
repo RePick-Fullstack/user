@@ -53,3 +53,7 @@ jobs:
     - name: kubectl rollout restarting
       run: |
         kubectl rollout restart deployment user-server
+        
+    - name: Notify Slack
+      run: |
+        curl -X POST -H 'Content-type: application/json' --data '{"text":"Successful Deploy : user"}' ${{ secrets.SLACK_WEBHOOK_URL }}
