@@ -47,4 +47,6 @@ public interface UserService {
     List<Object[]> getUserGenderCount();
 
     Token getUserToken(Long userId);
+
+    List<Object[]> getUserBillingCount();
 }
