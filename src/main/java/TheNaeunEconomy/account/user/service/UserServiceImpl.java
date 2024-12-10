@@ -205,6 +205,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<Object[]> getUserBillingCount() {
+        return userRepository.countUserByBilling();
+    }
+
+    @Override
     public boolean naverUserCheck(String email) {
         Optional<User> byEmail = userRepository.findByEmail(email);
         return byEmail.isPresent();

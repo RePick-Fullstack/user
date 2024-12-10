@@ -27,4 +27,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u.gender, COUNT(u) FROM User u WHERE u.deleteDate IS NULL GROUP BY u.gender")
     List<Object[]> countUsersByGender();
+
+    @Query("SELECT u.isBilling, COUNT(u) FROM User u GROUP BY u.isBilling")
+    List<Object[]> countUserByBilling();
 }

@@ -73,6 +73,12 @@ public class AdminController {
         return ResponseEntity.ok().body(adminService.getUserGenderCount());
     }
 
+    @GetMapping("/users/billing/count")
+    public ResponseEntity<List<Object[]>> userBillingCount() {
+        return ResponseEntity.ok().body(adminService.getUserBillingCount());
+    }
+
+
     @GetMapping("/users/delete")
     public Map<String, Long> usersDeleted() {
         return adminService.countDeletedUsersByMonthNative();

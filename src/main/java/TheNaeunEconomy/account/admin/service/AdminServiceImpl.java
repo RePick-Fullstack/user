@@ -98,4 +98,9 @@ public class AdminServiceImpl implements AdminService {
     public Token getUserToken(Long userId) {
         return userService.getUserToken(userId);
     }
+
+    @Override
+    public List<Object[]> getUserBillingCount() {
+        return userService.getUserBillingCount();
+    }
 }

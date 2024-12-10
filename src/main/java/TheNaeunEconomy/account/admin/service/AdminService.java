@@ -29,4 +29,6 @@ public interface AdminService {
     User findByEmail(String email);
 
     Token getUserToken(Long userId);
+
+    List<Object[]> getUserBillingCount();
 }
