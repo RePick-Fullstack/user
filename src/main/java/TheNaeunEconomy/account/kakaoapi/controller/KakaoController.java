@@ -69,7 +69,7 @@ public class KakaoController {
 
     private void redirectNewUser(HttpServletResponse response, String email, String nickname) throws Exception {
         String redirectUrl = String.format(
-                "http://localhost:5173/complete-profile?email=%s&name=%s",
+                "https://repick.site/complete-profile?email=%s&name=%s",
                 URLEncoder.encode(email, StandardCharsets.UTF_8),
                 URLEncoder.encode(nickname, StandardCharsets.UTF_8)
         );
