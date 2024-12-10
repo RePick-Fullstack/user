@@ -27,7 +27,7 @@ public class NaverController {
     }
 
     private String redirectExistingUser(LoginResponse loginResponse) {
-        return String.format("http://localhost:5173/?accessToken=%s&refreshToken=%s",
+        return String.format("https://repick.site/?accessToken=%s&refreshToken=%s",
                 URLEncoder.encode(loginResponse.getAccessToken().getToken(), StandardCharsets.UTF_8),
                 URLEncoder.encode(loginResponse.getRefreshToken().getToken(), StandardCharsets.UTF_8));
     }

@@ -60,7 +60,7 @@ public class KakaoController {
 
     private void redirectExistingUser(HttpServletResponse response, LoginResponse loginResponse) throws Exception {
         String redirectUrl = String.format(
-                "http://localhost:5173/?accessToken=%s&refreshToken=%s",
+                "https://repick.site/?accessToken=%s&refreshToken=%s",
                 URLEncoder.encode(loginResponse.getAccessToken().getToken(), StandardCharsets.UTF_8),
                 URLEncoder.encode(loginResponse.getRefreshToken().getToken(), StandardCharsets.UTF_8)
         );
