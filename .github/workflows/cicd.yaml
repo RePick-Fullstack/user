@@ -1,4 +1,4 @@
-name: Build and Push Docker image to Docker Hub
+name: CICD
 
 on:
   push:
@@ -52,4 +52,4 @@ jobs:
 
     - name: kubectl rollout restarting
       run: |
-        kubectl rollout restart deployment user
+        kubectl rollout restart deployment user-server
