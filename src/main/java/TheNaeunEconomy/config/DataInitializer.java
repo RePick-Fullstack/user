@@ -41,7 +41,7 @@ public class DataInitializer implements ApplicationRunner {
 
         Random random = new Random();
         for (int i = 1; i <= 1000; i++) {
-            int year = 1980 + random.nextInt(11);
+            int year = 1970 + random.nextInt(11);
             int month = 1 + random.nextInt(12);
             int day = 1 + random.nextInt(28);
             Gender gender = random.nextBoolean() ? Gender.MALE : Gender.FEMALE;
@@ -54,7 +54,7 @@ public class DataInitializer implements ApplicationRunner {
                 saveUser(request);
             }
         }
-        log.info("100개의 더미 데이터가 성공적으로 삽입되었습니다.");
+        log.info("1000개의 더미 데이터가 성공적으로 삽입되었습니다.");
     }
 
     private void saveUser(AddDevUserRequest request) {
