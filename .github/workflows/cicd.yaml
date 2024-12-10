@@ -38,3 +38,18 @@ jobs:
     - name: Push Docker image to Docker Hub
       run: |
         docker push jogyoungjun/user:latest
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: us-east-1
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    - name: aws eks update kubeconfig
+      run: |
+        aws eks --region us-east-1 update-kubeconfig --name repick-eks
+
+    - name: kubectl rollout restarting
+      run: |
+        kubectl rollout restart deployment user
