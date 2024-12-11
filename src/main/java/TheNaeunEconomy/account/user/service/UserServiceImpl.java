@@ -3,6 +3,7 @@ package TheNaeunEconomy.account.user.service;
 import TheNaeunEconomy.account.admin.service.response.UserCountResponse;
 import TheNaeunEconomy.account.naverapi.service.request.NaverAccountInfo;
 import TheNaeunEconomy.account.user.Dto.IsBilling;
+import TheNaeunEconomy.account.user.service.response.UserMyPageResponse;
 import TheNaeunEconomy.account.user.service.response.UserNickNameResponse;
 import TheNaeunEconomy.jwt.RefreshTokenRepository;
 import TheNaeunEconomy.account.user.repository.UserRepository;
@@ -233,5 +234,21 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(isBilling.getUserId()).orElseThrow();
         user.setIsBilling(isBilling.getIsBilling());
         userRepository.save(user);
+    }
+
+    public UserMyPageResponse getUserInfo(String token) {
+        Long userIdFromToken = tokenProvider.getUserIdFromToken(token);
+        User user = userRepository.findById(userIdFromToken).orElseThrow();
+        return new UserMyPageResponse(user);
+    }
+
+    @Override
+    public String checkPassword(String token, String password) {
+        Long userIdFromToken = tokenProvider.getUserIdFromToken(token);
+        User user = userRepository.findById(userIdFromToken).orElseThrow();
+        if (user.getPassword().equals(password)) {
+            return "ok";
+        }
+        return "wrong";
     }
 }
