@@ -24,6 +24,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
@@ -41,6 +43,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final TokenProvider tokenProvider;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
     public LoginResponse registerUser(KakaoAccountInfo kakaoAccountInfo) {
@@ -242,13 +245,18 @@ public class UserServiceImpl implements UserService {
         return new UserMyPageResponse(user);
     }
 
+
     @Override
-    public String checkPassword(String token, String password) {
+    public HttpStatus checkPassword(String token, String password) {
         Long userIdFromToken = tokenProvider.getUserIdFromToken(token);
-        User user = userRepository.findById(userIdFromToken).orElseThrow();
-        if (user.getPassword().equals(password)) {
-            return "ok";
+
+        User user = userRepository.findById(userIdFromToken).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+        if (bCryptPasswordEncoder.matches(password, user.getPassword())) {
+            return HttpStatus.OK;
         }
-        return "wrong";
+        return HttpStatus.UNAUTHORIZED;
     }
+
+
 }

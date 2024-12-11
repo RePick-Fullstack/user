@@ -8,14 +8,12 @@ import TheNaeunEconomy.account.kakaoapi.service.request.KakaoAccountInfo;
 import TheNaeunEconomy.account.user.service.request.UpdateUserRequest;
 import TheNaeunEconomy.account.user.service.response.UserMyPageResponse;
 import TheNaeunEconomy.account.user.service.response.UserNickNameResponse;
-import TheNaeunEconomy.account.user.service.response.UserResponse;
 import TheNaeunEconomy.jwt.Token;
-import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 
 public interface UserService {
     void logoutUser(String token);
@@ -56,5 +54,5 @@ public interface UserService {
 
     UserMyPageResponse getUserInfo(String token);
 
-    String checkPassword(String token, String password);
+    HttpStatus checkPassword(String token, String password);
 }

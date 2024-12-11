@@ -11,8 +11,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -65,14 +65,10 @@ public class UserController {
     }
 
     @PostMapping("/check/password")
-    public BodyBuilder checkPassword(@RequestHeader HttpHeaders headers, @RequestBody String password ) {
-        System.out.println(headers);
+    public HttpStatus checkPassword(@RequestHeader HttpHeaders headers,
+                                    @RequestBody TheNaeunEconomy.account.user.controller.PassWordRequest password) {
         String token = tokenProvider.getToken(headers);
-        System.out.println(token);
-        if (userService.checkPassword(token, password).equals("ok")){
-            return ResponseEntity.ok();
-        }
-        return ResponseEntity.status(400);
+        return userService.checkPassword(token, password.getPassword());
     }
 
     @PostMapping("/refresh-token")
