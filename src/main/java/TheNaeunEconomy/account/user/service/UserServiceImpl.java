@@ -3,6 +3,7 @@ package TheNaeunEconomy.account.user.service;
 import TheNaeunEconomy.account.admin.service.response.UserCountResponse;
 import TheNaeunEconomy.account.naverapi.service.request.NaverAccountInfo;
 import TheNaeunEconomy.account.user.Dto.IsBilling;
+import TheNaeunEconomy.account.user.service.response.UserMyPageResponse;
 import TheNaeunEconomy.account.user.service.response.UserNickNameResponse;
 import TheNaeunEconomy.jwt.RefreshTokenRepository;
 import TheNaeunEconomy.account.user.repository.UserRepository;
@@ -23,6 +24,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
@@ -40,6 +43,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final TokenProvider tokenProvider;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
     public LoginResponse registerUser(KakaoAccountInfo kakaoAccountInfo) {
@@ -234,4 +238,25 @@ public class UserServiceImpl implements UserService {
         user.setIsBilling(isBilling.getIsBilling());
         userRepository.save(user);
     }
+
+    public UserMyPageResponse getUserInfo(String token) {
+        Long userIdFromToken = tokenProvider.getUserIdFromToken(token);
+        User user = userRepository.findById(userIdFromToken).orElseThrow();
+        return new UserMyPageResponse(user);
+    }
+
+
+    @Override
+    public HttpStatus checkPassword(String token, String password) {
+        Long userIdFromToken = tokenProvider.getUserIdFromToken(token);
+
+        User user = userRepository.findById(userIdFromToken).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+        if (bCryptPasswordEncoder.matches(password, user.getPassword())) {
+            return HttpStatus.OK;
+        }
+        return HttpStatus.UNAUTHORIZED;
+    }
+
+
 }
