@@ -44,7 +44,7 @@ public class KakaoController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> registerUser(@RequestBody @Valid KakaoAccountInfo kakaoAccountInfo) {
-        return ResponseEntity.ok(userService.registerUser(kakaoAccountInfo));
+        return ResponseEntity.ok(userService.registerKakaoUser(kakaoAccountInfo));
     }
 
     private String extractEmail(Map<String, Object> userInfo) {

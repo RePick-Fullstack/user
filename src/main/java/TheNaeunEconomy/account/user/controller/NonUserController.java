@@ -33,6 +33,4 @@ public class NonUserController {
     public ResponseEntity<UserResponse> saveUser(@RequestBody @Valid AddUserRequest request) {
         return ResponseEntity.ok().body(new UserResponse(nonUserService.saveUser(request)));
     }
-
-
 }

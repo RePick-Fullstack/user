@@ -24,7 +24,7 @@ public interface UserService {
 
     UserNickNameResponse getUserName(String token);
 
-    LoginResponse registerUser(KakaoAccountInfo kakaoAccountInfo);
+    LoginResponse registerKakaoUser(KakaoAccountInfo kakaoAccountInfo);
 
     boolean naverUserCheck(String email);
 

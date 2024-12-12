@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
-    public LoginResponse registerUser(KakaoAccountInfo kakaoAccountInfo) {
+    public LoginResponse registerKakaoUser(KakaoAccountInfo kakaoAccountInfo) {
         return userRepository.findByEmail(kakaoAccountInfo.getEmail())
                 .map(existingUser -> kakaoLoginUser(existingUser.getEmail())).orElseGet(() -> {
                     userRepository.save(new User(kakaoAccountInfo));
@@ -229,7 +229,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(naverAccountInfo.getEmail())
                 .map(existingUser -> kakaoLoginUser(existingUser.getEmail())).orElseGet(() -> {
                     userRepository.save(new User(naverAccountInfo));
-                    return kakaoLoginUser(naverAccountInfo.getEmail());
+                    return naverLoginUser(naverAccountInfo.getEmail());
                 });
     }
 
@@ -257,6 +257,4 @@ public class UserServiceImpl implements UserService {
         }
         return HttpStatus.UNAUTHORIZED;
     }
-
-
 }
