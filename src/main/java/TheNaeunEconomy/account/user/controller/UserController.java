@@ -46,9 +46,10 @@ public class UserController {
 
 
     @DeleteMapping("/delete")
-    public ResponseEntity<UserResponse> deleteUser(@RequestHeader HttpHeaders headers) {
+    public HttpStatus deleteUser(@RequestHeader HttpHeaders headers) {
         String token = tokenProvider.getToken(headers);
-        return ResponseEntity.ok().body(new UserResponse(userService.deleteUser(token)));
+        userService.deleteUser(token);
+        return HttpStatus.OK;
     }
 
     @PutMapping("/update")

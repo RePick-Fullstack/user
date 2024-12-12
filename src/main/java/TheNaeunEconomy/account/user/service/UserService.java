@@ -20,7 +20,7 @@ public interface UserService {
 
     User updateUser(UpdateUserRequest request, String token);
 
-    User deleteUser(String token);
+    void deleteUser(String token);
 
     UserNickNameResponse getUserName(String token);
 

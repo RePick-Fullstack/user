@@ -115,7 +115,7 @@ public class User {
 
     public User(KakaoAccountInfo kakaoAccountInfo) {
         this.email = kakaoAccountInfo.getEmail();
-        this.password = bCryptPasswordEncoder.encode(kakaoAccountInfo.getEmail() + kakaoAccountInfo.getBirthDate());
+        this.password = bCryptPasswordEncoder.encode(kakaoAccountInfo.getEmail());
         this.name = kakaoAccountInfo.getName();
         this.nickname = kakaoAccountInfo.getNickname().isEmpty() ? NicknameGenerator.generate()
                 : kakaoAccountInfo.getNickname();
@@ -129,7 +129,7 @@ public class User {
 
     public User(NaverAccountInfo naverAccountInfo) {
         this.email = naverAccountInfo.getEmail();
-        this.password = bCryptPasswordEncoder.encode(naverAccountInfo.getEmail() + naverAccountInfo.getBirthDate());
+        this.password = bCryptPasswordEncoder.encode(naverAccountInfo.getEmail());
         this.name = naverAccountInfo.getName();
         this.nickname = naverAccountInfo.getNickname().isEmpty() ? NicknameGenerator.generate()
                 : naverAccountInfo.getNickname();
