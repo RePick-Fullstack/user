@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
-    public LoginResponse registerUser(KakaoAccountInfo kakaoAccountInfo) {
+    public LoginResponse registerKakaoUser(KakaoAccountInfo kakaoAccountInfo) {
         return userRepository.findByEmail(kakaoAccountInfo.getEmail())
                 .map(existingUser -> kakaoLoginUser(existingUser.getEmail())).orElseGet(() -> {
                     userRepository.save(new User(kakaoAccountInfo));
@@ -90,15 +90,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User deleteUser(String token) {
+    public void deleteUser(String token) {
         Long userId = tokenProvider.getUserIdFromToken(token);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("토큰에 대한 사용자를 찾을 수 없습니다. " + token));
 
-        user.setDeleteDate(LocalDate.now());
-
-        return userRepository.save(user);
+        userRepository.delete(user);
     }
 
     @Override
@@ -112,6 +110,10 @@ public class UserServiceImpl implements UserService {
     }
 
     public LoginResponse kakaoLoginUser(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow();
+        if (user.getDeleteDate() != null) {
+            throw new IllegalStateException("정지된 사용자입니다. 관리자에게 문의하세요.");
+        }
         return getLoginResponse(email);
     }
 
@@ -221,6 +223,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public LoginResponse naverLoginUser(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow();
+        if (user.getDeleteDate() != null) {
+            throw new IllegalStateException("정지된 사용자입니다. 관리자에게 문의하세요.");
+        }
         return getLoginResponse(email);
     }
 
@@ -229,7 +235,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(naverAccountInfo.getEmail())
                 .map(existingUser -> kakaoLoginUser(existingUser.getEmail())).orElseGet(() -> {
                     userRepository.save(new User(naverAccountInfo));
-                    return kakaoLoginUser(naverAccountInfo.getEmail());
+                    return naverLoginUser(naverAccountInfo.getEmail());
                 });
     }
 
@@ -257,6 +263,4 @@ public class UserServiceImpl implements UserService {
         }
         return HttpStatus.UNAUTHORIZED;
     }
-
-
 }
