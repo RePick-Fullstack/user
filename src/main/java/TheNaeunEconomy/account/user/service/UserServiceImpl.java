@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new IllegalArgumentException("토큰에 대한 사용자를 찾을 수 없습니다. " + token));
 
         if (user.getDeleteDate() != null) {
-            throw new IllegalStateException("사용자는 비활성화 상태 입니다.");
+            throw new IllegalStateException("정지된 사용자입니다. 관리자에게 문의하세요.");
         }
 
         user.updateUserDetails(request);
@@ -92,11 +92,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(String token) {
         Long userId = tokenProvider.getUserIdFromToken(token);
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("토큰에 대한 사용자를 찾을 수 없습니다. " + token));
-
-        userRepository.delete(user);
+        refreshTokenRepository.deleteByUserId(userId);
+        userRepository.deleteById(userId);
     }
 
     @Override

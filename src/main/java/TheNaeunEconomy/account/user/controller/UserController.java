@@ -46,10 +46,10 @@ public class UserController {
 
 
     @DeleteMapping("/delete")
-    public HttpStatus deleteUser(@RequestHeader HttpHeaders headers) {
+    public ResponseEntity<String> deleteUser(@RequestHeader HttpHeaders headers) {
         String token = tokenProvider.getToken(headers);
         userService.deleteUser(token);
-        return HttpStatus.OK;
+        return ResponseEntity.ok().body("사용자가 성공적으로 삭제되었습니다.");
     }
 
     @PutMapping("/update")
