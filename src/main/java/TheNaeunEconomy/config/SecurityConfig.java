@@ -35,6 +35,7 @@ public class SecurityConfig {
                                 "/api/v1/oauth/kakao/callback",
                                 "/api/v1/oauth/kakao/login",
                                 "/api/v1/oauth/naver/login",
+                                "/api/v1/users/suggestions",
                                 "/api/v1/oauth/naver/callback",
                                 "/api/v1/admin/login",
                                 "/api/v1/users/kafka/test"

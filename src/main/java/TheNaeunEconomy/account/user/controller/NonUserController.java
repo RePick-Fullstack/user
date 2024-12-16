@@ -2,7 +2,7 @@ package TheNaeunEconomy.account.user.controller;
 
 
 import TheNaeunEconomy.account.user.service.NonUserServiceImpl;
-import TheNaeunEconomy.account.user.service.UserServiceImpl;
+import TheNaeunEconomy.account.user.service.request.AddSuggestionsRequest;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import TheNaeunEconomy.account.user.service.request.AddUserRequest;
 import TheNaeunEconomy.account.user.service.request.LoginUserRequest;
@@ -32,5 +32,10 @@ public class NonUserController {
     @PostMapping("/signup")
     public ResponseEntity<UserResponse> saveUser(@RequestBody @Valid AddUserRequest request) {
         return ResponseEntity.ok().body(new UserResponse(nonUserService.saveUser(request)));
+    }
+
+    @PostMapping("suggestions")
+    public ResponseEntity<String> saveSuggestions(@RequestBody AddSuggestionsRequest request) {
+        return ResponseEntity.ok().body(nonUserService.saveSuggestions(request));
     }
 }

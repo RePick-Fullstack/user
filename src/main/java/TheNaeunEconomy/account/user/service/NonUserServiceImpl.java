@@ -2,8 +2,11 @@ package TheNaeunEconomy.account.user.service;
 
 import TheNaeunEconomy.account.user.domain.User;
 import TheNaeunEconomy.account.user.domain.UserActivityLog;
+import TheNaeunEconomy.account.user.domain.UserSuggestions;
 import TheNaeunEconomy.account.user.repository.UserActivityLogRepository;
 import TheNaeunEconomy.account.user.repository.UserRepository;
+import TheNaeunEconomy.account.user.repository.UserSuggestionsRepository;
+import TheNaeunEconomy.account.user.service.request.AddSuggestionsRequest;
 import TheNaeunEconomy.account.user.service.request.AddUserRequest;
 import TheNaeunEconomy.account.user.service.request.LoginUserRequest;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
@@ -32,6 +35,7 @@ public class NonUserServiceImpl implements NonUserService {
 
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final UserSuggestionsRepository userSuggestionsRepository;
     private final UserActivityLogRepository userActivityLogRepository;
     private final TokenProvider tokenProvider;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -72,6 +76,14 @@ public class NonUserServiceImpl implements NonUserService {
         });
         return userRepository.save(new User(request));
     }
+
+    @Override
+    public String saveSuggestions(AddSuggestionsRequest request) {
+        UserSuggestions suggestion = new UserSuggestions(request.getName(), request.getContent());
+        userSuggestionsRepository.save(suggestion);
+        return "관리자 한테 전달했습니다.";
+    }
+
 
 
     private void validateUser(User user, String rawPassword) {
