@@ -41,7 +41,7 @@ public class SecurityConfig {
                         ).permitAll()
                         .requestMatchers("/api/v1/users/**").hasAuthority("ROLE_USER")
                         .requestMatchers("/api/v1/admin/super/**").hasAuthority("ROLE_SUPER_ADMIN")
-                        .requestMatchers("/api/v1/admin/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_SUPER_ADMIN")
+                        .requestMatchers("/api/v1/admin/users/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_SUPER_ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(tokenProvider),

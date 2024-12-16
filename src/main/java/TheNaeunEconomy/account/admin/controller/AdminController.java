@@ -2,12 +2,15 @@ package TheNaeunEconomy.account.admin.controller;
 
 import TheNaeunEconomy.account.admin.service.AdminServiceImpl;
 import TheNaeunEconomy.account.admin.service.request.EmailRequest;
+import TheNaeunEconomy.account.admin.service.response.UserCountLoginResponse;
 import TheNaeunEconomy.account.user.domain.User;
+import TheNaeunEconomy.account.user.service.UserActivityLogServiceImpl;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import TheNaeunEconomy.account.admin.service.response.UserCountResponse;
 import TheNaeunEconomy.jwt.Token;
 import TheNaeunEconomy.jwt.TokenProvider;
 import jakarta.validation.Valid;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminController {
 
     private final AdminServiceImpl adminService;
+    private final UserActivityLogServiceImpl userActivityLogService;
     private final TokenProvider tokenProvider;
 
     @GetMapping("/users")
@@ -64,7 +68,7 @@ public class AdminController {
     }
 
     @GetMapping("/users/count")
-    public ResponseEntity<UserCountResponse>userCount() {
+    public ResponseEntity<UserCountResponse> userCount() {
         return ResponseEntity.ok().body(adminService.getUserCount());
     }
 
@@ -78,14 +82,13 @@ public class AdminController {
         return ResponseEntity.ok().body(adminService.getUserBillingCount());
     }
 
-
-    @GetMapping("/users/delete")
-    public Map<String, Long> usersDeleted() {
-        return adminService.countDeletedUsersByMonthNative();
-    }
-
     @PostMapping("/users/email")
     public ResponseEntity<User> usersByEmail(@RequestBody @Valid EmailRequest email) {
         return ResponseEntity.ok().body(adminService.findByEmail(email.getEmail()));
+    }
+
+    @GetMapping("/users/activate/day/count")
+    public ResponseEntity<UserCountLoginResponse> activateDayCount() {
+        return ResponseEntity.ok().body(userActivityLogService.getDAU(LocalDate.now()));
     }
 }
