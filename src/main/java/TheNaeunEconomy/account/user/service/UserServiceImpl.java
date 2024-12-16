@@ -3,6 +3,8 @@ package TheNaeunEconomy.account.user.service;
 import TheNaeunEconomy.account.admin.service.response.UserCountResponse;
 import TheNaeunEconomy.account.naverapi.service.request.NaverAccountInfo;
 import TheNaeunEconomy.account.user.Dto.IsBilling;
+import TheNaeunEconomy.account.user.domain.UserActivityLog;
+import TheNaeunEconomy.account.user.repository.UserActivityLogRepository;
 import TheNaeunEconomy.account.user.service.response.UserMyPageResponse;
 import TheNaeunEconomy.account.user.service.response.UserNickNameResponse;
 import TheNaeunEconomy.jwt.RefreshTokenRepository;
@@ -42,6 +44,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final UserActivityLogRepository userActivityLogRepository;
     private final TokenProvider tokenProvider;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -111,6 +114,7 @@ public class UserServiceImpl implements UserService {
         if (user.getDeleteDate() != null) {
             throw new IllegalStateException("정지된 사용자입니다. 관리자에게 문의하세요.");
         }
+        userActiveLog(user);
         return getLoginResponse(email);
     }
 
@@ -224,6 +228,7 @@ public class UserServiceImpl implements UserService {
         if (user.getDeleteDate() != null) {
             throw new IllegalStateException("정지된 사용자입니다. 관리자에게 문의하세요.");
         }
+        userActiveLog(user);
         return getLoginResponse(email);
     }
 
@@ -249,15 +254,15 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    @Override
-    public HttpStatus checkPassword(String token, String password) {
-        Long userIdFromToken = tokenProvider.getUserIdFromToken(token);
+    private void userActiveLog(User user) {
+        Optional<UserActivityLog> existingLog = userActivityLogRepository.findByUserIdAndActivityDate(user.getId(),
+                LocalDate.now());
 
-        User user = userRepository.findById(userIdFromToken).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-
-        if (bCryptPasswordEncoder.matches(password, user.getPassword())) {
-            return HttpStatus.OK;
+        if (existingLog.isEmpty()) {
+            UserActivityLog log = new UserActivityLog();
+            log.setUserId(user.getId());
+            log.setActivityDate(LocalDate.now());
+            userActivityLogRepository.save(log);
         }
-        return HttpStatus.UNAUTHORIZED;
     }
 }

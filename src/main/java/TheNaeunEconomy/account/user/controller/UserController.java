@@ -11,7 +11,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -63,13 +62,6 @@ public class UserController {
     public ResponseEntity<UserMyPageResponse> myPage(@RequestHeader HttpHeaders headers) {
         String token = tokenProvider.getToken(headers);
         return ResponseEntity.ok().body(userService.getUserInfo(token));
-    }
-
-    @PostMapping("/check/password")
-    public HttpStatus checkPassword(@RequestHeader HttpHeaders headers,
-                                    @RequestBody TheNaeunEconomy.account.user.controller.PassWordRequest password) {
-        String token = tokenProvider.getToken(headers);
-        return userService.checkPassword(token, password.getPassword());
     }
 
     @PostMapping("/refresh-token")

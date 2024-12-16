@@ -4,9 +4,11 @@ import TheNaeunEconomy.account.admin.domain.Admin;
 import TheNaeunEconomy.account.admin.repository.AdminRepository;
 import TheNaeunEconomy.account.admin.service.request.AddAdminRequest;
 import TheNaeunEconomy.account.domain.Role;
+import TheNaeunEconomy.account.user.repository.UserActivityLogRepository;
 import TheNaeunEconomy.account.user.repository.UserRepository;
 import TheNaeunEconomy.account.user.domain.Gender;
 import TheNaeunEconomy.account.user.domain.User;
+import TheNaeunEconomy.account.user.service.UserService;
 import TheNaeunEconomy.account.user.service.request.AddDevUserRequest;
 import TheNaeunEconomy.jwt.RefreshTokenRepository;
 import TheNaeunEconomy.util.NicknameGenerator;
@@ -29,6 +31,7 @@ public class DataInitializer implements ApplicationRunner {
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserRepository userRepository;
     private final AdminRepository adminRepository;
+    private final UserActivityLogRepository userActivityLogRepository;
 
     private static final List<String> NAMES = List.of(
             "김민준", "이서연", "박지민", "최준호", "정다은", "조유진", "장하늘", "강지수", "오은영", "임서진"
@@ -70,6 +73,7 @@ public class DataInitializer implements ApplicationRunner {
     @PreDestroy
     public void cleanUp() {
         refreshTokenRepository.deleteAll();
+        userActivityLogRepository.deleteAll();
         userRepository.deleteAll();
         adminRepository.deleteAll();
         log.info("애플리케이션 종료 시 모든 더미 데이터가 삭제되었습니다.");

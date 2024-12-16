@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 
 public interface UserService {
     void logoutUser(String token);
@@ -53,6 +52,4 @@ public interface UserService {
     List<Object[]> getUserBillingCount();
 
     UserMyPageResponse getUserInfo(String token);
-
-    HttpStatus checkPassword(String token, String password);
 }

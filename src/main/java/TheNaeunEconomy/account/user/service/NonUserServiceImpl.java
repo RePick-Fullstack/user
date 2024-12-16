@@ -1,6 +1,8 @@
 package TheNaeunEconomy.account.user.service;
 
 import TheNaeunEconomy.account.user.domain.User;
+import TheNaeunEconomy.account.user.domain.UserActivityLog;
+import TheNaeunEconomy.account.user.repository.UserActivityLogRepository;
 import TheNaeunEconomy.account.user.repository.UserRepository;
 import TheNaeunEconomy.account.user.service.request.AddUserRequest;
 import TheNaeunEconomy.account.user.service.request.LoginUserRequest;
@@ -10,7 +12,9 @@ import TheNaeunEconomy.jwt.Token;
 import TheNaeunEconomy.jwt.TokenProvider;
 import TheNaeunEconomy.jwt.domain.RefreshToken;
 import jakarta.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,6 +32,7 @@ public class NonUserServiceImpl implements NonUserService {
 
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final UserActivityLogRepository userActivityLogRepository;
     private final TokenProvider tokenProvider;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -38,6 +43,8 @@ public class NonUserServiceImpl implements NonUserService {
 
         validateUser(user, request.getPassword());
 
+        userActiveLog(user);
+
         Token accessToken = tokenProvider.generateToken(user, ACCESS_TOKEN_MINUTE_TIME);
         Token refreshToken = tokenProvider.generateToken(user, REFRESH_TOKEN_MINUTE_TIME);
 
@@ -45,6 +52,17 @@ public class NonUserServiceImpl implements NonUserService {
                 LocalDateTime.now().plusMinutes(REFRESH_TOKEN_MINUTE_TIME)));
 
         return new LoginResponse(accessToken, refreshToken);
+    }
+
+    private void userActiveLog(User user) {
+        Optional<UserActivityLog> existingLog = userActivityLogRepository.findByUserIdAndActivityDate(user.getId(), LocalDate.now());
+
+        if (existingLog.isEmpty()) {
+            UserActivityLog log = new UserActivityLog();
+            log.setUserId(user.getId());
+            log.setActivityDate(LocalDate.now());
+            userActivityLogRepository.save(log);
+        }
     }
 
     @Override
