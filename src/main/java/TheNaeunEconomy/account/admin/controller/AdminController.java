@@ -91,4 +91,9 @@ public class AdminController {
     public ResponseEntity<UserCountLoginResponse> activateDayCount() {
         return ResponseEntity.ok().body(userActivityLogService.getDAU(LocalDate.now()));
     }
+
+    @GetMapping("/users/activate/week/count")
+    public ResponseEntity<List<UserCountLoginResponse>> activateWeekCount() {
+        return ResponseEntity.ok().body(userActivityLogService.getWAU(LocalDate.now()));
+    }
 }
