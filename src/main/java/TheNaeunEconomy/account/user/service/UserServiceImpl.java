@@ -4,7 +4,9 @@ import TheNaeunEconomy.account.admin.service.response.UserCountResponse;
 import TheNaeunEconomy.account.naverapi.service.request.NaverAccountInfo;
 import TheNaeunEconomy.account.user.Dto.IsBilling;
 import TheNaeunEconomy.account.user.domain.UserActivityLog;
+import TheNaeunEconomy.account.user.domain.UserSuggestions;
 import TheNaeunEconomy.account.user.repository.UserActivityLogRepository;
+import TheNaeunEconomy.account.user.repository.UserSuggestionsRepository;
 import TheNaeunEconomy.account.user.service.response.UserMyPageResponse;
 import TheNaeunEconomy.account.user.service.response.UserNickNameResponse;
 import TheNaeunEconomy.jwt.RefreshTokenRepository;
@@ -43,6 +45,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final UserSuggestionsRepository userSuggestionsRepository;
     private final UserActivityLogRepository userActivityLogRepository;
     private final TokenProvider tokenProvider;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -244,6 +247,11 @@ public class UserServiceImpl implements UserService {
         Long userIdFromToken = tokenProvider.getUserIdFromToken(token);
         User user = userRepository.findById(userIdFromToken).orElseThrow();
         return new UserMyPageResponse(user);
+    }
+
+    @Override
+    public Page<UserSuggestions> findAllSuggestions(Pageable pageable) {
+        return userSuggestionsRepository.findAll(pageable);
     }
 
 

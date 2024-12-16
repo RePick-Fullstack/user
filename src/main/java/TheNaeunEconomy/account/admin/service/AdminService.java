@@ -2,6 +2,7 @@ package TheNaeunEconomy.account.admin.service;
 
 import TheNaeunEconomy.account.admin.service.response.UserCountResponse;
 import TheNaeunEconomy.account.user.domain.User;
+import TheNaeunEconomy.account.user.domain.UserSuggestions;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import TheNaeunEconomy.jwt.Token;
 import java.util.List;
@@ -29,4 +30,6 @@ public interface AdminService {
     Token getUserToken(Long userId);
 
     List<Object[]> getUserBillingCount();
+
+    Page<UserSuggestions> getSuggestions(Pageable pageable);
 }

@@ -4,6 +4,7 @@ import TheNaeunEconomy.account.admin.service.AdminServiceImpl;
 import TheNaeunEconomy.account.admin.service.request.EmailRequest;
 import TheNaeunEconomy.account.admin.service.response.UserCountLoginResponse;
 import TheNaeunEconomy.account.user.domain.User;
+import TheNaeunEconomy.account.user.domain.UserSuggestions;
 import TheNaeunEconomy.account.user.service.UserActivityLogServiceImpl;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import TheNaeunEconomy.account.admin.service.response.UserCountResponse;
@@ -95,5 +96,10 @@ public class AdminController {
     @GetMapping("/users/activate/week/count")
     public ResponseEntity<List<UserCountLoginResponse>> activateWeekCount() {
         return ResponseEntity.ok().body(userActivityLogService.getWAU(LocalDate.now()));
+    }
+
+    @GetMapping("/users/suggestions")
+    public ResponseEntity<Page<UserSuggestions>> suggestions(Pageable pageable) {
+        return ResponseEntity.ok(adminService.getSuggestions(pageable));
     }
 }
