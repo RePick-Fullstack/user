@@ -21,10 +21,4 @@ public class UserActivityLogServiceImpl {
         LocalDate startDate = date.minusDays(6);
         return userActivityLogRepository.findWeeklyActiveUsers(startDate, date);
     }
-
-    public List<UserCountLoginResponse> getMAU(int year, int month) {
-        LocalDate startOfMonth = LocalDate.of(year, month, 1);
-        LocalDate endOfMonth = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth());
-        return userActivityLogRepository.findMonthlyActiveUsersDaily(startOfMonth, endOfMonth);
-    }
 }
