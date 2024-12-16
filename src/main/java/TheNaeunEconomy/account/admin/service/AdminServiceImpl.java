@@ -85,11 +85,6 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public Map<String, Long> countDeletedUsersByMonthNative() {
-        return userService.countDeletedUsersByMonthNative();
-    }
-
-    @Override
     public User findByEmail(String email) {
         return userService.findByEmail(email);
     }

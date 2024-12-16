@@ -24,8 +24,6 @@ public interface AdminService {
 
     List<Object[]> getUserGenderCount();
 
-    Map<String, Long> countDeletedUsersByMonthNative();
-
     User findByEmail(String email);
 
     Token getUserToken(Long userId);

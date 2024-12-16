@@ -41,8 +41,6 @@ public interface UserService {
 
     Map<String, Long> getUsersCountByMonth();
 
-    Map<String, Long> countDeletedUsersByMonthNative();
-
     UserCountResponse getUserCount();
 
     List<Object[]> getUserGenderCount();

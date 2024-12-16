@@ -170,12 +170,6 @@ public class UserServiceImpl implements UserService {
         return monthlyUserCount;
     }
 
-    @Override
-    public Map<String, Long> countDeletedUsersByMonthNative() {
-        List<Object[]> results = userRepository.countDeletedUsersByMonthNative();
-        return getStringLongMap(results);
-    }
-
     public UserCountResponse getUserCount() {
         return new UserCountResponse((int) userRepository.count());
     }
