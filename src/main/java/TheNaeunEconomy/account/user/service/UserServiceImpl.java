@@ -1,37 +1,38 @@
 package TheNaeunEconomy.account.user.service;
 
 import TheNaeunEconomy.account.admin.service.response.UserCountResponse;
+import TheNaeunEconomy.account.kakaoapi.service.request.KakaoAccountInfo;
 import TheNaeunEconomy.account.naverapi.service.request.NaverAccountInfo;
 import TheNaeunEconomy.account.user.Dto.IsBilling;
+import TheNaeunEconomy.account.user.Dto.UpdateUserNickName;
+import TheNaeunEconomy.account.user.domain.User;
 import TheNaeunEconomy.account.user.domain.UserActivityLog;
 import TheNaeunEconomy.account.user.domain.UserSuggestions;
 import TheNaeunEconomy.account.user.repository.UserActivityLogRepository;
+import TheNaeunEconomy.account.user.repository.UserRepository;
 import TheNaeunEconomy.account.user.repository.UserSuggestionsRepository;
+import TheNaeunEconomy.account.user.service.request.UpdateUserRequest;
+import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import TheNaeunEconomy.account.user.service.response.UserMyPageResponse;
 import TheNaeunEconomy.account.user.service.response.UserNickNameResponse;
 import TheNaeunEconomy.jwt.RefreshTokenRepository;
-import TheNaeunEconomy.account.user.repository.UserRepository;
-import TheNaeunEconomy.jwt.domain.RefreshToken;
-import TheNaeunEconomy.account.user.domain.User;
-import TheNaeunEconomy.jwt.TokenProvider;
-import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import TheNaeunEconomy.jwt.Token;
-import TheNaeunEconomy.account.kakaoapi.service.request.KakaoAccountInfo;
-import TheNaeunEconomy.account.user.service.request.UpdateUserRequest;
+import TheNaeunEconomy.jwt.TokenProvider;
+import TheNaeunEconomy.jwt.domain.RefreshToken;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.data.domain.Page;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +50,7 @@ public class UserServiceImpl implements UserService {
     private final UserActivityLogRepository userActivityLogRepository;
     private final TokenProvider tokenProvider;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final KafkaService kafkaService;
 
     @Override
     public LoginResponse registerKakaoUser(KakaoAccountInfo kakaoAccountInfo) {
@@ -90,7 +92,8 @@ public class UserServiceImpl implements UserService {
         }
 
         user.updateUserDetails(request);
-
+        UpdateUserNickName updateUserNickName = new UpdateUserNickName(user.getId(), user.getNickname());
+        kafkaService.userNickNameUpdate(updateUserNickName);
         return userRepository.save(user);
     }
 

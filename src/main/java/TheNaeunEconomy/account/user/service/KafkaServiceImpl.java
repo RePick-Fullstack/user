@@ -21,6 +21,7 @@ public class KafkaServiceImpl implements KafkaService {
 
     @Override
     public void userNickNameUpdate(UpdateUserNickName updateUserNickName) {
+        System.out.println("kafka send :" + updateUserNickName);
         kafkaTemplate.send("updateusernickname", updateUserNickName);
     }
 
