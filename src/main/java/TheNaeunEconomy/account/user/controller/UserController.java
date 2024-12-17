@@ -1,5 +1,8 @@
 package TheNaeunEconomy.account.user.controller;
 
+import TheNaeunEconomy.account.user.Dto.UpdateUserNickName;
+import TheNaeunEconomy.account.user.domain.User;
+import TheNaeunEconomy.account.user.service.KafkaService;
 import TheNaeunEconomy.account.user.service.UserServiceImpl;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import TheNaeunEconomy.account.user.service.request.UpdateUserRequest;
@@ -29,6 +32,7 @@ public class UserController {
 
     private final UserServiceImpl userService;
     private final TokenProvider tokenProvider;
+    private final KafkaService kafkaService;
 
     @GetMapping("/name")
     public ResponseEntity<UserNickNameResponse> userName(@RequestHeader HttpHeaders headers) {
@@ -55,7 +59,10 @@ public class UserController {
     public ResponseEntity<UserResponse> updateUser(@RequestHeader HttpHeaders headers,
                                                    @RequestBody @Valid UpdateUserRequest request) {
         String token = tokenProvider.getToken(headers);
-        return ResponseEntity.ok().body(new UserResponse(userService.updateUser(request, token)));
+        User user = userService.updateUser(request, token);
+        UpdateUserNickName updateUserNickName = new UpdateUserNickName(user.getId(), user.getNickname());
+        kafkaService.userNickNameUpdate(updateUserNickName);
+        return ResponseEntity.ok().body(new UserResponse(user));
     }
 
     @GetMapping("/mypage")

@@ -50,7 +50,6 @@ public class UserServiceImpl implements UserService {
     private final UserActivityLogRepository userActivityLogRepository;
     private final TokenProvider tokenProvider;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final KafkaService kafkaService;
 
     @Override
     public LoginResponse registerKakaoUser(KakaoAccountInfo kakaoAccountInfo) {
@@ -92,8 +91,6 @@ public class UserServiceImpl implements UserService {
         }
 
         user.updateUserDetails(request);
-        UpdateUserNickName updateUserNickName = new UpdateUserNickName(user.getId(), user.getNickname());
-        kafkaService.userNickNameUpdate(updateUserNickName);
         return userRepository.save(user);
     }
 
