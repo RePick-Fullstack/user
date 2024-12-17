@@ -11,7 +11,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,10 +45,10 @@ public class UserController {
 
 
     @DeleteMapping("/delete")
-    public HttpStatus deleteUser(@RequestHeader HttpHeaders headers) {
+    public ResponseEntity<String> deleteUser(@RequestHeader HttpHeaders headers) {
         String token = tokenProvider.getToken(headers);
         userService.deleteUser(token);
-        return HttpStatus.OK;
+        return ResponseEntity.ok().body("사용자가 성공적으로 삭제되었습니다.");
     }
 
     @PutMapping("/update")
@@ -63,13 +62,6 @@ public class UserController {
     public ResponseEntity<UserMyPageResponse> myPage(@RequestHeader HttpHeaders headers) {
         String token = tokenProvider.getToken(headers);
         return ResponseEntity.ok().body(userService.getUserInfo(token));
-    }
-
-    @PostMapping("/check/password")
-    public HttpStatus checkPassword(@RequestHeader HttpHeaders headers,
-                                    @RequestBody TheNaeunEconomy.account.user.controller.PassWordRequest password) {
-        String token = tokenProvider.getToken(headers);
-        return userService.checkPassword(token, password.getPassword());
     }
 
     @PostMapping("/refresh-token")

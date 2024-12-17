@@ -2,6 +2,7 @@ package TheNaeunEconomy.account.user.service;
 
 import TheNaeunEconomy.account.naverapi.service.request.NaverAccountInfo;
 import TheNaeunEconomy.account.user.domain.User;
+import TheNaeunEconomy.account.user.domain.UserSuggestions;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import TheNaeunEconomy.account.admin.service.response.UserCountResponse;
 import TheNaeunEconomy.account.kakaoapi.service.request.KakaoAccountInfo;
@@ -13,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 
 public interface UserService {
     void logoutUser(String token);
@@ -42,8 +42,6 @@ public interface UserService {
 
     Map<String, Long> getUsersCountByMonth();
 
-    Map<String, Long> countDeletedUsersByMonthNative();
-
     UserCountResponse getUserCount();
 
     List<Object[]> getUserGenderCount();
@@ -54,5 +52,5 @@ public interface UserService {
 
     UserMyPageResponse getUserInfo(String token);
 
-    HttpStatus checkPassword(String token, String password);
+    Page<UserSuggestions> findAllSuggestions(Pageable pageable);
 }

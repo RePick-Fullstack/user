@@ -3,6 +3,10 @@ package TheNaeunEconomy.account.user.service;
 import TheNaeunEconomy.account.admin.service.response.UserCountResponse;
 import TheNaeunEconomy.account.naverapi.service.request.NaverAccountInfo;
 import TheNaeunEconomy.account.user.Dto.IsBilling;
+import TheNaeunEconomy.account.user.domain.UserActivityLog;
+import TheNaeunEconomy.account.user.domain.UserSuggestions;
+import TheNaeunEconomy.account.user.repository.UserActivityLogRepository;
+import TheNaeunEconomy.account.user.repository.UserSuggestionsRepository;
 import TheNaeunEconomy.account.user.service.response.UserMyPageResponse;
 import TheNaeunEconomy.account.user.service.response.UserNickNameResponse;
 import TheNaeunEconomy.jwt.RefreshTokenRepository;
@@ -24,7 +28,6 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +45,8 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final UserSuggestionsRepository userSuggestionsRepository;
+    private final UserActivityLogRepository userActivityLogRepository;
     private final TokenProvider tokenProvider;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -81,7 +86,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new IllegalArgumentException("토큰에 대한 사용자를 찾을 수 없습니다. " + token));
 
         if (user.getDeleteDate() != null) {
-            throw new IllegalStateException("사용자는 비활성화 상태 입니다.");
+            throw new IllegalStateException("정지된 사용자입니다. 관리자에게 문의하세요.");
         }
 
         user.updateUserDetails(request);
@@ -92,11 +97,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(String token) {
         Long userId = tokenProvider.getUserIdFromToken(token);
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("토큰에 대한 사용자를 찾을 수 없습니다. " + token));
-
-        userRepository.delete(user);
+        refreshTokenRepository.deleteByUserId(userId);
+        userRepository.deleteById(userId);
     }
 
     @Override
@@ -114,6 +116,7 @@ public class UserServiceImpl implements UserService {
         if (user.getDeleteDate() != null) {
             throw new IllegalStateException("정지된 사용자입니다. 관리자에게 문의하세요.");
         }
+        userActiveLog(user);
         return getLoginResponse(email);
     }
 
@@ -170,12 +173,6 @@ public class UserServiceImpl implements UserService {
         return monthlyUserCount;
     }
 
-    @Override
-    public Map<String, Long> countDeletedUsersByMonthNative() {
-        List<Object[]> results = userRepository.countDeletedUsersByMonthNative();
-        return getStringLongMap(results);
-    }
-
     public UserCountResponse getUserCount() {
         return new UserCountResponse((int) userRepository.count());
     }
@@ -227,6 +224,7 @@ public class UserServiceImpl implements UserService {
         if (user.getDeleteDate() != null) {
             throw new IllegalStateException("정지된 사용자입니다. 관리자에게 문의하세요.");
         }
+        userActiveLog(user);
         return getLoginResponse(email);
     }
 
@@ -251,16 +249,21 @@ public class UserServiceImpl implements UserService {
         return new UserMyPageResponse(user);
     }
 
-
     @Override
-    public HttpStatus checkPassword(String token, String password) {
-        Long userIdFromToken = tokenProvider.getUserIdFromToken(token);
+    public Page<UserSuggestions> findAllSuggestions(Pageable pageable) {
+        return userSuggestionsRepository.findAll(pageable);
+    }
 
-        User user = userRepository.findById(userIdFromToken).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
-        if (bCryptPasswordEncoder.matches(password, user.getPassword())) {
-            return HttpStatus.OK;
+    private void userActiveLog(User user) {
+        Optional<UserActivityLog> existingLog = userActivityLogRepository.findByUserIdAndActivityDate(user.getId(),
+                LocalDate.now());
+
+        if (existingLog.isEmpty()) {
+            UserActivityLog log = new UserActivityLog();
+            log.setUserId(user.getId());
+            log.setActivityDate(LocalDate.now());
+            userActivityLogRepository.save(log);
         }
-        return HttpStatus.UNAUTHORIZED;
     }
 }
