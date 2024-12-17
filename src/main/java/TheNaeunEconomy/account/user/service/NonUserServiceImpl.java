@@ -81,7 +81,7 @@ public class NonUserServiceImpl implements NonUserService {
     public String saveSuggestions(AddSuggestionsRequest request) {
         UserSuggestions suggestion = new UserSuggestions(request.getName(), request.getContent());
         userSuggestionsRepository.save(suggestion);
-        return "관리자 한테 전달했습니다.";
+        return "관리자한테 전달했습니다.";
     }
 
 

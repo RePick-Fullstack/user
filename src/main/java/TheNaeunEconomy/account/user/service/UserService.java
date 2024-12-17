@@ -7,6 +7,7 @@ import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import TheNaeunEconomy.account.admin.service.response.UserCountResponse;
 import TheNaeunEconomy.account.kakaoapi.service.request.KakaoAccountInfo;
 import TheNaeunEconomy.account.user.service.request.UpdateUserRequest;
+import TheNaeunEconomy.account.user.service.response.UserBillingResponse;
 import TheNaeunEconomy.account.user.service.response.UserMyPageResponse;
 import TheNaeunEconomy.account.user.service.response.UserNickNameResponse;
 import TheNaeunEconomy.jwt.Token;
@@ -53,4 +54,6 @@ public interface UserService {
     UserMyPageResponse getUserInfo(String token);
 
     Page<UserSuggestions> findAllSuggestions(Pageable pageable);
+
+    UserBillingResponse billingUser(String token);
 }

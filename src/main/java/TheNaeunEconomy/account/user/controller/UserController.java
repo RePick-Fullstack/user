@@ -6,6 +6,7 @@ import TheNaeunEconomy.account.user.service.KafkaService;
 import TheNaeunEconomy.account.user.service.UserServiceImpl;
 import TheNaeunEconomy.account.user.service.response.LoginResponse;
 import TheNaeunEconomy.account.user.service.request.UpdateUserRequest;
+import TheNaeunEconomy.account.user.service.response.UserBillingResponse;
 import TheNaeunEconomy.account.user.service.response.UserMyPageResponse;
 import TheNaeunEconomy.account.user.service.response.UserNickNameResponse;
 import TheNaeunEconomy.account.user.service.response.UserResponse;
@@ -45,6 +46,12 @@ public class UserController {
         String token = tokenProvider.getToken(headers);
         userService.logoutUser(token);
         return ResponseEntity.ok().body("로그아웃 되었습니다.");
+    }
+
+    @GetMapping("/billing")
+    public ResponseEntity<UserBillingResponse> billingState(@RequestHeader HttpHeaders headers) {
+        String token = tokenProvider.getToken(headers);
+        return ResponseEntity.ok().body(userService.billingUser(token));
     }
 
 
