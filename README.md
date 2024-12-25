@@ -1,5 +1,4 @@
-# RePick
- - https://github.com/RePick-Fullstack
+# RePick (https://github.com/RePick-Fullstack)
 
 투자의 시작, RePick 챗봇으로 간편하게
 
